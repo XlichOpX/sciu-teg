@@ -1,6 +1,6 @@
-import { Box, Button, Container, Icon } from '@chakra-ui/react'
+import { Box, Button, Container, Link, useDisclosure } from '@chakra-ui/react'
 import NextLink from 'next/link'
-import { MdLogout, MdSettings } from 'react-icons/md'
+import { MdLogout, MdMenu, MdSettings } from 'react-icons/md'
 
 const links = [
   {
@@ -18,61 +18,80 @@ const links = [
   {
     href: '/informes',
     text: 'Informes'
-  }
-]
-
-const iconLinks = [
+  },
   {
     href: '/configuracion',
     title: 'Configuración',
-    icon: MdSettings
+    text: <MdSettings />
   },
   {
     href: '/logout',
     title: 'Cerrar sesión',
-    icon: MdLogout
+    text: <MdLogout />
   }
 ]
 
 export default function Navbar() {
+  const { getButtonProps, getDisclosureProps, isOpen } = useDisclosure()
+
   return (
-    <Box as="nav" py="2" shadow="base" pos="sticky">
+    <Box as="nav" shadow="base" pos="sticky" top={0} bgColor="white" zIndex={20}>
       <Container
         maxW="container.xl"
         display="flex"
+        py={2}
         justifyContent="space-between"
         alignItems="center"
       >
         <NextLink href="/" passHref>
-          <Button as="a" variant="ghost" fontSize="2xl" fontWeight="bold">
+          <Link fontSize="2xl" fontWeight="bold">
             SCIU
-          </Button>
+          </Link>
         </NextLink>
 
-        <Box as="ul" display="flex" gap="2" listStyleType="none">
-          {links.map(({ href, text }) => (
-            <Box as="li" key={href}>
+        <Button
+          variant="ghost"
+          fontSize="2xl"
+          {...getButtonProps()}
+          display={['block', null, 'none']}
+          title={isOpen ? 'Cerrar menú' : 'Abrir menú'}
+        >
+          <MdMenu />
+        </Button>
+
+        {/* Desktop menu */}
+        <Box as="ul" display={['none', null, 'flex']} gap="2" listStyleType="none">
+          {links.map(({ href, text, title }) => (
+            <li key={href}>
               <NextLink href={href} passHref>
-                <Button as="a" variant="ghost">
+                <Button as="a" variant="ghost" title={title}>
                   {text}
                 </Button>
               </NextLink>
-            </Box>
-          ))}
-        </Box>
-
-        <Box as="ul" display="flex" gap="2" listStyleType="none">
-          {iconLinks.map(({ href, title, icon }) => (
-            <Box as="li" key={href}>
-              <NextLink href={href} passHref>
-                <Button as="a" variant="ghost" display="flex" title={title}>
-                  <Icon as={icon} />
-                </Button>
-              </NextLink>
-            </Box>
+            </li>
           ))}
         </Box>
       </Container>
+
+      {/* Mobile menu */}
+      <Box
+        as="ul"
+        listStyleType="none"
+        bgColor="white"
+        display={['flex', null, 'none']}
+        flexDirection="column"
+        {...getDisclosureProps()}
+      >
+        {links.map(({ href, text, title }) => (
+          <li key={href}>
+            <NextLink href={href} passHref>
+              <Button as="a" variant="ghost" width="full" title={title}>
+                {text}
+              </Button>
+            </NextLink>
+          </li>
+        ))}
+      </Box>
     </Box>
   )
 }
