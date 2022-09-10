@@ -1,4 +1,5 @@
-import { Header, ReceiptList } from 'components/receipts'
+import { HeadingWithSearch } from 'components'
+import { ReceiptList } from 'components/receipts'
 import { NextPage } from 'next'
 import Head from 'next/head'
 
@@ -9,7 +10,7 @@ const Receipts: NextPage = () => {
         <title>Recibos</title>
       </Head>
 
-      <Header />
+      <HeadingWithSearch title="Recibos" placeholder="Buscar recibos" />
 
       <ReceiptList />
     </>

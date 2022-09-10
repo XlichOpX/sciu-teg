@@ -1,4 +1,5 @@
-import { Header, MonthlyPayments, StudentInfo, Actions } from 'components/charges'
+import { HeadingWithSearch } from 'components'
+import { Actions, MonthlyPayments, StudentInfo } from 'components/charges'
 import { NextPage } from 'next'
 import Head from 'next/head'
 
@@ -9,7 +10,7 @@ const Charges: NextPage = () => {
         <title>Cobros</title>
       </Head>
 
-      <Header />
+      <HeadingWithSearch title="Cobros" placeholder="Cédula" />
 
       <StudentInfo />
 

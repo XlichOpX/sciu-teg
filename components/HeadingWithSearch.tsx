@@ -1,15 +1,15 @@
 import { Heading, Divider, Flex, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
 import { MdSearch } from 'react-icons/md'
 
-function Header() {
+function HeadingWithSearch({ title, placeholder }: { title: string; placeholder: string }) {
   return (
     <>
       <Flex justifyContent="space-between" alignItems="center" gap={4} wrap="wrap">
         <Heading as="h1" width={['full', 'auto']} textAlign={['center', 'left']}>
-          Recibos
+          {title}
         </Heading>
         <InputGroup width={['full', '2xs']}>
-          <Input placeholder="Número de recibo" />
+          <Input placeholder={placeholder} />
           <InputRightElement pointerEvents="none" color="gray.500" fontSize="lg">
             <MdSearch />
           </InputRightElement>
@@ -20,4 +20,4 @@ function Header() {
   )
 }
 
-export default Header
+export default HeadingWithSearch
