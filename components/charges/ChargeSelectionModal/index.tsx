@@ -33,17 +33,18 @@ function ChargeSelectionModal() {
       <Button leftIcon={<BsWalletFill />} colorScheme="blue" onClick={onOpen}>
         Cobrar selección
       </Button>
+
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            <h2>Cobrar mensualidades</h2>
+            <h2>Registrar cobro</h2>
           </ModalHeader>
           <ModalCloseButton />
 
           <ModalBody>
             <TableContainer>
-              <Table size="sm">
+              <Table>
                 <Tbody>
                   {Array(3)
                     .fill(1)
@@ -93,9 +94,9 @@ function ChargeSelectionModal() {
 
           <ModalFooter>
             <Button mr={3} onClick={onClose}>
-              Cerrar
+              Cancelar
             </Button>
-            <Button colorScheme="blue">Confirmar cobro</Button>
+            <Button colorScheme="blue">Registrar cobro</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

@@ -18,8 +18,10 @@ const Charges: NextPage = () => {
 
       <MonthlyPayments />
 
-      <Flex justifyContent="space-between" mt={4}>
-        <Button leftIcon={<BsPlusLg />}>Otros cobros</Button>
+      <Flex justifyContent="space-between" mt={4} gap={4} wrap="wrap">
+        <Button leftIcon={<BsPlusLg />} width={{ base: 'full', md: 'auto' }}>
+          Agregar producto
+        </Button>
         <ChargeSelectionModal />
       </Flex>
     </>
