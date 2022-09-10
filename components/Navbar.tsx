@@ -32,7 +32,7 @@ const links = [
 ]
 
 export default function Navbar() {
-  const { getButtonProps, getDisclosureProps, isOpen } = useDisclosure()
+  const { getButtonProps, getDisclosureProps, isOpen, onClose } = useDisclosure()
 
   return (
     <Box as="nav" shadow="base" pos="sticky" top={0} bgColor="white" zIndex={20}>
@@ -85,7 +85,7 @@ export default function Navbar() {
         {links.map(({ href, text, title }) => (
           <li key={href}>
             <NextLink href={href} passHref>
-              <Button as="a" variant="ghost" width="full" title={title}>
+              <Button as="a" variant="ghost" width="full" title={title} onClick={onClose}>
                 {text}
               </Button>
             </NextLink>
