@@ -1,16 +1,22 @@
-import { Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
+import { Table, TableContainer, Tbody, Td, Th, Thead, ThemingProps, Tr } from '@chakra-ui/react'
 import Pagination from 'components/Pagination'
 
-function ReceiptList() {
+function ReceiptList({
+  size,
+  showIdCol = true
+}: {
+  size?: ThemingProps<'Table'>['size']
+  showIdCol?: boolean
+}) {
   return (
     <>
       <TableContainer>
-        <Table>
+        <Table size={size}>
           <Thead>
             <Tr>
               <Th pl={0}>Fecha</Th>
               <Th>Recibo N°</Th>
-              <Th>Cédula</Th>
+              {showIdCol && <Th>Cédula</Th>}
               <Th pr={0}>Monto</Th>
             </Tr>
           </Thead>
@@ -22,7 +28,7 @@ function ReceiptList() {
                 <Tr key={i}>
                   <Td pl={0}>10/09/2022</Td>
                   <Td>123456</Td>
-                  <Td>29784799</Td>
+                  {showIdCol && <Td>29784799</Td>}
                   <Td pr={0}>$40</Td>
                 </Tr>
               ))}

@@ -1,12 +1,12 @@
-import { Button, Divider, Flex } from '@chakra-ui/react'
-import { BsFileText } from 'react-icons/bs'
+import { Divider, Flex } from '@chakra-ui/react'
+import ViewReceiptsModal from './ViewReceiptsModal'
 
 function StudentInfo() {
   return (
     <>
       <Flex gap={4} wrap="wrap" justifyContent="space-between" alignItems="center">
         <p>*Información del estudiante*</p>
-        <Button leftIcon={<BsFileText />}>Ver recibos</Button>
+        <ViewReceiptsModal />
       </Flex>
       <Divider my={4} />
     </>
