@@ -1,4 +1,4 @@
-import { Header } from 'components/charges'
+import { Header, MonthlyPayments, StudentInfo, Actions } from 'components/charges'
 import { NextPage } from 'next'
 import Head from 'next/head'
 
@@ -11,7 +11,11 @@ const Charges: NextPage = () => {
 
       <Header />
 
-      <p>Aquí iría el resto del contenido</p>
+      <StudentInfo />
+
+      <MonthlyPayments />
+
+      <Actions />
     </>
   )
 }
