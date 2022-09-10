@@ -1,7 +1,9 @@
+import { Button, Flex } from '@chakra-ui/react'
 import { HeadingWithSearch } from 'components'
-import { Actions, MonthlyPayments, StudentInfo } from 'components/charges'
+import { ChargeSelectionModal, MonthlyPayments, StudentInfo } from 'components/charges'
 import { NextPage } from 'next'
 import Head from 'next/head'
+import { BsPlusLg } from 'react-icons/bs'
 
 const Charges: NextPage = () => {
   return (
@@ -16,7 +18,10 @@ const Charges: NextPage = () => {
 
       <MonthlyPayments />
 
-      <Actions />
+      <Flex justifyContent="space-between" mt={4}>
+        <Button leftIcon={<BsPlusLg />}>Otros cobros</Button>
+        <ChargeSelectionModal />
+      </Flex>
     </>
   )
 }
