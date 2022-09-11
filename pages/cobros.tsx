@@ -1,6 +1,9 @@
-import { Header } from 'components/charges'
+import { Button, Flex } from '@chakra-ui/react'
+import { HeadingWithSearch } from 'components'
+import { ChargeSelectionModal, MonthlyPayments, StudentInfo } from 'components/charges'
 import { NextPage } from 'next'
 import Head from 'next/head'
+import { BsPlusLg } from 'react-icons/bs'
 
 const Charges: NextPage = () => {
   return (
@@ -9,9 +12,18 @@ const Charges: NextPage = () => {
         <title>Cobros</title>
       </Head>
 
-      <Header />
+      <HeadingWithSearch title="Cobros" placeholder="Cédula" />
 
-      <p>Aquí iría el resto del contenido</p>
+      <StudentInfo />
+
+      <MonthlyPayments />
+
+      <Flex justifyContent="space-between" mt={4} gap={4} wrap="wrap">
+        <Button leftIcon={<BsPlusLg />} width={{ base: 'full', md: 'auto' }}>
+          Agregar producto
+        </Button>
+        <ChargeSelectionModal />
+      </Flex>
     </>
   )
 }
