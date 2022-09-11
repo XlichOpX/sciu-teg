@@ -1,6 +1,5 @@
 import {
   Button,
-  CloseButton,
   FormControl,
   Grid,
   GridItem,
@@ -19,18 +18,21 @@ import {
   Tbody,
   Td,
   Tfoot,
+  Th,
+  Thead,
   Tr,
   useDisclosure,
   VisuallyHidden
 } from '@chakra-ui/react'
+import { ComponentPropsWithoutRef } from 'react'
 import { BsPlusLg, BsWalletFill } from 'react-icons/bs'
 
-function ChargeSelectionModal() {
+function ChargeSelectionModal(props: ComponentPropsWithoutRef<typeof Button>) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <>
-      <Button leftIcon={<BsWalletFill />} colorScheme="blue" onClick={onOpen}>
+      <Button leftIcon={<BsWalletFill />} colorScheme="blue" onClick={onOpen} {...props}>
         Cobrar selección
       </Button>
 
@@ -45,24 +47,36 @@ function ChargeSelectionModal() {
           <ModalBody>
             <TableContainer>
               <Table>
+                <Thead>
+                  <Tr>
+                    <Th pl={0}>Producto</Th>
+                    <Th textAlign="center">Cantidad</Th>
+                    <Th pr={0} colSpan={2}>
+                      Precio
+                    </Th>
+                  </Tr>
+                </Thead>
                 <Tbody>
                   {Array(3)
                     .fill(1)
                     .map((_, i) => (
                       <Tr key={i}>
                         <Td pl={0}>Mensualidad #{i + 1}</Td>
-                        <Td textAlign="right">$20</Td>
-                        <Td pr={0}>
-                          <CloseButton size="sm" mx="auto" color="red" />
+                        <Td>1</Td>
+                        <Td textAlign="right" pr={0}>
+                          $20
                         </Td>
                       </Tr>
                     ))}
                 </Tbody>
                 <Tfoot>
                   <Tr fontWeight="bold">
-                    <Td pl={0}>Total</Td>
-                    <Td textAlign="right">$60</Td>
-                    <Td></Td>
+                    <Td pl={0} colSpan={2}>
+                      Total
+                    </Td>
+                    <Td pr={0} textAlign="right">
+                      $60
+                    </Td>
                   </Tr>
                 </Tfoot>
               </Table>
