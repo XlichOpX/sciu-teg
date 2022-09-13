@@ -1,8 +1,9 @@
 import { Button, Container, Heading, useToast } from '@chakra-ui/react'
-import type { NextPage } from 'next'
+import { BaseLayout } from 'components'
 import Head from 'next/head'
+import { NextPageWithLayout } from './_app'
 
-const Home: NextPage = () => {
+const Home: NextPageWithLayout = () => {
   const toast = useToast()
   return (
     <>
@@ -36,5 +37,7 @@ const Home: NextPage = () => {
     </>
   )
 }
+
+Home.getLayout = (page) => <BaseLayout>{page}</BaseLayout>
 
 export default Home
