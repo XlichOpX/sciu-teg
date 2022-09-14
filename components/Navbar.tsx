@@ -20,7 +20,7 @@ const links = [
     text: 'Informes'
   },
   {
-    href: '/configuracion',
+    href: '/configuracion/general',
     title: 'Configuración',
     text: <MdSettings />
   },
