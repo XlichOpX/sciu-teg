@@ -11,19 +11,15 @@ import {
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
-  useDisclosure,
-  VisuallyHidden
+  useDisclosure
 } from '@chakra-ui/react'
-import { BsPencilFill } from 'react-icons/bs'
+import EditButton from 'components/EditButton'
 
 function EditProductModal() {
   const { isOpen, onClose, onOpen } = useDisclosure()
   return (
     <>
-      <Button variant="ghost" size="xs" onClick={onOpen}>
-        <VisuallyHidden>Editar</VisuallyHidden>
-        <BsPencilFill />
-      </Button>
+      <EditButton onClick={onOpen} />
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
