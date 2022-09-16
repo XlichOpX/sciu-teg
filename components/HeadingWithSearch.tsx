@@ -1,19 +1,14 @@
-import { Heading, Divider, Flex, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
-import { MdSearch } from 'react-icons/md'
+import { Divider, Flex, Heading } from '@chakra-ui/react'
+import SearchInput from './SearchInput'
 
 function HeadingWithSearch({ title, placeholder }: { title: string; placeholder: string }) {
   return (
     <>
-      <Flex justifyContent="space-between" alignItems="center" gap={4} wrap="wrap">
-        <Heading as="h1" width={['full', 'auto']} textAlign={['center', 'left']}>
+      <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
+        <Heading as="h1" textAlign={['center', 'left']}>
           {title}
         </Heading>
-        <InputGroup width={['full', '2xs']}>
-          <Input placeholder={placeholder} />
-          <InputRightElement pointerEvents="none" color="gray.500" fontSize="lg">
-            <MdSearch />
-          </InputRightElement>
-        </InputGroup>
+        <SearchInput w="auto" placeholder={placeholder} />
       </Flex>
       <Divider my={4} />
     </>
