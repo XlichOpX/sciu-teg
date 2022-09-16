@@ -1,9 +1,8 @@
-import { Box } from '@chakra-ui/react'
-import { ReactNode } from 'react'
+import { Box, BoxProps } from '@chakra-ui/react'
 
-function SimpleBox({ children }: { children: ReactNode }) {
+function SimpleBox({ children, ...props }: BoxProps) {
   return (
-    <Box border="1px" borderColor="gray.200" borderRadius="md" p={4}>
+    <Box border="1px" borderColor="gray.200" borderRadius="md" p={4} {...props}>
       {children}
     </Box>
   )
