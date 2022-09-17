@@ -1,4 +1,5 @@
 import { Button, Checkbox, FormControl, FormLabel, Input, Select, VStack } from '@chakra-ui/react'
+import { Select as RSelect } from 'chakra-react-select'
 import { SimpleBox } from 'components'
 
 function Sidebar() {
@@ -43,11 +44,15 @@ function Sidebar() {
       <SimpleBox>
         <FormControl>
           <FormLabel>Cuentas</FormLabel>
-          <VStack align="flex-start">
-            <Checkbox>Cuenta X</Checkbox>
-            <Checkbox>Cuenta Y</Checkbox>
-            <Checkbox>Cuenta Z</Checkbox>
-          </VStack>
+          <RSelect
+            placeholder="Seleccionar cuentas"
+            isMulti
+            options={[
+              { value: 'X', label: 'Cuenta X' },
+              { value: 'Y', label: 'Cuenta Y' },
+              { value: 'Z', label: 'Cuenta Z' }
+            ]}
+          />
         </FormControl>
       </SimpleBox>
     </VStack>
