@@ -11,8 +11,8 @@ const links = [
     text: 'Usuarios'
   },
   {
-    href: 'permisos-y-roles',
-    text: 'Permisos y roles'
+    href: 'roles',
+    text: 'Roles'
   },
   {
     href: 'metodos-de-pago',
