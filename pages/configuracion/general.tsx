@@ -1,5 +1,4 @@
 import { Heading } from '@chakra-ui/react'
-import { BaseLayout } from 'components'
 import { Layout } from 'components/settings'
 import { NextPageWithLayout } from 'pages/_app'
 
@@ -11,10 +10,6 @@ const GeneralSettings: NextPageWithLayout = () => {
   )
 }
 
-GeneralSettings.getLayout = (page) => (
-  <BaseLayout>
-    <Layout>{page}</Layout>
-  </BaseLayout>
-)
+GeneralSettings.getLayout = (page) => <Layout title="General">{page}</Layout>
 
 export default GeneralSettings

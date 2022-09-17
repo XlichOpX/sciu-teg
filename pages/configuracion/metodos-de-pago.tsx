@@ -1,5 +1,4 @@
 import { Heading } from '@chakra-ui/react'
-import { BaseLayout } from 'components'
 import { Layout } from 'components/settings'
 import { NextPageWithLayout } from 'pages/_app'
 
@@ -11,10 +10,6 @@ const PaymentMethodsSettings: NextPageWithLayout = () => {
   )
 }
 
-PaymentMethodsSettings.getLayout = (page) => (
-  <BaseLayout>
-    <Layout>{page}</Layout>
-  </BaseLayout>
-)
+PaymentMethodsSettings.getLayout = (page) => <Layout title="Métodos de pago">{page}</Layout>
 
 export default PaymentMethodsSettings
