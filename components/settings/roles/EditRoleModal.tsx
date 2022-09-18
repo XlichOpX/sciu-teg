@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react'
 import { Select } from 'chakra-react-select'
 import EditButton from 'components/EditButton'
+import { BsTrash } from 'react-icons/bs'
 
 function EditRoleModal() {
   const { onOpen, isOpen, onClose } = useDisclosure()
@@ -45,6 +46,10 @@ function EditRoleModal() {
           </ModalBody>
 
           <ModalFooter>
+            <Button mr="auto" colorScheme="red" variant="outline" title="Eliminar rol">
+              <BsTrash />
+            </Button>
+
             <Button mr={3} onClick={onClose}>
               Cancelar
             </Button>
