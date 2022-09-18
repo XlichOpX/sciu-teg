@@ -94,9 +94,9 @@ model DocType {
 }
 
 model Address {
-  id     Int      @id @default(autoincrement())
-  shortAddress    String   @db.VarChar(120)
-  perons Person[]
+  id           Int      @id @default(autoincrement())
+  shortAddress String   @db.VarChar(120)
+  persons      Person[]
 }
 
 model Receipt {
