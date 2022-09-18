@@ -1,9 +1,9 @@
-import { HeadingWithSearch } from 'components'
+import { BaseLayout, HeadingWithSearch } from 'components'
 import { ReceiptList } from 'components/receipts'
-import { NextPage } from 'next'
 import Head from 'next/head'
+import { NextPageWithLayout } from './_app'
 
-const Receipts: NextPage = () => {
+const Receipts: NextPageWithLayout = () => {
   return (
     <>
       <Head>
@@ -16,5 +16,7 @@ const Receipts: NextPage = () => {
     </>
   )
 }
+
+Receipts.getLayout = (page) => <BaseLayout>{page}</BaseLayout>
 
 export default Receipts

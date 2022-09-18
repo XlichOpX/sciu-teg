@@ -1,10 +1,10 @@
 import { Divider } from '@chakra-ui/react'
-import { HeadingWithSearch, Pagination } from 'components'
+import { BaseLayout, HeadingWithSearch, Pagination } from 'components'
 import { ProductList } from 'components/products'
-import { NextPage } from 'next'
 import Head from 'next/head'
+import { NextPageWithLayout } from 'pages/_app'
 
-const Products: NextPage = () => {
+const Products: NextPageWithLayout = () => {
   return (
     <>
       <Head>
@@ -21,5 +21,7 @@ const Products: NextPage = () => {
     </>
   )
 }
+
+Products.getLayout = (page) => <BaseLayout>{page}</BaseLayout>
 
 export default Products

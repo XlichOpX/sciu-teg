@@ -1,11 +1,11 @@
 import { Flex } from '@chakra-ui/react'
-import { HeadingWithSearch } from 'components'
+import { BaseLayout, HeadingWithSearch } from 'components'
 import { ChargeSelectionModal, MonthlyPayments, StudentInfo } from 'components/charges'
 import AddProductsModal from 'components/charges/AddProductsModal'
-import { NextPage } from 'next'
 import Head from 'next/head'
+import { NextPageWithLayout } from './_app'
 
-const Charges: NextPage = () => {
+const Charges: NextPageWithLayout = () => {
   return (
     <>
       <Head>
@@ -25,5 +25,7 @@ const Charges: NextPage = () => {
     </>
   )
 }
+
+Charges.getLayout = (page) => <BaseLayout>{page}</BaseLayout>
 
 export default Charges

@@ -1,5 +1,5 @@
-import { Flex, Heading, Button, Divider, Box, VisuallyHidden } from '@chakra-ui/react'
-import { BsPencilFill } from 'react-icons/bs'
+import { Box, Divider, Flex, Heading } from '@chakra-ui/react'
+import EditProductModal from './EditProductModal'
 
 function ProductItem() {
   return (
@@ -9,17 +9,14 @@ function ProductItem() {
           Producto X
         </Heading>
 
-        <Button variant="ghost" size="xs">
-          <VisuallyHidden>Editar</VisuallyHidden>
-          <BsPencilFill />
-        </Button>
+        <EditProductModal />
       </Flex>
 
       <Divider borderColor="black" my={2} />
 
       <Box as="ul" listStylePosition="inside">
         <li>Precio: $20</li>
-        <li>Inventario: $20</li>
+        <li>Inventario: 20</li>
         <li>Categoría: Cualquiera</li>
       </Box>
     </Box>
