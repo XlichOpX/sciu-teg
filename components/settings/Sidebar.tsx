@@ -1,37 +1,45 @@
 import { Button, Divider, Flex } from '@chakra-ui/react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const links = [
   {
-    href: 'general',
+    href: '/configuracion/general',
     text: 'General'
   },
   {
-    href: 'usuarios',
+    href: '/configuracion/usuarios',
     text: 'Usuarios'
   },
   {
-    href: 'roles',
+    href: '/configuracion/roles',
     text: 'Roles'
   },
   {
-    href: 'metodos-de-pago',
+    href: '/configuracion/metodos-de-pago',
     text: 'Métodos de pago'
   },
   {
-    href: 'tasas-de-cambio',
+    href: '/configuracion/tasas-de-cambio',
     text: 'Tasas de cambio'
   }
 ]
 
 function Sidebar() {
+  const { asPath } = useRouter()
   return (
     <>
       <Flex as="ul" direction="column" gap={4} listStyleType="none">
         {links.map((li) => (
           <li key={li.href}>
             <Link href={li.href} passHref>
-              <Button as="a" width="full" justifyContent="flex-start">
+              <Button
+                as="a"
+                w="full"
+                variant={asPath === li.href ? 'solid' : 'ghost'}
+                justifyContent="flex-start"
+                pointerEvents={asPath === li.href ? 'none' : undefined}
+              >
                 {li.text}
               </Button>
             </Link>
