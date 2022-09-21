@@ -1,4 +1,4 @@
-import { prisma } from './db'
+import prisma from '../lib/prisma'
 import { compare } from '../lib/crypter'
 import { RequestInternal } from 'next-auth'
 
