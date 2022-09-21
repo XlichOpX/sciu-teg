@@ -20,7 +20,6 @@ export async function loging(
 ): Promise<{
   id: number
   statusId: number
-  personId: number
   username: string
 } | null> {
   // incoming username and password...
@@ -37,13 +36,13 @@ export async function loging(
 
   // validate exist username in db
   if (!user) throw new Error('username invalid')
-  const { id, statusId, personId } = user
+  const { id, statusId } = user
   // validate password matches with db password
   const isValid = compare(password, user.password)
-  console.log({valid: isValid, password, token: user.password})
+  console.log({ valid: isValid, password, token: user.password })
   if (!isValid) return null
 
-  return { id, statusId, personId, username }
+  return { id, statusId, username }
 }
 
 export async function authorize(
@@ -52,7 +51,6 @@ export async function authorize(
 ): Promise<{
   id: number
   statusId: number
-  personId: number
   username: string
 } | null> {
   return loging(credentials)
