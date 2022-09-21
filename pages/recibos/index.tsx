@@ -1,7 +1,7 @@
 import { BaseLayout, HeadingWithSearch } from 'components'
 import { ReceiptList } from 'components/receipts'
 import Head from 'next/head'
-import { NextPageWithLayout } from './_app'
+import { NextPageWithLayout } from '../_app'
 
 const Receipts: NextPageWithLayout = () => {
   return (
