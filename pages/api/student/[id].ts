@@ -1,30 +1,34 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
 import { Student } from '@prisma/client'
 import prisma from '../../../lib/prisma'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import z from 'zod'
 
 export default async function studentHandler(req: NextApiRequest, res: NextApiResponse) {
+  // Validate typeof id
+  const idValidation = z.preprocess((value) => Number(value), z.number().positive())
+
   const {
-    query: { id },
+    body,
     method,
-    body
+    query: { id }
   } = req
 
-  if (isNaN(id as unknown as number)) return res.status(404).send(`Id ${id} Not Allowed`)
+  const { success } = idValidation.safeParse(id)
+  if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
 
   switch (method) {
     case 'GET':
       //obtenemos a UN estudiante
       const student: Student | null = await prisma.student.findFirst({
-        include: { person: true, status: true },
+        include: { person: true, status: true, career: true, enrolledSemesters: true },
         where: { id: Number(id) }
       })
-      if(!student)
-        res.status(404).end(`Student not found`)
-
+      if (!student) res.status(404).end(`Student not found`)
+      res.status(200).send(student)
       break
     case 'PUT':
       //actualizamos a UN estudiante
-      const updateStudent: Student | null = await prisma.student.update({
+      const updateStudent: Student = await prisma.student.update({
         data: {
           ...body
         },
@@ -32,11 +36,12 @@ export default async function studentHandler(req: NextApiRequest, res: NextApiRe
           id: Number(id)
         }
       })
+      if (!updateStudent) res.status(404).end(`Student not found`)
       res.status(201).send(updateStudent || {})
       break
     case 'DELETE':
       //eliminamos a UN estudiante
-      const delStudent: Student | null = await prisma.student.delete({ where: { id: Number(id) } })
+      const delStudent: Student = await prisma.student.delete({ where: { id: Number(id) } })
       res.status(202).send(delStudent)
       break
     default:
