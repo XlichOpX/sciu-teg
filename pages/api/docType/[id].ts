@@ -3,7 +3,7 @@ import prisma from '../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import z from 'zod'
 
-export default async function DocTypeHandler(req: NextApiRequest, res: NextApiResponse) {
+export default async function docTypeHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
   const idValidation = z.preprocess((value) => Number(value), z.number().positive())
 
