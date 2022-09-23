@@ -10,14 +10,14 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     case 'GET':
       //obtenemos TODAS las personas
       const people: Person[] | null = await prisma.person.findMany()
+      
       if (!people) res.status(404).end(`People not found`)
       res.status(200).send(people)
       break
     case 'POST':
-      const result = await prisma.student.create({
-        data: {
-          ...body
-        }
+      //creamos UNA persona
+      const result : Person = await prisma.person.create({
+        data: { ...body }
       })
       res.status(201).send(result)
       break

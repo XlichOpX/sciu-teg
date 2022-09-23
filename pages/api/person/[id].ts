@@ -30,7 +30,7 @@ export default async function personHandler(req: NextApiRequest, res: NextApiRes
         },
         where: { id: Number(id) }
       })
-      if (!person) res.status(404).end(`person not found`)
+      if (!person) res.status(404).end(`Person not found`)
       res.status(201).send(person)
       break
     case 'PUT':
@@ -43,13 +43,13 @@ export default async function personHandler(req: NextApiRequest, res: NextApiRes
           id: Number(id)
         }
       })
-      if (!updatePerson) res.status(404).end(`person not found`)
+      if (!updatePerson) res.status(404).end(`Person not found`)
       res.status(201).send(updatePerson || {})
       break
     case 'DELETE':
       //eliminamos a UNA persona
-      const delperson: Person = await prisma.person.delete({ where: { id: Number(id) } })
-      res.status(202).send(delperson)
+      const delPerson: Person = await prisma.person.delete({ where: { id: Number(id) } })
+      res.status(202).send(delPerson)
       break
     default:
       res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])

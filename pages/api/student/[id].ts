@@ -29,9 +29,7 @@ export default async function studentHandler(req: NextApiRequest, res: NextApiRe
     case 'PUT':
       //actualizamos a UN estudiante
       const updateStudent: Student = await prisma.student.update({
-        data: {
-          ...body
-        },
+        data: { ...body },
         where: {
           id: Number(id)
         }

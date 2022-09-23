@@ -8,16 +8,18 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   switch (method) {
     case 'GET':
-      const addresses = await prisma.address.findMany()
+      //obtenemos TODAS las direcciones
+      const addresses: Address[] | null = await prisma.address.findMany()
 
-      if (!addresses) return res.status(404).end(`Not Addresses found`)
+      if (!addresses) return res.status(404).end(`Addresses not found`)
       res.status(200).send(addresses)
       break
     case 'POST':
-      const newAddress = await prisma.address.create({
+      //creamos UNA dirección
+      const result: Address = await prisma.address.create({
         data: { ...body }
       })
-      res.status(201).send(newAddress)
+      res.status(201).send(result)
       break
     default:
       res.setHeader('Allow', ['GET', 'POST'])
