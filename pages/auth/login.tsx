@@ -49,9 +49,10 @@ const Login: NextPageWithLayout = () => {
 
     if (!res.ok) {
       toast({ status: 'error', description: 'Credenciales inválidas' })
+      return
     }
 
-    router.push(redirect as string)
+    router.push(typeof redirect === 'string' ? redirect : '/')
   }
 
   return (
