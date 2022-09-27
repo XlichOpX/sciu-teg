@@ -125,6 +125,7 @@ model ProductSale {
   receipt   Receipt @relation(fields: [receiptId], references: [id])
   receiptId Int
   quantity  Int
+  price     Decimal
 }
 
 model Category {
@@ -142,6 +143,8 @@ model Charge {
   date            DateTime
   receipt         Receipt       @relation(fields: [receiptId], references: [id])
   receiptId       Int
+  conversionId    Int
+  conversion      Conversion    @relation(fields: [conversionId], references: [id])
 }
 
 model PaymentMethod {
@@ -161,10 +164,11 @@ model Currency {
 }
 
 model Conversion {
-  id    Int      @id @default(autoincrement())
-  date  DateTime @default(now())
-  dolar Decimal
-  euro  Decimal
+  id      Int      @id @default(autoincrement())
+  date    DateTime @default(now())
+  dolar   Decimal
+  euro    Decimal
+  charges Charge[]
 }
 
 model Parameters {
