@@ -3,13 +3,21 @@ import { ironOptions } from 'lib/ironSession'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import prisma from 'lib/prisma'
+import { z } from 'zod'
 
 export default withIronSessionApiRoute(loginRoute, ironOptions)
 
-async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
-  const { username, password } = JSON.parse(req.body)
+const input = z.object({
+  username: z.string(),
+  password: z.string()
+})
 
-  if (!username || !password) return res.status(403).json('username or password not in the json')
+async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
+  const result = input.safeParse(req.body)
+  if (!result.success) {
+    return res.status(403).json(result.error.message)
+  }
+  const { username, password } = result.data
 
   try {
     // retrieve user password from database
@@ -18,29 +26,31 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
       include: { roles: true, status: true }
     })
 
-    // validate exist username in db
-    if (!user) return res.status(403).json('username invalid')
+    // validate that username exists in db
+    if (!user) return invalidCredentials(res)
 
-    // validate password matches with db password
+    // validate that given password matches db password
     const isValid = compare(password, user.password)
 
-    console.log({ valid: isValid, password, token: user.password })
-
-    if (!isValid)
-      return res.status(403).json("Does'nt a valid username or password? idk english, sorry.")
+    if (!isValid) return invalidCredentials(res)
 
     const { roles, id, status } = user
-    // validate that if the user is distinct to inactive user status
-    if (status.id === 0)
-      return res.status(403).json('User inactive. Contact with an Administrator.')
+
+    // validate that user status is different from inactive
+    if (status.id === 0) return res.status(403).json('User is inactive. Contact an admin.')
     req.session.user = { id, status, roles, username }
 
-    // save cookie iSession
+    // save iSession cookie
     await req.session.save()
 
-    // response with a CookieUser object.
+    // respond with a CookieUser object.
     res.json({ id, status, roles, username })
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message })
+    if (error instanceof Error) {
+      return res.status(500).json({ error: error.message })
+    }
   }
 }
+
+const invalidCredentials = (res: NextApiResponse) =>
+  res.status(403).json({ error: 'Invalid credentials' })
