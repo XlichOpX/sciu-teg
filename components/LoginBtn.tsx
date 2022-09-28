@@ -1,20 +1,16 @@
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useRouter } from "next/router"
+
 export default function LoginBtn() {
-  const { data: session, status } = useSession()
-  if(!(status === "loading"))
-    console.log(session)
-  if (session) {
-    return (
+  const router = useRouter()
+  const signOut = async () => {
+    const res = await fetch('/api/auth/logout')
+    if(res.ok)
+      router.push('/')
+  }
+   return (
       <>
-        Signed in as {' '} {session.user?.email || session.user?.username} <br />
+        ¡You have access !<br />
         <button onClick={() => signOut()}>Sign out</button>
       </>
     )
-  }
-  return (
-    <>
-      Not signed in <br />
-      <button onClick={() => signIn()}>Sign in</button>
-    </>
-  )
 }
