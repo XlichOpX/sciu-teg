@@ -1,4 +1,4 @@
-import { Product } from '@prisma/client'
+import { Product, Prisma } from '@prisma/client'
 import prisma from '../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
@@ -8,22 +8,33 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   switch (method) {
     case 'GET':
-      //obtenemos TODOS los productos
-      const products: Product[] | null = await prisma.product.findMany()
-
-      if (!products) return res.status(404).end(`Products not found`)
-      res.status(200).send(products)
-      break
+      // obtenemos TODOS los productos
+      const products = await getProducts()
+      return res.json(products)
     case 'POST':
-      //creamos UN productos
+      // creamos UN producto
       const result: Product = await prisma.product.create({
         data: { ...body }
       })
-      res.status(201).send(result)
-      break
+      return res.status(201).send(result)
     default:
       res.setHeader('Allow', ['GET', 'POST'])
-      res.status(405).end(`Method ${method} Not Allowed`)
-      break
+      return res.status(405).end(`Method ${method} Not Allowed`)
   }
 }
+
+async function getProducts() {
+  let products = await prisma.product.findMany({
+    select: {
+      id: true,
+      name: true,
+      stock: true,
+      price: true,
+      category: { select: { name: true, id: true } }
+    }
+  })
+
+  return products
+}
+
+export type ProductWithCategory = Prisma.PromiseReturnType<typeof getProducts>[0]

@@ -1,14 +1,13 @@
 import { SimpleGrid } from '@chakra-ui/react'
+import { ProductWithCategory } from 'pages/api/product'
 import ProductItem from './ProductItem'
 
-function ProductList() {
+function ProductList({ products }: { products: ProductWithCategory[]; error: string }) {
   return (
     <SimpleGrid minChildWidth="2xs" as="ul" listStyleType="none" gap={4}>
-      {Array(20)
-        .fill(1)
-        .map((e, i) => (
-          <ProductItem key={i} />
-        ))}
+      {products.map((p) => (
+        <ProductItem key={p.id} product={p} />
+      ))}
     </SimpleGrid>
   )
 }
