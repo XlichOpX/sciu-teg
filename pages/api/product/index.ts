@@ -1,6 +1,19 @@
-import { Product, Category } from '@prisma/client'
+import { Product, Category, Prisma } from '@prisma/client'
 import prisma from '../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+
+const userWithPosts = Prisma.validator<Prisma.ProductArgs>()({
+  select: {
+    id: true,
+    name: true,
+    stock: true,
+    price: true,
+    categoryId: true,
+    category: { select: { name: true } }
+  }
+})
+
+export type ProductWithCategory = Prisma.ProductGetPayload<typeof userWithPosts>
 
 // GET|POST /api/product
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
@@ -9,16 +22,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   switch (method) {
     case 'GET':
       // obtenemos TODOS los productos
-      const products : ProductWithCategory[]  = await prisma.product.findMany({
-        select: {
-          id: true,
-          name: true,
-          stock: true,
-          price: true,
-          categoryId : true,
-          category: {select: {name: true}}
-        }
-      })
+      const products: ProductWithCategory[] = await prisma.product.findMany(userWithPosts)
       return res.json(products)
     case 'POST':
       // creamos UN producto
@@ -31,5 +35,3 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       return res.status(405).end(`Method ${method} Not Allowed`)
   }
 }
-
-export type ProductWithCategory = (Product & {category: Omit<Category, 'description' | 'id'> })
