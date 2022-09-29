@@ -10,7 +10,7 @@ function ProductItem({ product }: { product: ProductWithCategory }) {
           {product.name}
         </Heading>
 
-        <EditProductModal />
+        <EditProductModal product={product} />
       </Flex>
 
       <Divider borderColor="black" my={2} />
