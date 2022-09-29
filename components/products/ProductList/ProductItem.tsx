@@ -17,7 +17,7 @@ function ProductItem({ product }: { product: ProductWithCategory }) {
 
       <Box as="ul" listStylePosition="inside">
         <li>
-          Precio: ${typeof product.price == 'string' ? product.price : product.price.toString()}
+          Precio: ${product.price.toString()}
         </li>
         <li>Inventario: {product.stock}</li>
         <li>Categoría: {product.category.name}</li>
