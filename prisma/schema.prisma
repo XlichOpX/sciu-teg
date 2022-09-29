@@ -112,7 +112,7 @@ model Product {
   id           Int           @id @default(autoincrement())
   name         String        @db.VarChar(64)
   stock        Int
-  price        Decimal
+  price        Float
   category     Category      @relation(fields: [categoryId], references: [id])
   categoryId   Int
   productSales ProductSale[]
@@ -125,7 +125,7 @@ model ProductSale {
   receipt   Receipt @relation(fields: [receiptId], references: [id])
   receiptId Int
   quantity  Int
-  price     Decimal
+  price     Float
 }
 
 model Category {
@@ -139,7 +139,7 @@ model Charge {
   id              Int           @id @default(autoincrement())
   paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
   paymentMethodId Int
-  amount          Decimal
+  amount          Float
   date            DateTime
   receipt         Receipt       @relation(fields: [receiptId], references: [id])
   receiptId       Int
@@ -166,8 +166,8 @@ model Currency {
 model Conversion {
   id      Int      @id @default(autoincrement())
   date    DateTime @default(now())
-  dolar   Decimal
-  euro    Decimal
+  dolar   Float
+  euro    Float
   charges Charge[]
 }
 

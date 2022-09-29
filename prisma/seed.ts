@@ -130,7 +130,7 @@ async function createReceipts() {
             const product = getRandomValueFromArray(products)
             return {
               productId: product.id,
-              price: product.price.toNumber(),
+              price: product.price,
               quantity: getRandomInt({ max: 6 })
             }
           })
@@ -279,7 +279,7 @@ function genPerson(docTypeIds: number[]): Prisma.PersonCreateInput {
 function genProduct(name: string) {
   return {
     name,
-    price: faker.commerce.price(1, 30),
+    price: Number(faker.commerce.price(1, 30)),
     stock: faker.datatype.number(100)
   }
 }
