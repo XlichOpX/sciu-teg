@@ -17,13 +17,15 @@ const Products: NextPageWithLayout = () => {
 
       <HeadingWithSearch title="Productos" placeholder="Buscar productos" />
 
-      {error && <Alert status="error">{error}</Alert>}
+      {error && <Alert status="error">{error.message}</Alert>}
       {isLoading && <Placeholder />}
-      {products && <ProductList products={products} error={error} />}
-
-      <Divider my={4} />
-
-      <Pagination />
+      {products && (
+        <>
+          <ProductList products={products} />
+          <Divider my={4} />
+          <Pagination />
+        </>
+      )}
     </>
   )
 }
