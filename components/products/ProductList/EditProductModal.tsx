@@ -15,25 +15,30 @@ import {
   SimpleGrid,
   useDisclosure
 } from '@chakra-ui/react'
-import { productSchema } from 'schema/productSchema'
-import { SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import EditButton from 'components/EditButton'
-import type { ProductWithCategory, ProductInput } from '../../../types/product'
 import useCategories from 'hooks/useCategories'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { productSchema } from 'schema/productSchema'
+import { updateProduct } from 'services/products'
+import { useSWRConfig } from 'swr'
+import type { ProductInput, ProductWithCategory } from '../../../types/product'
 
 function EditProductModal({ product }: { product: ProductWithCategory }) {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const { categories } = useCategories()
+  const { mutate } = useSWRConfig()
 
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors, isSubmitting }
   } = useForm<ProductInput>({ resolver: zodResolver(productSchema) })
 
-  const onSubmit: SubmitHandler<ProductInput> = (v) => {
-    console.log(v)
+  const onSubmit: SubmitHandler<ProductInput> = async (data) => {
+    await updateProduct(product.id, data)
+    mutate('/api/product')
+    onClose()
   }
 
   return (
@@ -62,7 +67,7 @@ function EditProductModal({ product }: { product: ProductWithCategory }) {
                   defaultValue={product.category.id}
                   {...register('categoryId', { valueAsNumber: true })}
                 >
-                  {!!categories &&
+                  {categories &&
                     categories.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
@@ -100,7 +105,7 @@ function EditProductModal({ product }: { product: ProductWithCategory }) {
             <Button mr={3} onClick={onClose}>
               Cancelar
             </Button>
-            <Button colorScheme="blue" type="submit" form="editProductForm">
+            <Button colorScheme="blue" type="submit" form="editProductForm" disabled={isSubmitting}>
               Guardar cambios
             </Button>
           </ModalFooter>

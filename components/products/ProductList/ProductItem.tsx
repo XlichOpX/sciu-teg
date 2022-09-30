@@ -16,7 +16,7 @@ function ProductItem({ product }: { product: ProductWithCategory }) {
       <Divider borderColor="black" my={2} />
 
       <Box as="ul" listStylePosition="inside">
-        <li>Precio: ${product.price}</li>
+        <li>Precio: {product.price}</li>
         <li>Inventario: {product.stock}</li>
         <li>Categoría: {product.category.name}</li>
       </Box>
