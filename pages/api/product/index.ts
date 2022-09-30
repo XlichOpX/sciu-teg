@@ -1,9 +1,8 @@
 import { Prisma } from '@prisma/client'
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { z } from 'zod'
+import { productSchema } from 'schema/productSchema'
 import prisma from '../../../lib/prisma'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-// select base para las query de producto, sirve además para generar el tipo
 export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
   select: {
     id: true,
@@ -13,16 +12,7 @@ export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
     category: { select: { id: true, name: true } }
   }
 })
-export type ProductWithCategory = Prisma.ProductGetPayload<typeof productWithCategory>
 
-// schema para validar input tanto de post como put
-export const productSchema = z.object({
-  name: z.string().min(1).max(64),
-  stock: z.number().int().nonnegative(),
-  price: z.number().nonnegative(),
-  categoryId: z.number().int().positive()
-})
-export type ProductInput = z.infer<typeof productSchema>
 
 // GET|POST /api/product
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {

@@ -15,11 +15,12 @@ import {
   SimpleGrid,
   useDisclosure
 } from '@chakra-ui/react'
+import { productSchema } from 'schema/productSchema'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import EditButton from 'components/EditButton'
+import type { ProductWithCategory, ProductInput } from '../../../types/product'
 import useCategories from 'hooks/useCategories'
-import { ProductInput, productSchema, ProductWithCategory } from 'pages/api/product'
-import { SubmitHandler, useForm } from 'react-hook-form'
 
 function EditProductModal({ product }: { product: ProductWithCategory }) {
   const { isOpen, onClose, onOpen } = useDisclosure()
