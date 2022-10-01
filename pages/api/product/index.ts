@@ -21,21 +21,25 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   switch (method) {
     case 'GET':
       // destructuring limit and offset values from query params
-      const { limit, offset } = query
+      const { limit, offset, keyword } = query
 
       // validate values to pagination
       const take = Number(Array.isArray(limit) ? limit[0] : limit) || 5
       const skip = Number(Array.isArray(offset) ? offset[0] : offset) || 0
+      const contains = Array.isArray(keyword) ? keyword[0] : keyword
       // obtenemos TODOS los productos
       const products = await prisma.product.findMany({
         ...productWithCategory,
         take,
         skip,
+        where: {
+          name: { contains }
+        },
         orderBy: { name: 'asc' }
       })
       const count = await prisma.product.count()
       console.log(count)
-      return res.json({count, result:products})
+      return res.json({ count, result: products })
     case 'POST':
       // creamos UN producto
       try {
