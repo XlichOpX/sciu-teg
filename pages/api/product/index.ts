@@ -26,7 +26,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       // validate values to pagination
       const take = Number(Array.isArray(limit) ? limit[0] : limit) || 5
       const skip = Number(Array.isArray(offset) ? offset[0] : offset) || 0
-      const pagination: Prisma.ProductWhereInput = {
+      const search: Prisma.ProductWhereInput = {
         name: { contains: Array.isArray(keyword) ? keyword[0] : keyword, mode: 'insensitive' }
       }
       // obtenemos TODOS los productos
@@ -34,10 +34,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         ...productWithCategory,
         take,
         skip,
-        where: pagination,
+        where: search,
         orderBy: { name: 'asc' }
       })
-      const count = await prisma.product.count({ where: pagination })
+      const count = await prisma.product.count({ where: search })
       console.log(count)
       return res.json({ count, result: products })
     case 'POST':
