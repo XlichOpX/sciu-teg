@@ -55,7 +55,7 @@ function ProductFormModal({
               formHook={formHook}
               id={formId}
               onSubmit={async (data) => {
-                onSubmit(data)
+                await onSubmit(data)
                 onClose()
               }}
             />

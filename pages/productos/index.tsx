@@ -21,7 +21,7 @@ const Products: NextPageWithLayout = () => {
           trigger={<Button colorScheme="blue">Crear producto</Button>}
           onSubmit={async (data) => {
             await createProduct(data)
-            mutate()
+            await mutate()
           }}
           title="Crear producto"
           confirmText="Crear"
@@ -40,7 +40,7 @@ const Products: NextPageWithLayout = () => {
                 product={p}
                 onUpdate={async (data) => {
                   await updateProduct(p.id, data)
-                  mutate()
+                  await mutate()
                 }}
               />
             ))}
