@@ -16,7 +16,7 @@ function ProductItem({
   return (
     <SimpleBox>
       <Flex alignItems="center" justifyContent="space-between">
-        <Heading as="h2" size="sm">
+        <Heading as="h2" size="sm" noOfLines={2}>
           {name}
         </Heading>
 
