@@ -9,28 +9,33 @@ export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
     name: true,
     stock: true,
     price: true,
-    category: { select: { id: true, name: true } }
+    categoryId: true,
+    category: { select: { name: true } }
   }
 })
 
 // GET|POST /api/product
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { body, method, query } = req
-  const { limit, offset } = query
-
-  const take = Number((Array.isArray(limit) ? limit[0] : limit)) || 5
-  const skip = Number((Array.isArray(offset) ? offset[0] : offset)) || 0
 
   switch (method) {
     case 'GET':
+      // destructuring limit and offset values from query params
+      const { limit, offset } = query
+
+      // validate values to pagination
+      const take = Number(Array.isArray(limit) ? limit[0] : limit) || 5
+      const skip = Number(Array.isArray(offset) ? offset[0] : offset) || 0
       // obtenemos TODOS los productos
       const products = await prisma.product.findMany({
         ...productWithCategory,
         take,
         skip,
-        orderBy: { id: 'asc' }
+        orderBy: { name: 'asc' }
       })
-      return res.json(products)
+      const count = await prisma.product.count()
+      console.log(count)
+      return res.json({count, result:products})
     case 'POST':
       // creamos UN producto
       try {
