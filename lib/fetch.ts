@@ -1,7 +1,7 @@
 type FetchParams = Parameters<typeof window.fetch>
 type Input = FetchParams[0]
-interface CustomInit extends RequestInit {
-  body?: any
+interface CustomInit extends Omit<RequestInit, 'body'> {
+  body?: unknown
 }
 
 export const fetch = (input: Input, { headers, body, ...init }: CustomInit = {}) => {

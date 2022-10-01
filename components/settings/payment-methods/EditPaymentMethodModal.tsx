@@ -12,7 +12,6 @@ import {
   useDisclosure,
   Input
 } from '@chakra-ui/react'
-import { Select } from 'chakra-react-select'
 import EditButton from 'components/EditButton'
 import { BsTrash } from 'react-icons/bs'
 
