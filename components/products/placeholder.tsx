@@ -1,5 +1,5 @@
-import { SimpleGrid, VStack, SkeletonText, Divider } from '@chakra-ui/react'
-import SimpleBox from 'components/SimpleBox'
+import { Divider, SimpleGrid, SkeletonText } from '@chakra-ui/react'
+import { SimpleBox } from 'components'
 
 function Placeholder() {
   return (

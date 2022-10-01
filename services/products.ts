@@ -7,3 +7,7 @@ export async function updateProduct(id: number, data: ProductInput) {
     body: data
   })
 }
+
+export async function createProduct(data: ProductInput) {
+  return await fetch('/api/product', { method: 'POST', body: data })
+}
