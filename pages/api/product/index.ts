@@ -33,7 +33,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         take,
         skip,
         where: {
-          name: { contains }
+          name: { contains, mode: 'insensitive'}
         },
         orderBy: { name: 'asc' }
       })
