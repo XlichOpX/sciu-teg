@@ -13,15 +13,23 @@ export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
   }
 })
 
-
 // GET|POST /api/product
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  const { body, method } = req
+  const { body, method, query } = req
+  const { limit, offset } = query
+
+  const take = Number((Array.isArray(limit) ? limit[0] : limit)) || 5
+  const skip = Number((Array.isArray(offset) ? offset[0] : offset)) || 0
 
   switch (method) {
     case 'GET':
       // obtenemos TODOS los productos
-      const products = await prisma.product.findMany(productWithCategory)
+      const products = await prisma.product.findMany({
+        ...productWithCategory,
+        take,
+        skip,
+        orderBy: { id: 'asc' }
+      })
       return res.json(products)
     case 'POST':
       // creamos UN producto
