@@ -1,6 +1,8 @@
-import { Box, Divider, Flex, Heading } from '@chakra-ui/react'
-import { EditButton } from 'components'
+import { Divider, Flex, Heading, HStack, VStack } from '@chakra-ui/react'
+import { EditButton, SimpleBox } from 'components'
 import { SubmitHandler } from 'react-hook-form'
+import { BsBoxSeam, BsCurrencyDollar } from 'react-icons/bs'
+import { MdOutlineCategory } from 'react-icons/md'
 import { ProductInput, ProductWithCategory } from 'types/product'
 import ProductFormModal from './ProductFormModal'
 
@@ -12,7 +14,7 @@ function ProductItem({
   onUpdate: SubmitHandler<ProductInput>
 }) {
   return (
-    <Box as="li" rounded="md" p={4} border="1px" borderColor="gray.100">
+    <SimpleBox>
       <Flex alignItems="center" justifyContent="space-between">
         <Heading as="h2" size="sm">
           {name}
@@ -23,18 +25,24 @@ function ProductItem({
           title="Editar producto"
           defaultValues={{ categoryId: category.id, name, price, stock }}
           onSubmit={onUpdate}
-          confirmText="Guardar cambios"
+          confirmText="Guardar"
         />
       </Flex>
 
-      <Divider borderColor="black" my={2} />
+      <Divider my={2} />
 
-      <Box as="ul" listStylePosition="inside">
-        <li>Precio: {price}</li>
-        <li>Inventario: {stock}</li>
-        <li>Categoría: {category.name}</li>
-      </Box>
-    </Box>
+      <VStack align="flex-start">
+        <HStack as="p">
+          <BsCurrencyDollar /> <span>Precio: {price}</span>
+        </HStack>
+        <HStack as="p">
+          <BsBoxSeam /> <span>Inventario: {stock}</span>
+        </HStack>
+        <HStack as="p">
+          <MdOutlineCategory /> <span>Categoría: {category.name}</span>
+        </HStack>
+      </VStack>
+    </SimpleBox>
   )
 }
 

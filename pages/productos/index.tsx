@@ -4,6 +4,7 @@ import { Placeholder, ProductFormModal, ProductItem, ProductList } from 'compone
 import useProducts from 'hooks/useProducts'
 import Head from 'next/head'
 import { NextPageWithLayout } from 'pages/_app'
+import { BsPlusLg } from 'react-icons/bs'
 import { createProduct, updateProduct } from 'services/products'
 
 const Products: NextPageWithLayout = () => {
@@ -18,7 +19,11 @@ const Products: NextPageWithLayout = () => {
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
         <SearchInput w="auto" placeholder="Buscar productos" />
         <ProductFormModal
-          trigger={<Button colorScheme="blue">Crear producto</Button>}
+          trigger={
+            <Button colorScheme="blue" leftIcon={<BsPlusLg />}>
+              Crear producto
+            </Button>
+          }
           onSubmit={async (data) => {
             await createProduct(data)
             await mutate()

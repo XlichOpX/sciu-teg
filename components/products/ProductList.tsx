@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 
 function ProductList({ children }: { children: ReactNode }) {
   return (
-    <SimpleGrid minChildWidth="2xs" as="ul" listStyleType="none" gap={4}>
+    <SimpleGrid minChildWidth="2xs" listStyleType="none" gap={4}>
       {children}
     </SimpleGrid>
   )

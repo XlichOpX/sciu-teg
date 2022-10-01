@@ -13,6 +13,8 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import React, { ReactElement, useId } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { BsXLg } from 'react-icons/bs'
+import { FaSave } from 'react-icons/fa'
 import { productSchema } from 'schema/productSchema'
 import type { ProductInput } from 'types/product'
 import ProductForm from './ProductForm'
@@ -62,7 +64,7 @@ function ProductFormModal({
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={onClose}>
+            <Button mr={3} onClick={onClose} leftIcon={<BsXLg />}>
               Cancelar
             </Button>
             <Button
@@ -70,6 +72,7 @@ function ProductFormModal({
               type="submit"
               form={formId}
               disabled={formHook.formState.isSubmitting}
+              leftIcon={<FaSave />}
             >
               {confirmText}
             </Button>
