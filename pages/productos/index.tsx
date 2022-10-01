@@ -29,7 +29,6 @@ const Products: NextPageWithLayout = () => {
             await mutate()
           }}
           title="Crear producto"
-          confirmText="Crear"
         />
       </Flex>
       <Divider my={4} />

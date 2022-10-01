@@ -24,13 +24,15 @@ function ProductFormModal({
   onSubmit,
   trigger,
   title,
-  confirmText
+  confirmText = 'guardar',
+  resetOnSubmit = true
 }: {
   defaultValues?: ProductInput
   onSubmit: SubmitHandler<ProductInput>
   trigger: ReactElement<ButtonProps>
   title: string
-  confirmText: string
+  confirmText?: string
+  resetOnSubmit?: boolean
 }) {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const formId = useId()
@@ -58,6 +60,7 @@ function ProductFormModal({
               id={formId}
               onSubmit={async (data) => {
                 await onSubmit(data)
+                resetOnSubmit && formHook.reset()
                 onClose()
               }}
             />

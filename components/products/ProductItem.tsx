@@ -25,7 +25,7 @@ function ProductItem({
           title="Editar producto"
           defaultValues={{ categoryId: category.id, name, price, stock }}
           onSubmit={onUpdate}
-          confirmText="Guardar"
+          resetOnSubmit={false}
         />
       </Flex>
 
