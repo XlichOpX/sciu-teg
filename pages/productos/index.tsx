@@ -1,4 +1,4 @@
-import { Alert, Button, Divider, Flex } from '@chakra-ui/react'
+import { Alert, Button, Divider, Flex, Text } from '@chakra-ui/react'
 import { BaseLayout, Pagination, SearchInput } from 'components'
 import { Placeholder, ProductFormModal, ProductItem, ProductList } from 'components/products'
 import useProducts from 'hooks/useProducts'
@@ -8,7 +8,7 @@ import { BsPlusLg } from 'react-icons/bs'
 import { createProduct, updateProduct } from 'services/products'
 
 const Products: NextPageWithLayout = () => {
-  const { products, page, pages, setPage, error, isLoading, mutate } = useProducts({
+  const { products, page, pages, setPage, setSearch, error, isLoading, mutate } = useProducts({
     itemsPerPage: 20
   })
 
@@ -19,7 +19,7 @@ const Products: NextPageWithLayout = () => {
       </Head>
 
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
-        <SearchInput w="auto" placeholder="Buscar productos" />
+        <SearchInput placeholder="Buscar productos" onSubmit={(data) => setSearch(data.text)} />
         <ProductFormModal
           trigger={
             <Button colorScheme="blue" leftIcon={<BsPlusLg />}>
@@ -51,8 +51,15 @@ const Products: NextPageWithLayout = () => {
               />
             ))}
           </ProductList>
-          <Divider my={4} />
-          <Pagination page={page} setPage={setPage} pages={pages} />
+
+          {!!pages && pages > 0 && (
+            <>
+              <Divider my={4} />
+              <Pagination page={page} setPage={setPage} pages={pages} />
+            </>
+          )}
+
+          {products.length === 0 && <Text textAlign="center">No hay productos...</Text>}
         </>
       )}
     </>
