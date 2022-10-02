@@ -7,7 +7,7 @@ import { ProductInput, ProductWithCategory } from 'types/product'
 import ProductFormModal from './ProductFormModal'
 
 function ProductItem({
-  product: { category, name, price, stock },
+  product: { categoryId, category, name, price, stock },
   onUpdate
 }: {
   product: ProductWithCategory
@@ -23,7 +23,7 @@ function ProductItem({
         <ProductFormModal
           trigger={<EditButton alignSelf="flex-start" />}
           title="Editar producto"
-          defaultValues={{ categoryId: category.id, name, price, stock }}
+          defaultValues={{ categoryId, name, price, stock }}
           onSubmit={onUpdate}
           resetOnSubmit={false}
         />

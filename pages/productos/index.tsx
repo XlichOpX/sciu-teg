@@ -8,7 +8,9 @@ import { BsPlusLg } from 'react-icons/bs'
 import { createProduct, updateProduct } from 'services/products'
 
 const Products: NextPageWithLayout = () => {
-  const { products, error, isLoading, mutate } = useProducts()
+  const { products, page, pages, setPage, error, isLoading, mutate } = useProducts({
+    itemsPerPage: 20
+  })
 
   return (
     <>
@@ -50,7 +52,7 @@ const Products: NextPageWithLayout = () => {
             ))}
           </ProductList>
           <Divider my={4} />
-          <Pagination />
+          <Pagination page={page} setPage={setPage} pages={pages} />
         </>
       )}
     </>
