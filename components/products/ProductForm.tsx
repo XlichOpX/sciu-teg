@@ -35,7 +35,10 @@ const ProductForm = ({ onSubmit, formHook, ...props }: Props) => {
 
       <FormControl mb={4} isInvalid={!!errors.categoryId}>
         <FormLabel>Categoría</FormLabel>
-        <Select {...register('categoryId', { valueAsNumber: true })}>
+        <Select {...register('categoryId', { valueAsNumber: true })} defaultValue="">
+          <option disabled value="">
+            Seleccionar
+          </option>
           {categories &&
             categories.map((c) => (
               <option key={c.id} value={c.id}>

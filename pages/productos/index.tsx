@@ -1,11 +1,11 @@
-import { Alert, Button, Divider, Flex, Text } from '@chakra-ui/react'
+import { Alert, Divider, Flex, Text } from '@chakra-ui/react'
 import { BaseLayout, Pagination, SearchInput } from 'components'
-import { Placeholder, ProductFormModal, ProductItem, ProductList } from 'components/products'
+import { Placeholder, ProductItem, ProductList } from 'components/products'
+import CreateProductModal from 'components/products/CreateProductModal'
 import useProducts from 'hooks/useProducts'
 import Head from 'next/head'
 import { NextPageWithLayout } from 'pages/_app'
-import { BsPlusLg } from 'react-icons/bs'
-import { createProduct, updateProduct } from 'services/products'
+import { createProduct, deleteProduct, updateProduct } from 'services/products'
 
 const Products: NextPageWithLayout = () => {
   const { products, page, pages, setPage, setSearch, error, isLoading, mutate } = useProducts({
@@ -20,17 +20,11 @@ const Products: NextPageWithLayout = () => {
 
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
         <SearchInput placeholder="Buscar productos" onSubmit={(data) => setSearch(data.text)} />
-        <ProductFormModal
-          trigger={
-            <Button colorScheme="blue" leftIcon={<BsPlusLg />}>
-              Crear producto
-            </Button>
-          }
+        <CreateProductModal
           onSubmit={async (data) => {
             await createProduct(data)
             await mutate()
           }}
-          title="Crear producto"
         />
       </Flex>
       <Divider my={4} />
@@ -47,6 +41,10 @@ const Products: NextPageWithLayout = () => {
                 onUpdate={async (data) => {
                   await updateProduct(p.id, data)
                   await mutate()
+                }}
+                onDelete={async () => {
+                  await deleteProduct(p.id)
+                  mutate()
                 }}
               />
             ))}

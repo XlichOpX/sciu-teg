@@ -8,7 +8,7 @@ function HeadingWithSearch({ title, placeholder }: { title: string; placeholder:
         <Heading as="h1" textAlign={['center', 'left']}>
           {title}
         </Heading>
-        <SearchInput w="auto" placeholder={placeholder} />
+        <SearchInput placeholder={placeholder} />
       </Flex>
       <Divider my={4} />
     </>

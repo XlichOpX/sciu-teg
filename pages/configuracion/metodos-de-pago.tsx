@@ -9,7 +9,7 @@ const PaymentMethodsSettings: NextPageWithLayout = () => {
   return (
     <>
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
-        <SearchInput w="auto" placeholder="Buscar métodos de pago" />
+        <SearchInput placeholder="Buscar métodos de pago" />
         <CreatePaymentMethodModal />
       </Flex>
       <Divider my={4} />

@@ -1,6 +1,5 @@
 import {
   Button,
-  ButtonProps,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -11,46 +10,33 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { ReactElement, useId } from 'react'
+import { useId } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { BsXLg } from 'react-icons/bs'
+import { BsPlusLg, BsXLg } from 'react-icons/bs'
 import { FaSave } from 'react-icons/fa'
 import { productSchema } from 'schema/productSchema'
 import type { ProductInput } from 'types/product'
 import ProductForm from './ProductForm'
 
-function ProductFormModal({
-  defaultValues,
-  onSubmit,
-  trigger,
-  title,
-  confirmText = 'guardar',
-  resetOnSubmit = true
-}: {
-  defaultValues?: ProductInput
-  onSubmit: SubmitHandler<ProductInput>
-  trigger: ReactElement<ButtonProps>
-  title: string
-  confirmText?: string
-  resetOnSubmit?: boolean
-}) {
-  const { isOpen, onClose, onOpen } = useDisclosure()
+function CreateProductModal({ onSubmit }: { onSubmit: SubmitHandler<ProductInput> }) {
   const formId = useId()
 
   const formHook = useForm<ProductInput>({
-    resolver: zodResolver(productSchema),
-    defaultValues
+    resolver: zodResolver(productSchema)
   })
 
+  const { isOpen, onClose, onOpen } = useDisclosure({ onClose: () => formHook.reset() })
   return (
     <>
-      {React.cloneElement(trigger, { onClick: onOpen })}
+      <Button colorScheme="blue" leftIcon={<BsPlusLg />} onClick={onOpen}>
+        Crear producto
+      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            <h2>{title}</h2>
+            <h2>Crear producto</h2>
           </ModalHeader>
           <ModalCloseButton />
 
@@ -60,7 +46,6 @@ function ProductFormModal({
               id={formId}
               onSubmit={async (data) => {
                 await onSubmit(data)
-                resetOnSubmit && formHook.reset()
                 onClose()
               }}
             />
@@ -77,7 +62,7 @@ function ProductFormModal({
               disabled={formHook.formState.isSubmitting}
               leftIcon={<FaSave />}
             >
-              {confirmText}
+              Crear
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -86,4 +71,4 @@ function ProductFormModal({
   )
 }
 
-export default ProductFormModal
+export default CreateProductModal

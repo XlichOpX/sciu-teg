@@ -9,7 +9,7 @@ const UsersSettings: NextPageWithLayout = () => {
   return (
     <>
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
-        <SearchInput w="auto" placeholder="Buscar usuarios" />
+        <SearchInput placeholder="Buscar usuarios" />
         <CreateUserModal />
       </Flex>
 

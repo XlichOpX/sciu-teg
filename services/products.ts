@@ -11,3 +11,7 @@ export async function updateProduct(id: number, data: ProductInput) {
 export async function createProduct(data: ProductInput) {
   return await fetch('/api/product', { method: 'POST', body: data })
 }
+
+export async function deleteProduct(id: number) {
+  return await fetch(`/api/product/${id}`, { method: 'DELETE' })
+}

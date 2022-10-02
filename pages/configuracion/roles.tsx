@@ -9,7 +9,7 @@ const RoleSettings: NextPageWithLayout = () => {
   return (
     <>
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
-        <SearchInput w="auto" placeholder="Buscar roles" />
+        <SearchInput placeholder="Buscar roles" />
         <CreateRoleModal />
       </Flex>
       <Divider my={4} />

@@ -1,17 +1,19 @@
 import { Divider, Flex, Heading, HStack, VStack } from '@chakra-ui/react'
-import { EditButton, SimpleBox } from 'components'
+import { SimpleBox } from 'components'
 import { SubmitHandler } from 'react-hook-form'
 import { BsBoxSeam, BsCurrencyDollar } from 'react-icons/bs'
 import { MdOutlineCategory } from 'react-icons/md'
 import { ProductInput, ProductWithCategory } from 'types/product'
-import ProductFormModal from './ProductFormModal'
+import EditProductModal from './EditProductModal'
 
 function ProductItem({
   product: { categoryId, category, name, price, stock },
-  onUpdate
+  onUpdate,
+  onDelete
 }: {
   product: ProductWithCategory
   onUpdate: SubmitHandler<ProductInput>
+  onDelete: () => void
 }) {
   return (
     <SimpleBox>
@@ -20,12 +22,10 @@ function ProductItem({
           {name}
         </Heading>
 
-        <ProductFormModal
-          trigger={<EditButton alignSelf="flex-start" />}
-          title="Editar producto"
+        <EditProductModal
           defaultValues={{ categoryId, name, price, stock }}
           onSubmit={onUpdate}
-          resetOnSubmit={false}
+          onDelete={onDelete}
         />
       </Flex>
 
