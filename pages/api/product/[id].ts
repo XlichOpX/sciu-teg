@@ -42,7 +42,7 @@ export default async function productHandler(req: NextApiRequest, res: NextApiRe
       const existRelation = await prisma.productSale.count({where: { productId: Number(id)}})
       
       if( existRelation > 0 )
-        res.status(200).end(`Exists relation receipts`)
+        res.status(409).end(`Exists relation receipts`)
 
       const delProduct: Product = await prisma.product.delete({ where: { id: Number(id) } })
       res.status(202).send(delProduct)
