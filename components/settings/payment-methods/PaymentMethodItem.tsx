@@ -6,15 +6,21 @@ import EditPaymentMethodModal from './EditPaymentMethodModal'
 
 function PaymentMethodItem({
   paymentMethod,
-  onUpdate
+  onUpdate,
+  onDelete
 }: {
   paymentMethod: PaymentMethod
   onUpdate: (data: PaymentMethodInput) => Promise<void>
+  onDelete: () => Promise<void>
 }) {
   return (
     <SimpleBox as="li" display="flex" justifyContent="space-between">
       <Text fontWeight="bold">{paymentMethod.name}</Text>
-      <EditPaymentMethodModal paymentMethod={paymentMethod} onSubmit={onUpdate} />
+      <EditPaymentMethodModal
+        paymentMethod={paymentMethod}
+        onSubmit={onUpdate}
+        onDelete={onDelete}
+      />
     </SimpleBox>
   )
 }

@@ -1,34 +1,36 @@
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  FormControl,
-  FormLabel,
-  ModalFooter,
   Button,
-  useDisclosure,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Input,
-  FormErrorMessage
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PaymentMethod } from '@prisma/client'
+import DeleteButton from 'components/DeleteButton'
 import EditButton from 'components/EditButton'
 import SaveButton from 'components/SaveButton'
 import { useId } from 'react'
 import { useForm } from 'react-hook-form'
-import { BsTrash } from 'react-icons/bs'
 import { paymentMethodSchema } from 'schema/paymentMethodSchema'
 import { PaymentMethodInput } from 'types/paymentMethod'
 
 function EditPaymentMethodModal({
   paymentMethod,
-  onSubmit
+  onSubmit,
+  onDelete
 }: {
   paymentMethod: PaymentMethod
   onSubmit: (data: PaymentMethodInput) => Promise<void>
+  onDelete: () => Promise<void>
 }) {
   const {
     handleSubmit,
@@ -73,9 +75,12 @@ function EditPaymentMethodModal({
           </ModalBody>
 
           <ModalFooter>
-            <Button mr="auto" colorScheme="red" variant="outline" title="Eliminar método de pago">
-              <BsTrash />
-            </Button>
+            <DeleteButton
+              confirmBody="¿Está seguro de eliminar este método de pago?"
+              onDelete={onDelete}
+              toastBody="Método de pago eliminado"
+              mr="auto"
+            />
 
             <Button mr={3} onClick={onClose}>
               Cancelar
