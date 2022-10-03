@@ -4,33 +4,35 @@ import { InputGroup, Input, InputRightElement } from '@chakra-ui/react'
 import { MdSearch } from 'react-icons/md'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { debounce } from 'utils/debounce'
 
 const schema = z.object({ text: z.string() })
 type Input = z.infer<typeof schema>
 
 function SearchInput({
   placeholder,
-  onSubmit = () => null
+  onChange = () => null
 }: {
   placeholder: string
-  onSubmit?: SubmitHandler<Input>
+  onChange?: SubmitHandler<Input>
 }) {
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting }
+    formState: { errors }
   } = useForm<Input>({ resolver: zodResolver(schema) })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <InputGroup>
-        <Input placeholder={placeholder} {...register('text')} isInvalid={!!errors.text} />
-        <InputRightElement pointerEvents="none" color="gray.500" fontSize="lg">
-          <MdSearch />
-        </InputRightElement>
-      </InputGroup>
-      <button hidden type="submit" disabled={isSubmitting}></button>
-    </form>
+    <InputGroup w="auto">
+      <Input
+        placeholder={placeholder}
+        {...register('text', { onChange: debounce(handleSubmit(onChange), 275) })}
+        isInvalid={!!errors.text}
+      />
+      <InputRightElement pointerEvents="none" color="gray.500" fontSize="lg">
+        <MdSearch />
+      </InputRightElement>
+    </InputGroup>
   )
 }
 

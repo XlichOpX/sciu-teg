@@ -21,7 +21,7 @@ const Products: NextPageWithLayout = () => {
       </Head>
 
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
-        <SearchInput placeholder="Buscar productos" onSubmit={(data) => setSearch(data.text)} />
+        <SearchInput placeholder="Buscar productos" onChange={({ text }) => setSearch(text)} />
         <CreateProductModal
           onSubmit={async (data) => {
             try {

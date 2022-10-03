@@ -7,12 +7,17 @@ import usePaymentMethods from 'hooks/usePaymentMethods'
 import { NextPageWithLayout } from 'pages/_app'
 
 const PaymentMethodsSettings: NextPageWithLayout = () => {
-  const { paymentMethods } = usePaymentMethods()
+  const { paymentMethods, setSearch } = usePaymentMethods()
 
   return (
     <>
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
-        <SearchInput placeholder="Buscar métodos de pago" />
+        <SearchInput
+          placeholder="Buscar métodos de pago"
+          onChange={({ text }) => {
+            setSearch(text)
+          }}
+        />
         <CreatePaymentMethodModal />
       </Flex>
       <Divider my={4} />
