@@ -21,17 +21,17 @@ import {
   SimpleGrid,
   useDisclosure
 } from '@chakra-ui/react'
+import CreateButton from 'components/CreateButton'
 import { ComponentPropsWithoutRef } from 'react'
-import { BsPlusLg } from 'react-icons/bs'
 
 function AddProductsModal(props: ComponentPropsWithoutRef<typeof Button>) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <>
-      <Button leftIcon={<BsPlusLg />} onClick={onOpen} {...props}>
+      <CreateButton onClick={onOpen} {...props}>
         Agregar producto
-      </Button>
+      </CreateButton>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

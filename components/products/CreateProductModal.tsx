@@ -10,9 +10,10 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import CreateButton from 'components/CreateButton'
 import { useId } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { BsPlusLg, BsXLg } from 'react-icons/bs'
+import { BsXLg } from 'react-icons/bs'
 import { FaSave } from 'react-icons/fa'
 import { productSchema } from 'schema/productSchema'
 import type { ProductInput } from 'types/product'
@@ -28,9 +29,7 @@ function CreateProductModal({ onSubmit }: { onSubmit: SubmitHandler<ProductInput
   const { isOpen, onClose, onOpen } = useDisclosure({ onClose: () => formHook.reset() })
   return (
     <>
-      <Button colorScheme="blue" leftIcon={<BsPlusLg />} onClick={onOpen}>
-        Crear producto
-      </Button>
+      <CreateButton onClick={onOpen}>Crear producto</CreateButton>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

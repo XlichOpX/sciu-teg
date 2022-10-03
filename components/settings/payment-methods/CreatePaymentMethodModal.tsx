@@ -12,15 +12,14 @@ import {
   ModalOverlay,
   useDisclosure
 } from '@chakra-ui/react'
+import { CreateButton } from 'components'
 
 function CreatePaymentMethodModal() {
   const { onOpen, isOpen, onClose } = useDisclosure()
 
   return (
     <>
-      <Button colorScheme="blue" onClick={onOpen}>
-        Crear método de pago
-      </Button>
+      <CreateButton onClick={onOpen}>Crear método de pago</CreateButton>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
