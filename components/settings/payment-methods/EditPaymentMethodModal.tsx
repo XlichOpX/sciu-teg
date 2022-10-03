@@ -12,11 +12,31 @@ import {
   useDisclosure,
   Input
 } from '@chakra-ui/react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { PaymentMethod } from '@prisma/client'
 import EditButton from 'components/EditButton'
+import SaveButton from 'components/SaveButton'
+import { useId } from 'react'
+import { useForm } from 'react-hook-form'
 import { BsTrash } from 'react-icons/bs'
+import { paymentMethodSchema } from 'schema/paymentMethodSchema'
+import { PaymentMethodInput } from 'types/paymentMethod'
 
-function EditPaymentMethodModal() {
+function EditPaymentMethodModal({
+  paymentMethod,
+  onSubmit
+}: {
+  paymentMethod: PaymentMethod
+  onSubmit: () => void
+}) {
   const { onOpen, isOpen, onClose } = useDisclosure()
+  const { handleSubmit, register } = useForm<PaymentMethodInput>({
+    resolver: zodResolver(paymentMethodSchema),
+    defaultValues: {
+      name: paymentMethod.name
+    }
+  })
+  const formId = useId()
 
   return (
     <>
@@ -26,15 +46,15 @@ function EditPaymentMethodModal() {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            <h3>Editar método X</h3>
+            <h3>Editar método de pago</h3>
           </ModalHeader>
           <ModalCloseButton />
 
           <ModalBody>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)} id={formId}>
               <FormControl>
                 <FormLabel>Nombre</FormLabel>
-                <Input />
+                <Input {...register('name')} />
               </FormControl>
             </form>
           </ModalBody>
@@ -47,7 +67,7 @@ function EditPaymentMethodModal() {
             <Button mr={3} onClick={onClose}>
               Cancelar
             </Button>
-            <Button colorScheme="blue">Guardar cambios</Button>
+            <SaveButton>Guardar</SaveButton>
           </ModalFooter>
         </ModalContent>
       </Modal>
