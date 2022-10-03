@@ -10,7 +10,8 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  Input
+  Input,
+  FormErrorMessage
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PaymentMethod } from '@prisma/client'
@@ -27,16 +28,21 @@ function EditPaymentMethodModal({
   onSubmit
 }: {
   paymentMethod: PaymentMethod
-  onSubmit: () => void
+  onSubmit: (data: PaymentMethodInput) => Promise<void>
 }) {
-  const { onOpen, isOpen, onClose } = useDisclosure()
-  const { handleSubmit, register } = useForm<PaymentMethodInput>({
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting }
+  } = useForm<PaymentMethodInput>({
     resolver: zodResolver(paymentMethodSchema),
     defaultValues: {
       name: paymentMethod.name
     }
   })
   const formId = useId()
+
+  const { onOpen, isOpen, onClose } = useDisclosure()
 
   return (
     <>
@@ -51,10 +57,17 @@ function EditPaymentMethodModal({
           <ModalCloseButton />
 
           <ModalBody>
-            <form onSubmit={handleSubmit(onSubmit)} id={formId}>
-              <FormControl>
+            <form
+              onSubmit={handleSubmit(async (data) => {
+                await onSubmit(data)
+                onClose()
+              })}
+              id={formId}
+            >
+              <FormControl isInvalid={!!errors.name}>
                 <FormLabel>Nombre</FormLabel>
                 <Input {...register('name')} />
+                <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
               </FormControl>
             </form>
           </ModalBody>
@@ -67,7 +80,9 @@ function EditPaymentMethodModal({
             <Button mr={3} onClick={onClose}>
               Cancelar
             </Button>
-            <SaveButton>Guardar</SaveButton>
+            <SaveButton type="submit" form={formId} disabled={isSubmitting}>
+              Guardar
+            </SaveButton>
           </ModalFooter>
         </ModalContent>
       </Modal>
