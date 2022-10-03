@@ -1,4 +1,4 @@
-import { Alert, Divider, Flex, Text } from '@chakra-ui/react'
+import { Alert, Divider, Flex, Text, useToast } from '@chakra-ui/react'
 import { BaseLayout, Pagination, SearchInput } from 'components'
 import { Placeholder, ProductItem, ProductList } from 'components/products'
 import CreateProductModal from 'components/products/CreateProductModal'
@@ -12,6 +12,8 @@ const Products: NextPageWithLayout = () => {
     itemsPerPage: 20
   })
 
+  const toast = useToast()
+
   return (
     <>
       <Head>
@@ -22,8 +24,14 @@ const Products: NextPageWithLayout = () => {
         <SearchInput placeholder="Buscar productos" onSubmit={(data) => setSearch(data.text)} />
         <CreateProductModal
           onSubmit={async (data) => {
-            await createProduct(data)
-            await mutate()
+            try {
+              await createProduct(data)
+              await mutate()
+            } catch (error) {
+              if (error instanceof Error) {
+                toast({ status: 'error', description: error.message })
+              }
+            }
           }}
         />
       </Flex>
@@ -39,12 +47,24 @@ const Products: NextPageWithLayout = () => {
                 key={p.id}
                 product={p}
                 onUpdate={async (data) => {
-                  await updateProduct(p.id, data)
-                  await mutate()
+                  try {
+                    await updateProduct(p.id, data)
+                    await mutate()
+                  } catch (error) {
+                    if (error instanceof Error) {
+                      toast({ status: 'error', description: error.message })
+                    }
+                  }
                 }}
                 onDelete={async () => {
-                  await deleteProduct(p.id)
-                  mutate()
+                  try {
+                    await deleteProduct(p.id)
+                    mutate()
+                  } catch (error) {
+                    if (error instanceof Error) {
+                      toast({ status: 'error', description: error.message })
+                    }
+                  }
                 }}
               />
             ))}

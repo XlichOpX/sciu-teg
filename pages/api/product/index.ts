@@ -51,7 +51,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         return res.status(201).json(result)
       } catch (error) {
         if (error instanceof Error) {
-          res.status(400).json({ error })
+          res.status(400).send(error.message)
         }
       }
 

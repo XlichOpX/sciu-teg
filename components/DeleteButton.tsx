@@ -1,15 +1,15 @@
 import {
-  Popover,
-  PopoverTrigger,
   Button,
-  PopoverContent,
+  ButtonProps,
+  Popover,
   PopoverArrow,
-  PopoverCloseButton,
-  PopoverHeader,
   PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
   PopoverFooter,
-  useToast,
-  ButtonProps
+  PopoverHeader,
+  PopoverTrigger,
+  useDisclosure
 } from '@chakra-ui/react'
 import { ReactNode } from 'react'
 import { BsTrash } from 'react-icons/bs'
@@ -20,10 +20,10 @@ interface DeleteButtonProps extends ButtonProps {
   toastBody: ReactNode
 }
 
-const DeleteButton = ({ onDelete, confirmBody, toastBody, ...props }: DeleteButtonProps) => {
-  const toast = useToast()
+const DeleteButton = ({ onDelete, confirmBody, ...props }: DeleteButtonProps) => {
+  const { onOpen, onClose, isOpen } = useDisclosure()
   return (
-    <Popover>
+    <Popover onOpen={onOpen} onClose={onClose} isOpen={isOpen}>
       <PopoverTrigger>
         <Button {...props} colorScheme="red" variant="outline" title="Eliminar">
           <BsTrash />
@@ -41,7 +41,7 @@ const DeleteButton = ({ onDelete, confirmBody, toastBody, ...props }: DeleteButt
             colorScheme="red"
             onClick={() => {
               onDelete()
-              toast({ status: 'info', description: toastBody })
+              onClose()
             }}
           >
             Sí
