@@ -1,16 +1,15 @@
 import { SimpleGrid } from '@chakra-ui/react'
+import { ReactNode } from 'react'
 import PaymentMethodItem from './PaymentMethodItem'
 
-function PaymentMethodsList() {
+function PaymentMethodsList({ children }: { children: ReactNode }) {
   return (
     <SimpleGrid minChildWidth="2xs" as="ul" listStyleType="none" gap={4}>
-      {Array(4)
-        .fill(1)
-        .map((_, i) => (
-          <PaymentMethodItem key={i} />
-        ))}
+      {children}
     </SimpleGrid>
   )
 }
+
+PaymentMethodsList.Item = PaymentMethodItem
 
 export default PaymentMethodsList

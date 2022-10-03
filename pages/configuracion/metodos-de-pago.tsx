@@ -1,11 +1,14 @@
 import { Divider, Flex } from '@chakra-ui/react'
-import { Pagination, SearchInput } from 'components'
+import { SearchInput } from 'components'
 import { Layout } from 'components/settings'
 import CreatePaymentMethodModal from 'components/settings/payment-methods/CreatePaymentMethodModal'
 import PaymentMethodsList from 'components/settings/payment-methods/PaymentMethodsList'
+import usePaymentMethods from 'hooks/usePaymentMethods'
 import { NextPageWithLayout } from 'pages/_app'
 
 const PaymentMethodsSettings: NextPageWithLayout = () => {
+  const { paymentMethods } = usePaymentMethods()
+
   return (
     <>
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
@@ -14,9 +17,11 @@ const PaymentMethodsSettings: NextPageWithLayout = () => {
       </Flex>
       <Divider my={4} />
 
-      <PaymentMethodsList />
-
-      <Pagination />
+      <PaymentMethodsList>
+        {paymentMethods?.map((pm) => (
+          <PaymentMethodsList.Item key={pm.id} paymentMethod={pm} />
+        ))}
+      </PaymentMethodsList>
     </>
   )
 }
