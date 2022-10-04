@@ -22,6 +22,10 @@ const links = [
   {
     href: '/configuracion/tasas-de-cambio',
     text: 'Tasas de cambio'
+  },
+  {
+    href: '/configuracion/categorias',
+    text: 'Categorías'
   }
 ]
 
