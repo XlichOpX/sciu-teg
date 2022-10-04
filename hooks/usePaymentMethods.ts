@@ -2,7 +2,7 @@ import { useToast } from '@chakra-ui/react'
 import { PaymentMethod } from '@prisma/client'
 import { useState } from 'react'
 import {
-  updatePaymentMethod,
+  updatePaymentMethod as updatePaymentMethodSv,
   deletePaymentMethod as deletePaymentMethodSv
 } from 'services/paymentMethods'
 import useSWR from 'swr'
@@ -13,8 +13,8 @@ function usePaymentMethods() {
   const { data, error, mutate } = useSWR<PaymentMethod[], Error>('/api/paymentMethod')
   const toast = useToast()
 
-  const mutatePaymentMethod = async (id: number, data: PaymentMethodInput) => {
-    await updatePaymentMethod(id, data)
+  const updatePaymentMethod = async (id: number, data: PaymentMethodInput) => {
+    await updatePaymentMethodSv(id, data)
     await mutate()
   }
 
@@ -32,7 +32,7 @@ function usePaymentMethods() {
     error,
     isLoading: !data && !error,
     setSearch,
-    mutatePaymentMethod,
+    updatePaymentMethod,
     deletePaymentMethod
   }
 }
