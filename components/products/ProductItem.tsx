@@ -36,7 +36,7 @@ function ProductItem({
           <BsCurrencyDollar /> <span>Precio: {price}</span>
         </HStack>
         <HStack as="p">
-          <BsBoxSeam /> <span>Inventario: {stock}</span>
+          <BsBoxSeam /> <span>Inventario: {stock >= 0 ? stock : 'No aplica'}</span>
         </HStack>
         <HStack as="p">
           <MdOutlineCategory /> <span>Categoría: {category.name}</span>

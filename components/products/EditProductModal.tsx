@@ -53,6 +53,7 @@ function EditProductModal({
                 await onSubmit(data)
                 onClose()
               }}
+              defaultValues={defaultValues}
             />
           </ModalBody>
 
