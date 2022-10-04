@@ -17,7 +17,6 @@ import { BsTrash } from 'react-icons/bs'
 interface DeleteButtonProps extends ButtonProps {
   onDelete: () => void
   confirmBody: ReactNode
-  toastBody: ReactNode
 }
 
 const DeleteButton = ({ onDelete, confirmBody, ...props }: DeleteButtonProps) => {
