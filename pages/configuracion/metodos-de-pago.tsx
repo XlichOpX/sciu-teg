@@ -1,4 +1,4 @@
-import { Divider, Flex } from '@chakra-ui/react'
+import { Alert, Divider, Flex } from '@chakra-ui/react'
 import { SearchInput } from 'components'
 import { Layout } from 'components/settings'
 import CreatePaymentMethodModal from 'components/settings/payment-methods/CreatePaymentMethodModal'
@@ -7,7 +7,7 @@ import usePaymentMethods from 'hooks/usePaymentMethods'
 import { NextPageWithLayout } from 'pages/_app'
 
 const PaymentMethodsSettings: NextPageWithLayout = () => {
-  const { paymentMethods, setSearch, updatePaymentMethod, deletePaymentMethod } =
+  const { paymentMethods, setSearch, updatePaymentMethod, deletePaymentMethod, error } =
     usePaymentMethods()
 
   return (
@@ -22,6 +22,8 @@ const PaymentMethodsSettings: NextPageWithLayout = () => {
         <CreatePaymentMethodModal />
       </Flex>
       <Divider my={4} />
+
+      {error && <Alert status="error">{error.message}</Alert>}
 
       <PaymentMethodsList>
         {paymentMethods?.map((pm) => (
