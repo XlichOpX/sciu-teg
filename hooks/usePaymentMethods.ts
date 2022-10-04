@@ -17,17 +17,20 @@ function usePaymentMethods() {
   const createPaymentMethod = async (data: PaymentMethodInput) => {
     await createPaymentMethodSv(data)
     await mutate()
+    toast({ status: 'success', description: 'Método de pago creado' })
   }
 
   const updatePaymentMethod = async (id: number, data: PaymentMethodInput) => {
     await updatePaymentMethodSv(id, data)
     await mutate()
+    toast({ status: 'success', description: 'Método de pago actualizado' })
   }
 
   const deletePaymentMethod = async (id: number) => {
     try {
       await deletePaymentMethodSv(id)
       await mutate()
+      toast({ status: 'success', description: 'Método de pago eliminado' })
     } catch {
       toast({ status: 'error', description: 'No se pudo eliminar el método de pago' })
     }
