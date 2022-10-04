@@ -17,7 +17,7 @@ interface Props {
   id: string
   onSubmit: SubmitHandler<ProductInput>
   formHook: ReturnType<typeof useForm<ProductInput>>
-  defaultValues?: ProductInput
+  defaultValues?: Partial<ProductInput>
 }
 
 const defaultStockValue = 15
@@ -46,10 +46,7 @@ const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Props) => 
 
       <FormControl isInvalid={!!errors.categoryId}>
         <FormLabel>Categoría</FormLabel>
-        <Select {...register('categoryId', { valueAsNumber: true })} defaultValue="">
-          <option disabled value="">
-            Seleccionar
-          </option>
+        <Select {...register('categoryId', { valueAsNumber: true })}>
           {categories &&
             categories.map((c) => (
               <option key={c.id} value={c.id}>

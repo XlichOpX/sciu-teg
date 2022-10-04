@@ -20,7 +20,8 @@ function CreateProductModal({ onSubmit }: { onSubmit: SubmitHandler<ProductInput
   const formId = useId()
 
   const formHook = useForm<ProductInput>({
-    resolver: zodResolver(productSchema)
+    resolver: zodResolver(productSchema),
+    defaultValues: { stock: -1 }
   })
 
   const { isOpen, onClose, onOpen } = useDisclosure({ onClose: () => formHook.reset() })
