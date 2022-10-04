@@ -9,7 +9,7 @@ function Layout({ children, title }: { children: ReactNode; title?: string }) {
   return (
     <BaseLayout>
       <Head>
-        <title>Configuración{title && ` - ${title}`}</title>
+        <title>{`Configuración${title && ` - ${title}`}`}</title>
       </Head>
       <Heading as="h1" textAlign={{ base: 'center', md: 'left' }}>
         Configuración
