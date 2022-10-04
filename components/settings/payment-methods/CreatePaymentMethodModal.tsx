@@ -1,7 +1,4 @@
 import {
-  FormControl,
-  FormLabel,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -11,10 +8,17 @@ import {
   ModalOverlay,
   useDisclosure
 } from '@chakra-ui/react'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, CreateButton, SaveButton } from 'components'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { paymentMethodSchema } from 'schema/paymentMethodSchema'
+import { PaymentMethodInput } from 'types/paymentMethod'
+import PaymentMethodForm from './PaymentMethodForm'
 
-function CreatePaymentMethodModal() {
+function CreatePaymentMethodModal({ onSubmit }: { onSubmit: SubmitHandler<PaymentMethodInput> }) {
   const { onOpen, isOpen, onClose } = useDisclosure()
+
+  const formHook = useForm<PaymentMethodInput>({ resolver: zodResolver(paymentMethodSchema) })
 
   return (
     <>
@@ -29,17 +33,23 @@ function CreatePaymentMethodModal() {
           <ModalCloseButton />
 
           <ModalBody>
-            <form>
-              <FormControl>
-                <FormLabel>Nombre</FormLabel>
-                <Input />
-              </FormControl>
-            </form>
+            <PaymentMethodForm
+              id="CreatePaymentMethodForm"
+              formHook={formHook}
+              onSubmit={async (data) => {
+                await onSubmit(data)
+                onClose()
+              }}
+            />
           </ModalBody>
 
           <ModalFooter>
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton />
+            <SaveButton
+              type="submit"
+              form="CreatePaymentMethodForm"
+              disabled={formHook.formState.isSubmitting}
+            />
           </ModalFooter>
         </ModalContent>
       </Modal>
