@@ -6,11 +6,13 @@ import { PaymentMethodInput } from 'types/paymentMethod'
 const PaymentMethodForm = ({
   id,
   onSubmit,
-  formHook
+  formHook,
+  resetOnSubmit = true
 }: {
   id: string
   onSubmit: SubmitHandler<PaymentMethodInput>
   formHook: UseFormReturn<PaymentMethodInput>
+  resetOnSubmit?: boolean
 }) => {
   const { currencies } = useCurrencies()
 
@@ -26,7 +28,7 @@ const PaymentMethodForm = ({
       as="form"
       onSubmit={handleSubmit(async (data) => {
         await onSubmit(data)
-        reset()
+        resetOnSubmit && reset()
       })}
       id={id}
     >

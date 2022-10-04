@@ -1,8 +1,4 @@
 import {
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -18,10 +14,10 @@ import { CancelButton } from 'components'
 import DeleteButton from 'components/DeleteButton'
 import EditButton from 'components/EditButton'
 import SaveButton from 'components/SaveButton'
-import { useId } from 'react'
 import { useForm } from 'react-hook-form'
 import { paymentMethodSchema } from 'schema/paymentMethodSchema'
 import { PaymentMethodInput } from 'types/paymentMethod'
+import PaymentMethodForm from './PaymentMethodForm'
 
 function EditPaymentMethodModal({
   paymentMethod,
@@ -32,17 +28,10 @@ function EditPaymentMethodModal({
   onSubmit: (data: PaymentMethodInput) => Promise<void>
   onDelete: () => Promise<void>
 }) {
-  const {
-    handleSubmit,
-    register,
-    formState: { errors, isSubmitting }
-  } = useForm<PaymentMethodInput>({
+  const formHook = useForm<PaymentMethodInput>({
     resolver: zodResolver(paymentMethodSchema),
-    defaultValues: {
-      name: paymentMethod.name
-    }
+    defaultValues: paymentMethod
   })
-  const formId = useId()
 
   const { onOpen, isOpen, onClose } = useDisclosure()
 
@@ -59,30 +48,29 @@ function EditPaymentMethodModal({
           <ModalCloseButton />
 
           <ModalBody>
-            <form
-              onSubmit={handleSubmit(async (data) => {
+            <PaymentMethodForm
+              id="EditPaymentMethodForm"
+              formHook={formHook}
+              onSubmit={async (data) => {
                 await onSubmit(data)
                 onClose()
-              })}
-              id={formId}
-            >
-              <FormControl isInvalid={!!errors.name}>
-                <FormLabel>Nombre</FormLabel>
-                <Input {...register('name')} />
-                <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
-              </FormControl>
-            </form>
+              }}
+              resetOnSubmit={false}
+            />
           </ModalBody>
 
           <ModalFooter>
             <DeleteButton
               confirmBody="¿Está seguro de eliminar este método de pago?"
               onDelete={onDelete}
-              toastBody="Método de pago eliminado"
               mr="auto"
             />
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton type="submit" form={formId} disabled={isSubmitting} />
+            <SaveButton
+              type="submit"
+              form="EditPaymentMethodForm"
+              disabled={formHook.formState.isSubmitting}
+            />
           </ModalFooter>
         </ModalContent>
       </Modal>
