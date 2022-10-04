@@ -1,5 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { swrConfig } from 'lib/swr'
+import 'lib/zod'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
