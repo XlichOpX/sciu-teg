@@ -59,7 +59,6 @@ function EditProductModal({
           <ModalFooter>
             <DeleteButton
               confirmBody="¿Está seguro de eliminar este producto?"
-              toastBody="Producto eliminado"
               onDelete={onDelete}
               mr="auto"
             />
