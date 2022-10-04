@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   FormLabel,
   Input,
@@ -15,17 +14,17 @@ import {
   useDisclosure,
   VStack
 } from '@chakra-ui/react'
-
 import { Select } from 'chakra-react-select'
+import { CancelButton, CreateButton, SaveButton } from 'components'
 
 function CreateUserModal() {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
     <>
-      <Button colorScheme="blue" onClick={onOpen}>
+      <CreateButton colorScheme="blue" onClick={onOpen}>
         Crear usuario
-      </Button>
+      </CreateButton>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -92,10 +91,8 @@ function CreateUserModal() {
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button colorScheme="blue">Crear</Button>
+            <CancelButton mr={3} onClick={onClose} />
+            <SaveButton />
           </ModalFooter>
         </ModalContent>
       </Modal>

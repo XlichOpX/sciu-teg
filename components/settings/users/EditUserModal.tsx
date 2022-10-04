@@ -12,7 +12,7 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import { Select } from 'chakra-react-select'
-import EditButton from 'components/EditButton'
+import { CancelButton, EditButton, SaveButton } from 'components'
 import { BsTrash } from 'react-icons/bs'
 
 function EditUserModal() {
@@ -50,11 +50,8 @@ function EditUserModal() {
             <Button mr="auto" colorScheme="red" variant="outline" title="Eliminar usuario">
               <BsTrash />
             </Button>
-
-            <Button mr={3} onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button colorScheme="blue">Guardar cambios</Button>
+            <CancelButton mr={3} onClick={onClose} />
+            <SaveButton />
           </ModalFooter>
         </ModalContent>
       </Modal>

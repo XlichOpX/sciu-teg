@@ -1,5 +1,5 @@
 import {
-  Button,
+  ButtonProps,
   FormControl,
   FormLabel,
   Input,
@@ -21,10 +21,9 @@ import {
   SimpleGrid,
   useDisclosure
 } from '@chakra-ui/react'
-import CreateButton from 'components/CreateButton'
-import { ComponentPropsWithoutRef } from 'react'
+import { CancelButton, CreateButton } from 'components'
 
-function AddProductsModal(props: ComponentPropsWithoutRef<typeof Button>) {
+function AddProductsModal(props: ButtonProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -81,10 +80,8 @@ function AddProductsModal(props: ComponentPropsWithoutRef<typeof Button>) {
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button colorScheme="blue">Agregar producto</Button>
+            <CancelButton mr={3} onClick={onClose} />
+            <CreateButton>Agregar producto</CreateButton>
           </ModalFooter>
         </ModalContent>
       </Modal>

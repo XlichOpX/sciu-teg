@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -15,6 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PaymentMethod } from '@prisma/client'
+import { CancelButton } from 'components'
 import DeleteButton from 'components/DeleteButton'
 import EditButton from 'components/EditButton'
 import SaveButton from 'components/SaveButton'
@@ -81,13 +81,8 @@ function EditPaymentMethodModal({
               toastBody="Método de pago eliminado"
               mr="auto"
             />
-
-            <Button mr={3} onClick={onClose}>
-              Cancelar
-            </Button>
-            <SaveButton type="submit" form={formId} disabled={isSubmitting}>
-              Guardar
-            </SaveButton>
+            <CancelButton mr={3} onClick={onClose} />
+            <SaveButton type="submit" form={formId} disabled={isSubmitting} />
           </ModalFooter>
         </ModalContent>
       </Modal>

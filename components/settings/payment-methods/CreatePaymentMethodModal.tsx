@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   FormLabel,
   Input,
@@ -12,7 +11,7 @@ import {
   ModalOverlay,
   useDisclosure
 } from '@chakra-ui/react'
-import { CreateButton } from 'components'
+import { CancelButton, CreateButton, SaveButton } from 'components'
 
 function CreatePaymentMethodModal() {
   const { onOpen, isOpen, onClose } = useDisclosure()
@@ -39,10 +38,8 @@ function CreatePaymentMethodModal() {
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button colorScheme="blue">Crear</Button>
+            <CancelButton mr={3} onClick={onClose} />
+            <SaveButton />
           </ModalFooter>
         </ModalContent>
       </Modal>

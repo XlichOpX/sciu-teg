@@ -1,12 +1,5 @@
-import {
-  Button,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
-  SimpleGrid,
-  VStack
-} from '@chakra-ui/react'
+import { FormControl, FormLabel, Heading, Input, SimpleGrid, VStack } from '@chakra-ui/react'
+import { SaveButton } from 'components'
 import { Layout } from 'components/settings'
 import { NextPageWithLayout } from 'pages/_app'
 
@@ -47,7 +40,7 @@ const GeneralSettings: NextPageWithLayout = () => {
           </FormControl>
         </SimpleGrid>
 
-        <Button colorScheme="blue">Guardar cambios</Button>
+        <SaveButton />
       </VStack>
     </>
   )

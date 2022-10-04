@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   FormLabel,
   Input,
@@ -15,15 +14,16 @@ import {
 } from '@chakra-ui/react'
 
 import { Select } from 'chakra-react-select'
+import { CancelButton, CreateButton, SaveButton } from 'components'
 
 function CreateRoleModal() {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
     <>
-      <Button colorScheme="blue" onClick={onOpen}>
+      <CreateButton colorScheme="blue" onClick={onOpen}>
         Crear rol
-      </Button>
+      </CreateButton>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -56,10 +56,8 @@ function CreateRoleModal() {
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button colorScheme="blue">Crear</Button>
+            <CancelButton mr={3} onClick={onClose} />
+            <SaveButton />
           </ModalFooter>
         </ModalContent>
       </Modal>

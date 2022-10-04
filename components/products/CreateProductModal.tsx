@@ -1,5 +1,4 @@
 import {
-  Button,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -10,11 +9,9 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import CreateButton from 'components/CreateButton'
+import { CancelButton, CreateButton, SaveButton } from 'components'
 import { useId } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { BsXLg } from 'react-icons/bs'
-import { FaSave } from 'react-icons/fa'
 import { productSchema } from 'schema/productSchema'
 import type { ProductInput } from 'types/product'
 import ProductForm from './ProductForm'
@@ -51,18 +48,13 @@ function CreateProductModal({ onSubmit }: { onSubmit: SubmitHandler<ProductInput
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={onClose} leftIcon={<BsXLg />}>
-              Cancelar
-            </Button>
-            <Button
+            <CancelButton onClick={onClose} mr={3} />
+            <SaveButton
               colorScheme="blue"
               type="submit"
               form={formId}
               disabled={formHook.formState.isSubmitting}
-              leftIcon={<FaSave />}
-            >
-              Crear
-            </Button>
+            />
           </ModalFooter>
         </ModalContent>
       </Modal>

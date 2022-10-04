@@ -12,7 +12,7 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import { Select } from 'chakra-react-select'
-import EditButton from 'components/EditButton'
+import { CancelButton, EditButton, SaveButton } from 'components'
 import { BsTrash } from 'react-icons/bs'
 
 function EditRoleModal() {
@@ -50,10 +50,8 @@ function EditRoleModal() {
               <BsTrash />
             </Button>
 
-            <Button mr={3} onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button colorScheme="blue">Guardar cambios</Button>
+            <CancelButton mr={3} onClick={onClose} />
+            <SaveButton />
           </ModalFooter>
         </ModalContent>
       </Modal>

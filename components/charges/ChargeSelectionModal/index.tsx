@@ -1,5 +1,6 @@
 import {
   Button,
+  ButtonProps,
   FormControl,
   Grid,
   GridItem,
@@ -24,10 +25,10 @@ import {
   useDisclosure,
   VisuallyHidden
 } from '@chakra-ui/react'
-import { ComponentPropsWithoutRef } from 'react'
+import { CancelButton, SaveButton } from 'components'
 import { BsPlusLg, BsWalletFill } from 'react-icons/bs'
 
-function ChargeSelectionModal(props: ComponentPropsWithoutRef<typeof Button>) {
+function ChargeSelectionModal(props: ButtonProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -107,10 +108,8 @@ function ChargeSelectionModal(props: ComponentPropsWithoutRef<typeof Button>) {
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button colorScheme="blue">Registrar cobro</Button>
+            <CancelButton mr={3} onClick={onClose} />
+            <SaveButton>Registrar cobro</SaveButton>
           </ModalFooter>
         </ModalContent>
       </Modal>

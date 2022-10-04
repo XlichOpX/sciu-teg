@@ -9,6 +9,8 @@ import {
   ModalOverlay,
   useDisclosure
 } from '@chakra-ui/react'
+import { CancelButton, SaveButton } from 'components'
+import { BsArrowRepeat } from 'react-icons/bs'
 import ExchangeRateForm from './ExchangeRateForm'
 
 function UpdateExchangeRateModal() {
@@ -16,7 +18,7 @@ function UpdateExchangeRateModal() {
 
   return (
     <>
-      <Button colorScheme="blue" onClick={onOpen}>
+      <Button colorScheme="blue" leftIcon={<BsArrowRepeat size={20} />} onClick={onOpen}>
         Actualizar tasa de cambio
       </Button>
 
@@ -33,10 +35,8 @@ function UpdateExchangeRateModal() {
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button colorScheme="blue">Actualizar</Button>
+            <CancelButton mr={3} onClick={onClose} />
+            <SaveButton />
           </ModalFooter>
         </ModalContent>
       </Modal>
