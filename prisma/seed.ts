@@ -71,6 +71,7 @@ async function main() {
   await createReceipts()
 
   await createDummyUser(docTypeIds)
+  await createParameters()
 }
 
 main()
@@ -82,6 +83,18 @@ main()
     await prisma.$disconnect()
     process.exit(1)
   })
+
+async function createParameters() {
+  await prisma.parameters.create({
+    data: {
+      institute: 'Instituto Universitario X',
+      address: `${faker.address.city()}, ${faker.address.street()}`,
+      phone: faker.phone.number('04## #### ###'),
+      population: faker.address.cityName(),
+      rif: `J-${faker.random.numeric(9)}`
+    }
+  })
+}
 
 async function createDummyUser(docTypeIds: number[]) {
   await prisma.user.create({
