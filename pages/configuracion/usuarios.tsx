@@ -3,9 +3,12 @@ import { SearchInput } from 'components'
 import { Layout } from 'components/settings'
 import CreateUserModal from 'components/settings/users/CreateUserModal'
 import UserList from 'components/settings/users/UserList'
+import useUsers from 'hooks/useUsers'
 import { NextPageWithLayout } from 'pages/_app'
 
 const UsersSettings: NextPageWithLayout = () => {
+  const { users } = useUsers()
+
   return (
     <>
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
@@ -15,7 +18,11 @@ const UsersSettings: NextPageWithLayout = () => {
 
       <Divider my={4} />
 
-      <UserList />
+      <UserList>
+        {users?.map((u) => (
+          <UserList.Item key={u.id} user={u} />
+        ))}
+      </UserList>
     </>
   )
 }
