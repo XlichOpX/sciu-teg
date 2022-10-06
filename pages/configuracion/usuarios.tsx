@@ -7,12 +7,12 @@ import useUsers from 'hooks/useUsers'
 import { NextPageWithLayout } from 'pages/_app'
 
 const UsersSettings: NextPageWithLayout = () => {
-  const { users } = useUsers()
+  const { users, setSearch } = useUsers()
 
   return (
     <>
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
-        <SearchInput placeholder="Buscar usuarios" />
+        <SearchInput placeholder="Buscar usuarios" onChange={({ text }) => setSearch(text)} />
         <CreateUserModal />
       </Flex>
 
