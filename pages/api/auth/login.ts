@@ -23,9 +23,13 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
     // retrieve user password from database
     const user = await prisma.user.findFirst({
       where: { username },
-      include: { roles: true, status: true }
+      include: { roles: { include: { permissions: true } }, status: true }
     })
-
+    const permissions = await prisma.permission.findMany({
+      select: { permission: true, description: true },
+      where: { roles: { some: { users: { some: { id: user?.id } } } } }
+    })
+    console.log(permissions)
     // validate that username exists in db
     if (!user) return invalidCredentials(res)
 
@@ -38,7 +42,7 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
 
     // validate that user status is different from inactive
     if (status.id === 0) return res.status(403).json('User is inactive. Contact an admin.')
-    req.session.user = { id, status, roles, username }
+    req.session.user = { id, status, permissions, username }
 
     // save iSession cookie
     await req.session.save()
