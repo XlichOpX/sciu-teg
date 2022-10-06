@@ -27,18 +27,18 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
     })
     // validate that username exists in db
     if (!user) return invalidCredentials(res)
-    
+
     // validate that given password matches db password
     const isValid = compare(password, user.password)
-    
+
     if (!isValid) return invalidCredentials(res)
-    
+
     const { roles, id, status } = user
-    
+
     // validate that user status is different from inactive
     if (status.id === 0) return res.status(403).json('User is inactive. Contact an admin.')
 
-    // Retrieve permissions of the roles of user. 
+    // Retrieve permissions of the roles of user.
     const permissions = await prisma.permission.findMany({
       select: { permission: true, description: true },
       where: { roles: { some: { users: { some: { id: user?.id } } } } }
