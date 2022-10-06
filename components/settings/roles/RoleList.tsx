@@ -1,16 +1,15 @@
 import { SimpleGrid } from '@chakra-ui/react'
+import { ReactNode } from 'react'
 import RoleItem from './RoleItem'
 
-function RoleList() {
+function RoleList({ children }: { children: ReactNode }) {
   return (
     <SimpleGrid minChildWidth="2xs" as="ul" listStyleType="none" spacing={4}>
-      {Array(4)
-        .fill(1)
-        .map((_, i) => (
-          <RoleItem key={i} />
-        ))}
+      {children}
     </SimpleGrid>
   )
 }
+
+RoleList.Item = RoleItem
 
 export default RoleList
