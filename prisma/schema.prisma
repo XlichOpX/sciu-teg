@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Aquí abajo se definirían los 'modelos' que relacionan tablas de la BD con objetos de JS
 model Person {
   id             Int       @id @default(autoincrement())
   firstName      String    @db.VarChar(20)
@@ -18,39 +14,39 @@ model Person {
   firstLastName  String    @db.VarChar(20)
   secondLastName String?   @db.VarChar(20)
   docNumber      String    @unique @db.VarChar(12)
-  docType        DocType   @relation(fields: [docTypeId], references: [id])
   docTypeId      Int
-  address        Address   @relation(fields: [addressId], references: [id])
   addressId      Int
   regDate        DateTime  @default(now())
   email          String    @unique @db.VarChar(254)
   cellphone      String?   @db.VarChar(24)
   landline       String    @db.VarChar(24)
-  student        Student?
+  address        Address   @relation(fields: [addressId], references: [id])
+  docType        DocType   @relation(fields: [docTypeId], references: [id])
   client         Client?
-  user           User?
   receipts       Receipt[]
+  student        Student?
+  user           User?
 }
 
 model Student {
   id                Int           @id @default(autoincrement())
-  person            Person        @relation(fields: [personId], references: [id])
   personId          Int           @unique
-  career            Career        @relation(fields: [careerId], references: [id])
   careerId          Int
-  status            StudentStatus @relation(fields: [statusId], references: [id])
   statusId          Int
   currentSemester   Int
-  enrolledSemesters Enrollment[]
+  career            Career        @relation(fields: [careerId], references: [id])
+  person            Person        @relation(fields: [personId], references: [id])
+  status            StudentStatus @relation(fields: [statusId], references: [id])
   billings          Billing[]
+  enrolledSemesters Enrollment[]
 }
 
 model Client {
   id           Int        @id @default(autoincrement())
-  occupation   Occupation @relation(fields: [occupationId], references: [id])
   occupationId Int
-  person       Person     @relation(fields: [personId], references: [id])
   personId     Int        @unique
+  occupation   Occupation @relation(fields: [occupationId], references: [id])
+  person       Person     @relation(fields: [personId], references: [id])
 }
 
 model Occupation {
@@ -68,10 +64,10 @@ model StudentStatus {
 
 model Enrollment {
   id         Int      @id @default(autoincrement())
-  semester   Semester @relation(fields: [semesterId], references: [id])
   semesterId Int
-  student    Student  @relation(fields: [studentId], references: [id])
   studentId  Int
+  semester   Semester @relation(fields: [semesterId], references: [id])
+  student    Student  @relation(fields: [studentId], references: [id])
 }
 
 model Semester {
@@ -79,8 +75,8 @@ model Semester {
   startDate   DateTime
   endDate     DateTime
   semester    String       @db.VarChar(30)
-  enrollments Enrollment[]
   billings    Billing[]
+  enrollments Enrollment[]
 }
 
 model Career {
@@ -103,11 +99,11 @@ model Address {
 
 model Receipt {
   id              Int           @id @default(autoincrement())
-  person          Person        @relation(fields: [personId], references: [id])
   personId        Int
+  createdAt       DateTime      @default(now())
+  person          Person        @relation(fields: [personId], references: [id])
   charges         Charge[]
   chargedProducts ProductSale[]
-  createdAt       DateTime      @default(now())
 }
 
 model Product {
@@ -115,20 +111,20 @@ model Product {
   name         String        @db.VarChar(64)
   stock        Int
   price        Float
-  category     Category      @relation(fields: [categoryId], references: [id])
   categoryId   Int
-  productSales ProductSale[]
+  category     Category      @relation(fields: [categoryId], references: [id])
   billings     Billing[]
+  productSales ProductSale[]
 }
 
 model ProductSale {
   id        Int     @id @default(autoincrement())
-  product   Product @relation(fields: [productId], references: [id])
   productId Int
-  receipt   Receipt @relation(fields: [receiptId], references: [id])
   receiptId Int
   quantity  Int
   price     Float
+  product   Product @relation(fields: [productId], references: [id])
+  receipt   Receipt @relation(fields: [receiptId], references: [id])
 }
 
 model Category {
@@ -140,22 +136,22 @@ model Category {
 
 model Charge {
   id              Int           @id @default(autoincrement())
-  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
   paymentMethodId Int
   amount          Float
   date            DateTime
-  receipt         Receipt       @relation(fields: [receiptId], references: [id])
   receiptId       Int
   conversionId    Int
   conversion      Conversion    @relation(fields: [conversionId], references: [id])
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  receipt         Receipt       @relation(fields: [receiptId], references: [id])
 }
 
 model PaymentMethod {
   id          Int      @id @default(autoincrement())
   name        String   @db.VarChar(26)
   description String   @db.VarChar(64)
-  currency    Currency @relation(fields: [currencyId], references: [id])
   currencyId  Int
+  currency    Currency @relation(fields: [currencyId], references: [id])
   charges     Charge[]
 }
 
@@ -185,26 +181,26 @@ model Parameters {
 
 model User {
   id       Int        @id @default(autoincrement())
-  person   Person     @relation(fields: [personId], references: [id])
   personId Int        @unique
   username String     @db.VarChar(32)
-  password String     @db.VarChar()
-  secret   Secret     @relation(fields: [secretId], references: [id])
+  password String     @db.VarChar
   secretId Int        @unique
-  status   UserStatus @relation(fields: [statusId], references: [id])
   statusId Int
+  person   Person     @relation(fields: [personId], references: [id])
+  secret   Secret     @relation(fields: [secretId], references: [id])
+  status   UserStatus @relation(fields: [statusId], references: [id])
   roles    Role[]
 }
 
 model Secret {
   id            Int    @id @default(autoincrement())
-  user          User?
   questionOne   String @db.VarChar(128)
   answerOne     String @db.VarChar(128)
   questionTwo   String @db.VarChar(128)
   answerTwo     String @db.VarChar(128)
   questionThree String @db.VarChar(128)
   answerThree   String @db.VarChar(128)
+  user          User?
 }
 
 model UserStatus {
@@ -233,13 +229,14 @@ model Permission {
 model Billing {
   id          Int      @id @default(autoincrement())
   studentId   Int
-  student     Student  @relation(fields: [studentId], references: [id])
   semesterId  Int
-  semester    Semester @relation(fields: [semesterId], references: [id])
   productId   Int
-  product     Product  @relation(fields: [productId], references: [id])
-  productName String   @db.VarChar(64)
   isCharged   Boolean  @default(false)
   createAt    DateTime @default(now())
   updateAt    DateTime @default(now())
+  productName String   @db.VarChar(64)
+  amount      Float
+  product     Product  @relation(fields: [productId], references: [id])
+  semester    Semester @relation(fields: [semesterId], references: [id])
+  student     Student  @relation(fields: [studentId], references: [id])
 }
