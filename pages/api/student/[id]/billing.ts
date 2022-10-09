@@ -1,9 +1,8 @@
-import { Billing, Enrollment, Prisma, Product, Semester, Student } from '@prisma/client'
+import { Prisma, Product, Semester, Student } from '@prisma/client'
 import prisma from '../../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
-import dayjs from 'dayjs'
-import 'dayjs/locale/es-mx'
+import dayjs from 'lib/dayjs'
 // Validate typeof id
 const idValidation = z.string().min(1).max(12)
 //Función para calcular la duración en MESES de un semestre...
@@ -33,18 +32,17 @@ const constructBilling = (
 // We have handle the logic from billing to a student, calculate pending semester or months and return this
 export default async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
   const {
-    body,
     method,
     query: { id: docNum }
   } = req
-
-  const { success } = idValidation.safeParse(docNum)
-  if (!success) return res.status(404).send(`Document Number ${docNum} Not Allowed`)
 
   if (method !== 'POST') {
     res.setHeader('Allow', ['POST'])
     res.status(405).end(`Method ${method} Not Allowed`)
   }
+
+  const { success } = idValidation.safeParse(docNum)
+  if (!success) return res.status(404).send(`Document Number ${docNum} Not Allowed`)
 
   // buscamos a la persona, su estatus y última recibo generado.
   //Obtenemos al estudiante y todos sus datos a partir de la cédula
@@ -68,21 +66,17 @@ export default async function billingHandle(req: NextApiRequest, res: NextApiRes
   })
   // Obtenemos el semestre actual
   const semester = await prisma.semester.findFirst({ orderBy: { endDate: 'desc' } })
-  // Obtenemos el arreglo de las mensualidades por cobrar...
-  const billings = await prisma.billing.findMany({
-    select: {
-      id: true,
-      isCharged: true,
-      product: true,
-      productName: true,
-      amount: true,
-      semester: true,
-      createAt: true
-    },
-    where: { student: { id: student?.id }, AND: { isCharged: false } }
+
+  //Hacemos una query y contamos si existen
+  const billingCount = await prisma.billing.count({
+    where: {
+      student: { id: { equals: student?.id } },
+      semesterId: { equals: semester?.id }
+    }
   })
 
-  //Tomamos la cantidad de meses, validamos si son 6 o más.
+  console.log({ billingCount })
+  
   // Generamos los productos correspondiente al semestre
   const createBilling = async () => {
     const monthsOfSemester = semester ? calculateMonths(semester) : 0
@@ -93,13 +87,14 @@ export default async function billingHandle(req: NextApiRequest, res: NextApiRes
       where: { name: { contains: 'Inscripción', mode: 'insensitive' } }
     })
     const data: Prisma.Enumerable<Prisma.BillingCreateManyInput> = []
-    for (let i = 0; i < monthsOfSemester; i++) {
+    for (let i = 0; i <= monthsOfSemester; i++) {
       const newMonth = dayjs(semester?.startDate).locale('es').add(i, 'month').format('MMMM')
       const productName = `Mensualidad de ${newMonth}`
 
       if (monthlyPayment && semester)
         data.push(constructBilling(monthlyPayment, student as Student, semester, productName))
     }
+    //Tomamos la cantidad de meses, validamos si son 6 o más.
     if (monthsOfSemester <= 5 && semester && inscription)
       data.push(
         constructBilling(
@@ -110,9 +105,10 @@ export default async function billingHandle(req: NextApiRequest, res: NextApiRes
         )
       )
 
-    const result = await prisma.billing.createMany({ data })
-    return result
+    return await prisma.billing.createMany({ data })
   }
+
+
   // tomar el mes de inicio del semestre y restarlo al mes final del semestre.
   // Contar desde el mes de inicio hasta el final incluyendo estos dos.
   // ¿Se debería añadir un campo booleano al semestre para indicar que está activo?
@@ -125,16 +121,31 @@ export default async function billingHandle(req: NextApiRequest, res: NextApiRes
   // Tiene cobros en false o NO tiene
   // Y estos NO son del semestre actual
   // Se generan los cobros del semestre actual
-  const existThisSemester = billings.some((billing) => billing.semester.id === semester?.id)
-  if (!existThisSemester)
-    if (billings.length > 0)
-      // No existen cobros de este semestre. Generamos los cobros pertinentes
+  // const existThisSemester = billings.some((billing) => billing.semester.id === semester?.id)
 
-      // *no puede pagar semestre actual si no ha pagado anteriores*
-      // Si reviso la lista de cobros, tiene cobros y estos son del semestre actual, no realizo ninguna creación y devuelvo todos los que estén en false
+  if (billingCount === 0) await createBilling()
+  // No existen cobros de este semestre. Generamos los cobros pertinentes
 
-      // Tenemos cobros por realizar. Puede que sean del semestre pasado.
-      return createBilling().then((data) => res.status(200).json(data))
+  // Obtenemos el arreglo de las mensualidades por cobrar...
+  const billings = await prisma.billing.findMany({
+    select: {
+      id: true,
+      isCharged: true,
+      product: true,
+      productName: true,
+      amount: true,
+      semester: true,
+      createAt: true
+    },
+    where: {
+      student: { id: { equals: student?.id } },
+      isCharged: { equals: false }
+    }
+  })
+  // *no puede pagar semestre actual si no ha pagado anteriores*
+  // Si reviso la lista de cobros, tiene cobros y estos son del semestre actual, no realizo ninguna creación y devuelvo todos los que estén en false
+
+  // Tenemos cobros por realizar. Puede que sean del semestre pasado.
 
   res.status(200).json({ student, billings })
 }
