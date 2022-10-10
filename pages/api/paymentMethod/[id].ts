@@ -20,6 +20,7 @@ export default async function paymentMethodHandler(req: NextApiRequest, res: Nex
     case 'GET':
       //obtenemos a UN método de pago
       const paymentMethod: PaymentMethod | null = await prisma.paymentMethod.findFirst({
+        include : {currency : true },
         where: { id: Number(id) }
       })
       if (!paymentMethod) res.status(404).end(`PaymentMethod not found`)

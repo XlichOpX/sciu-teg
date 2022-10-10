@@ -9,7 +9,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   switch (method) {
     case 'GET':
       //obtenemos TODOS los métodos de pago
-      const paymentMethod: PaymentMethod[] | null = await prisma.paymentMethod.findMany()
+      const paymentMethod: PaymentMethod[] | null = await prisma.paymentMethod.findMany({
+        include: { currency: { select: { name: true, symbol: true } } }
+      })
 
       if (!paymentMethod) return res.status(404).end(`PaymentMethods not found`)
       res.status(200).send(paymentMethod)
