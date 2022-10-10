@@ -89,9 +89,10 @@ export default async function billingHandle(req: NextApiRequest, res: NextApiRes
     })
     if (!inscription) return res.status(404).end(`Inscription product not found`)
     // Iteramos los meses del semestre y creamos los objetos pertinentes de 'cobro'
-    for (let i = 0; i <= monthsOfSemester; i++) {
+    for (let i = 0; i < monthsOfSemester; i++) {
       const newMonth = dayjs(semester?.startDate).locale('es').add(i, 'month').format('MMMM')
-      const productName = `Mensualidad de ${newMonth}`
+      console.log({date: dayjs(semester?.startDate).locale('es').add(i, 'month'), newMonth})
+      const productName = `Mensualidad de ${newMonth} ${semester?.semester}`
 
       if (monthlyPayment)
         data.push(constructBilling(monthlyPayment, student as Student, semester, productName))
