@@ -34,9 +34,9 @@ export default async function billingHandle(req: NextApiRequest, res: NextApiRes
     method,
     query: { id: docNum }
   } = req
-  // Validamos que el método utilizado sea POST.
-  if (method !== 'POST') {
-    res.setHeader('Allow', ['POST'])
+  // Validamos que el método utilizado sea GET.
+  if (method !== 'GET') {
+    res.setHeader('Allow', ['GET'])
     res.status(405).end(`Method ${method} Not Allowed`)
   }
   // Validamos que el docNum sea un string válido (entre 1 y 12 carácteres)
