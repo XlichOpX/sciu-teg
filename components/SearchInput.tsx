@@ -7,32 +7,37 @@ import { z } from 'zod'
 import { debounce } from 'utils/debounce'
 
 const schema = z.object({ text: z.string() })
-type Input = z.infer<typeof schema>
+export type SearchInput = z.infer<typeof schema>
+export type SearchSubmitHandler = SubmitHandler<SearchInput>
 
 function SearchInput({
   placeholder,
-  onChange = () => null
+  onChange = () => null,
+  onSubmit = () => null
 }: {
   placeholder: string
-  onChange?: SubmitHandler<Input>
+  onChange?: SearchSubmitHandler
+  onSubmit?: SearchSubmitHandler
 }) {
   const {
     handleSubmit,
     register,
     formState: { errors }
-  } = useForm<Input>({ resolver: zodResolver(schema) })
+  } = useForm<SearchInput>({ resolver: zodResolver(schema) })
 
   return (
-    <InputGroup w="auto">
-      <Input
-        placeholder={placeholder}
-        {...register('text', { onChange: debounce(handleSubmit(onChange), 275) })}
-        isInvalid={!!errors.text}
-      />
-      <InputRightElement pointerEvents="none" color="gray.500" fontSize="lg">
-        <MdSearch />
-      </InputRightElement>
-    </InputGroup>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <InputGroup w="auto">
+        <Input
+          placeholder={placeholder}
+          {...register('text', { onChange: debounce(handleSubmit(onChange), 275) })}
+          isInvalid={!!errors.text}
+        />
+        <InputRightElement pointerEvents="none" color="gray.500" fontSize="lg">
+          <MdSearch />
+        </InputRightElement>
+      </InputGroup>
+    </form>
   )
 }
 
