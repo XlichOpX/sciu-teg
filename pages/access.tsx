@@ -1,9 +1,37 @@
 import LoginBtn from '../components/LoginBtn'
 
-export default function Component() {
+import { withIronSessionSsr } from 'iron-session/next'
+import { ironOptions } from 'lib/ironSession'
+
+import { GetServerSideProps } from 'next'
+import { InferGetServerSidePropsType } from 'next'
+import { Permission } from '@prisma/client'
+export default function SsrProfile({ user }: InferGetServerSidePropsType<GetServerSideProps>) {
   return (
     <>
+      <h2>{user.username}{" "}</h2>
+      Permisos:
+      {user.permissions.map( (p: Permission) => <><p>{p.permission}</p> <br/></>)}
       <LoginBtn />
     </>
   )
 }
+
+export const getServerSideProps = withIronSessionSsr(async function ({ req, res }) {
+  const user = req.session.user
+
+  if (user === undefined) {
+    res.setHeader('location', '/login')
+    res.statusCode = 302
+    res.end()
+    return {
+      props: {
+        user
+      }
+    }
+  }
+
+  return {
+    props: { user: req.session.user }
+  }
+}, ironOptions)

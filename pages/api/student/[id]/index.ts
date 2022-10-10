@@ -1,5 +1,5 @@
 import { Student } from '@prisma/client'
-import prisma from '../../../lib/prisma'
+import prisma from '../../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import z from 'zod'
 
