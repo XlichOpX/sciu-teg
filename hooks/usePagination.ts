@@ -1,12 +1,12 @@
 import { useState } from 'react'
 
-function usePagination({
+export const usePagination = ({
   initialPage = 1,
   itemsPerPage = 16
 }: {
   initialPage?: number
   itemsPerPage?: number
-} = {}) {
+} = {}) => {
   const [page, setPage] = useState(initialPage)
 
   return {
@@ -16,5 +16,3 @@ function usePagination({
     setPage
   }
 }
-
-export default usePagination

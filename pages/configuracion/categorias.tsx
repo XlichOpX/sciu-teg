@@ -2,7 +2,7 @@ import { Divider, Flex, SimpleGrid } from '@chakra-ui/react'
 import { SearchInput } from 'components/app'
 import { SettingsLayout } from 'components/settings'
 import { CategoryItem, CreateCategoryModal } from 'components/settings/categories'
-import useCategories from 'hooks/useCategories'
+import { useCategories } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
 const CategorySettings: NextPageWithLayout = () => {

@@ -2,14 +2,14 @@ import { useToast } from '@chakra-ui/react'
 import { PaymentMethod } from '@prisma/client'
 import { useState } from 'react'
 import {
-  updatePaymentMethod as updatePaymentMethodSv,
+  createPaymentMethod as createPaymentMethodSv,
   deletePaymentMethod as deletePaymentMethodSv,
-  createPaymentMethod as createPaymentMethodSv
+  updatePaymentMethod as updatePaymentMethodSv
 } from 'services/paymentMethods'
 import useSWR from 'swr'
 import { PaymentMethodInput } from 'types/paymentMethod'
 
-function usePaymentMethods() {
+export const usePaymentMethods = () => {
   const [search, setSearch] = useState('')
   const { data, error, mutate } = useSWR<PaymentMethod[], Error>('/api/paymentMethod')
   const toast = useToast()
@@ -46,5 +46,3 @@ function usePaymentMethods() {
     createPaymentMethod
   }
 }
-
-export default usePaymentMethods

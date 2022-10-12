@@ -2,7 +2,7 @@ import { Alert, Divider, Flex, Text } from '@chakra-ui/react'
 import { Pagination, SearchInput } from 'components/app'
 import { BaseLayout } from 'components/layouts'
 import { CreateProductModal, Placeholder, ProductItem, ProductList } from 'components/products'
-import useProducts from 'hooks/useProducts'
+import { useProducts } from 'hooks'
 import Head from 'next/head'
 import { NextPageWithLayout } from 'pages/_app'
 

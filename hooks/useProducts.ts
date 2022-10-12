@@ -1,15 +1,15 @@
+import { useToast } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import useSWR from 'swr'
-import { GetProductsResponse, ProductInput } from 'types/product'
-import usePagination from './usePagination'
 import {
   createProduct as createProductSv,
-  updateProduct as updateProductSv,
-  deleteProduct as deleteProductSv
+  deleteProduct as deleteProductSv,
+  updateProduct as updateProductSv
 } from 'services/products'
-import { useToast } from '@chakra-ui/react'
+import useSWR from 'swr'
+import { GetProductsResponse, ProductInput } from 'types/product'
+import { usePagination } from './usePagination'
 
-function useProducts({ itemsPerPage }: { itemsPerPage: number }) {
+export const useProducts = ({ itemsPerPage }: { itemsPerPage: number }) => {
   const [search, setSearch] = useState('')
   const toast = useToast()
 
@@ -60,5 +60,3 @@ function useProducts({ itemsPerPage }: { itemsPerPage: number }) {
     createProduct
   }
 }
-
-export default useProducts

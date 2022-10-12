@@ -1,9 +1,9 @@
-import { Parameters } from '@prisma/client'
-import useSWR from 'swr'
-import { updateParameters as updateParametersSv } from 'services/parameters'
 import { useToast } from '@chakra-ui/react'
+import { Parameters } from '@prisma/client'
+import { updateParameters as updateParametersSv } from 'services/parameters'
+import useSWR from 'swr'
 
-function useParameters() {
+export const useParameters = () => {
   const { data, error, mutate } = useSWR<Parameters[], Error>('/api/parameters')
   const toast = useToast()
 
@@ -19,5 +19,3 @@ function useParameters() {
 
   return { parameters: data && data[0], error, updateParameters }
 }
-
-export default useParameters

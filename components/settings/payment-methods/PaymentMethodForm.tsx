@@ -1,5 +1,5 @@
 import { FormControl, FormErrorMessage, FormLabel, Input, Select, VStack } from '@chakra-ui/react'
-import useCurrencies from 'hooks/useCurrencies'
+import { useCurrencies } from 'hooks'
 import { SubmitHandler, UseFormReturn } from 'react-hook-form'
 import { PaymentMethodInput } from 'types/paymentMethod'
 

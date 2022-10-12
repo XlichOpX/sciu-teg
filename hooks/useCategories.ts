@@ -1,14 +1,14 @@
+import { useToast } from '@chakra-ui/react'
 import { Category } from '@prisma/client'
-import useSWR from 'swr'
-import { CategoryInput } from 'types/category'
 import {
   createCategory as createCategorySv,
-  updateCategory as updateCategorySv,
-  deleteCategory as deleteCategorySv
+  deleteCategory as deleteCategorySv,
+  updateCategory as updateCategorySv
 } from 'services/categories'
-import { useToast } from '@chakra-ui/react'
+import useSWR from 'swr'
+import { CategoryInput } from 'types/category'
 
-function useCategories() {
+export const useCategories = () => {
   const { data, error, mutate } = useSWR<Category[], Error>('/api/category')
   const toast = useToast()
 
@@ -45,5 +45,3 @@ function useCategories() {
     deleteCategory
   }
 }
-
-export default useCategories

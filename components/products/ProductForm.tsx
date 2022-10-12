@@ -8,7 +8,7 @@ import {
   SimpleGrid,
   VStack
 } from '@chakra-ui/react'
-import useCategories from 'hooks/useCategories'
+import { useCategories } from 'hooks'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { ProductInput } from 'types/product'
