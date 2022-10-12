@@ -11,9 +11,9 @@ import {
 } from '@chakra-ui/react'
 import { CancelButton, SaveButton } from 'components/app'
 import { BsArrowRepeat } from 'react-icons/bs'
-import ExchangeRateForm from './ExchangeRateForm'
+import { ExchangeRateForm } from './ExchangeRateForm'
 
-function UpdateExchangeRateModal() {
+export const UpdateExchangeRateModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
@@ -43,5 +43,3 @@ function UpdateExchangeRateModal() {
     </>
   )
 }
-
-export default UpdateExchangeRateModal

@@ -9,9 +9,9 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import { CancelButton, EditButton, SaveButton } from 'components/app'
-import ExchangeRateForm from './ExchangeRateForm'
+import { ExchangeRateForm } from './ExchangeRateForm'
 
-function EditExchangeRateModal() {
+export const EditExchangeRateModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
@@ -39,5 +39,3 @@ function EditExchangeRateModal() {
     </>
   )
 }
-
-export default EditExchangeRateModal
