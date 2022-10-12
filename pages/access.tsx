@@ -1,17 +1,20 @@
-import LoginBtn from '../components/LoginBtn'
+import LoginBtn from '../components/app/LoginBtn'
 
 import { withIronSessionSsr } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 
-import { GetServerSideProps } from 'next'
-import { InferGetServerSidePropsType } from 'next'
 import { Permission } from '@prisma/client'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 export default function SsrProfile({ user }: InferGetServerSidePropsType<GetServerSideProps>) {
   return (
     <>
-      <h2>{user.username}{" "}</h2>
+      <h2>{user.username} </h2>
       Permisos:
-      {user.permissions.map( (p: Permission) => <><p>{p.permission}</p> <br/></>)}
+      {user.permissions.map((p: Permission) => (
+        <>
+          <p>{p.permission}</p> <br />
+        </>
+      ))}
       <LoginBtn />
     </>
   )

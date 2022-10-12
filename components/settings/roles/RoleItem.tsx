@@ -1,6 +1,6 @@
 import { Box, Heading } from '@chakra-ui/react'
 import { Role } from '@prisma/client'
-import SimpleBox from 'components/SimpleBox'
+import { SimpleBox } from 'components'
 import EditRoleModal from './EditRoleModal'
 
 function RoleItem({ role }: { role: Role }) {
