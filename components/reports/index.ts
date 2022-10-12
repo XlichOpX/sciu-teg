@@ -1,1 +1,3 @@
-export { default as Sidebar } from './Sidebar'
+// created from 'create-ts-index'
+
+export * from './Sidebar';
