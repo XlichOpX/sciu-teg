@@ -14,9 +14,9 @@ import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/a
 import { useForm } from 'react-hook-form'
 import { paymentMethodSchema } from 'schema/paymentMethodSchema'
 import { PaymentMethodInput } from 'types/paymentMethod'
-import PaymentMethodForm from './PaymentMethodForm'
+import { PaymentMethodForm } from './PaymentMethodForm'
 
-function EditPaymentMethodModal({
+export const EditPaymentMethodModal = ({
   paymentMethod,
   onSubmit,
   onDelete
@@ -24,7 +24,7 @@ function EditPaymentMethodModal({
   paymentMethod: PaymentMethod
   onSubmit: (data: PaymentMethodInput) => Promise<void>
   onDelete: () => Promise<void>
-}) {
+}) => {
   const formHook = useForm<PaymentMethodInput>({
     resolver: zodResolver(paymentMethodSchema),
     defaultValues: paymentMethod
@@ -74,5 +74,3 @@ function EditPaymentMethodModal({
     </>
   )
 }
-
-export default EditPaymentMethodModal

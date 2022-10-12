@@ -3,7 +3,7 @@ import useCurrencies from 'hooks/useCurrencies'
 import { SubmitHandler, UseFormReturn } from 'react-hook-form'
 import { PaymentMethodInput } from 'types/paymentMethod'
 
-const PaymentMethodForm = ({
+export const PaymentMethodForm = ({
   id,
   onSubmit,
   formHook,
@@ -58,5 +58,3 @@ const PaymentMethodForm = ({
     </VStack>
   )
 }
-
-export default PaymentMethodForm

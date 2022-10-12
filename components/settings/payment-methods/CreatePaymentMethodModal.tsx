@@ -13,9 +13,13 @@ import { CancelButton, CreateButton, SaveButton } from 'components/app'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { paymentMethodSchema } from 'schema/paymentMethodSchema'
 import { PaymentMethodInput } from 'types/paymentMethod'
-import PaymentMethodForm from './PaymentMethodForm'
+import { PaymentMethodForm } from './PaymentMethodForm'
 
-function CreatePaymentMethodModal({ onSubmit }: { onSubmit: SubmitHandler<PaymentMethodInput> }) {
+export const CreatePaymentMethodModal = ({
+  onSubmit
+}: {
+  onSubmit: SubmitHandler<PaymentMethodInput>
+}) => {
   const { onOpen, isOpen, onClose } = useDisclosure()
 
   const formHook = useForm<PaymentMethodInput>({ resolver: zodResolver(paymentMethodSchema) })
@@ -56,5 +60,3 @@ function CreatePaymentMethodModal({ onSubmit }: { onSubmit: SubmitHandler<Paymen
     </>
   )
 }
-
-export default CreatePaymentMethodModal
