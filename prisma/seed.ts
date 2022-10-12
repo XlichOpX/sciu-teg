@@ -72,6 +72,9 @@ async function main() {
 
   await createDummyUser(docTypeIds)
   await createParameters()
+  await createRoles()
+
+  await createSemester()
 }
 
 main()
@@ -83,6 +86,16 @@ main()
     await prisma.$disconnect()
     process.exit(1)
   })
+
+async function createSemester() {
+  await prisma.semester.create({
+    data: {
+      startDate: new Date('2022-02-04T00:00-04:00'),
+      endDate: new Date('2022-08-04T00:00-04:00'),
+      semester: '2022-I'
+    }
+  })
+}
 
 async function createParameters() {
   await prisma.parameters.create({
@@ -272,6 +285,16 @@ async function createCurrenciesAndPaymentMethods() {
   )
 }
 
+async function createRoles() {
+  return await prisma.role.createMany({
+    data: Array.from({ length: 6 }).map(() => ({
+      name: faker.name.jobType(),
+      description: faker.lorem.sentence(4),
+      level: faker.datatype.number(5)
+    }))
+  })
+}
+
 function genPerson(docTypeIds: number[]): Prisma.PersonCreateInput {
   return {
     docNumber: faker.random.numeric(9),
@@ -309,6 +332,6 @@ function getRandomInt({ min = 1, max }: { min?: number; max: number }) {
   return faker.datatype.number({ min, max, precision: 1 })
 }
 
-function getRandomValueFromArray(array: any[]) {
+function getRandomValueFromArray<T>(array: T[]) {
   return array[getRandomInt({ min: 0, max: array.length - 1 })]
 }
