@@ -1,1 +1,3 @@
-export { default as ReceiptList } from './ReceiptList'
+// created from 'create-ts-index'
+
+export * from './ReceiptList';
