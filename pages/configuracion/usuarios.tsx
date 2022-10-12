@@ -1,5 +1,5 @@
 import { Divider, Flex } from '@chakra-ui/react'
-import { SearchInput } from 'components'
+import { SearchInput } from 'components/app'
 import { Layout } from 'components/settings'
 import CreateUserModal from 'components/settings/users/CreateUserModal'
 import UserList from 'components/settings/users/UserList'

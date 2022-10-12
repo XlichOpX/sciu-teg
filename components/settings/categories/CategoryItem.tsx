@@ -1,6 +1,6 @@
 import { Text } from '@chakra-ui/react'
 import { Category } from '@prisma/client'
-import { SimpleBox } from 'components'
+import { SimpleBox } from 'components/app'
 import { SubmitHandler } from 'react-hook-form'
 import { CategoryInput } from 'types/category'
 import { EditCategoryModal } from './EditCategoryModal'

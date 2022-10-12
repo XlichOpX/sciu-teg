@@ -9,7 +9,7 @@ import {
   ModalOverlay,
   useDisclosure
 } from '@chakra-ui/react'
-import { CancelButton, SaveButton } from 'components'
+import { CancelButton, SaveButton } from 'components/app'
 import { BsArrowRepeat } from 'react-icons/bs'
 import ExchangeRateForm from './ExchangeRateForm'
 

@@ -1,5 +1,5 @@
 import { Divider } from '@chakra-ui/react'
-import { Pagination } from 'components'
+import { Pagination } from 'components/app'
 import { Layout } from 'components/settings'
 import ExchangeRatesList from 'components/settings/exchange-rates/ExchangeRatesList'
 import UpdateExchangeRateModal from 'components/settings/exchange-rates/UpdateExchangeRateModal'

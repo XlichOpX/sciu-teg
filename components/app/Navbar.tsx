@@ -31,7 +31,7 @@ const links = [
   }
 ]
 
-export default function Navbar() {
+export const Navbar = () => {
   const { getButtonProps, getDisclosureProps, isOpen, onClose } = useDisclosure()
 
   return (

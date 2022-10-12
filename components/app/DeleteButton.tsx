@@ -19,7 +19,7 @@ interface DeleteButtonProps extends ButtonProps {
   confirmBody: ReactNode
 }
 
-const DeleteButton = ({ onDelete, confirmBody, ...props }: DeleteButtonProps) => {
+export const DeleteButton = ({ onDelete, confirmBody, ...props }: DeleteButtonProps) => {
   const { onOpen, onClose, isOpen } = useDisclosure()
   return (
     <Popover onOpen={onOpen} onClose={onClose} isOpen={isOpen}>
@@ -50,5 +50,3 @@ const DeleteButton = ({ onDelete, confirmBody, ...props }: DeleteButtonProps) =>
     </Popover>
   )
 }
-
-export default DeleteButton

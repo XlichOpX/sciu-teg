@@ -21,7 +21,7 @@ import {
   SimpleGrid,
   useDisclosure
 } from '@chakra-ui/react'
-import { CancelButton, CreateButton } from 'components'
+import { CancelButton, CreateButton } from 'components/app'
 
 function AddProductsModal(props: ButtonProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()

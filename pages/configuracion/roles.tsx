@@ -1,5 +1,5 @@
 import { Divider, Flex } from '@chakra-ui/react'
-import { Pagination, SearchInput } from 'components'
+import { Pagination, SearchInput } from 'components/app'
 import { Layout } from 'components/settings'
 import CreateRoleModal from 'components/settings/roles/CreateRoleModal'
 import RoleList from 'components/settings/roles/RoleList'

@@ -1,5 +1,5 @@
 import { Table, TableContainer, Tbody, Td, Th, Thead, ThemingProps, Tr } from '@chakra-ui/react'
-import Pagination from 'components/app/Pagination'
+import { Pagination } from 'components/app'
 
 function ReceiptList({
   size,

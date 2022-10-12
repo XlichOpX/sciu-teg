@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Parameters } from '@prisma/client'
-import { SaveButton } from 'components'
+import { SaveButton } from 'components/app'
 import { Layout } from 'components/settings'
 import useParameters from 'hooks/useParameters'
 import { NextPageWithLayout } from 'pages/_app'

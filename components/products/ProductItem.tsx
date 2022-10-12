@@ -1,5 +1,5 @@
 import { Divider, Flex, Heading, HStack, VStack } from '@chakra-ui/react'
-import { SimpleBox } from 'components'
+import { SimpleBox } from 'components/app'
 import { SubmitHandler } from 'react-hook-form'
 import { BsBoxSeam, BsCurrencyDollar } from 'react-icons/bs'
 import { MdOutlineCategory } from 'react-icons/md'

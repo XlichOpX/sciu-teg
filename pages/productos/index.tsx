@@ -1,5 +1,6 @@
 import { Alert, Divider, Flex, Text } from '@chakra-ui/react'
-import { BaseLayout, Pagination, SearchInput } from 'components'
+import { Pagination, SearchInput } from 'components/app'
+import { BaseLayout } from 'components/layouts'
 import { Placeholder, ProductItem, ProductList } from 'components/products'
 import CreateProductModal from 'components/products/CreateProductModal'
 import useProducts from 'hooks/useProducts'

@@ -9,7 +9,7 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components'
+import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
 import { useId } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { productSchema } from 'schema/productSchema'

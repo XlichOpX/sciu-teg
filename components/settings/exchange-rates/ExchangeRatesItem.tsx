@@ -1,5 +1,5 @@
 import { Text, VStack } from '@chakra-ui/react'
-import { SimpleBox } from 'components'
+import { SimpleBox } from 'components/app'
 import EditExchangeRateModal from './EditExchangeRateModal'
 
 function ExchangeRatesItem() {

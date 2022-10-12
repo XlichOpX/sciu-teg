@@ -1,6 +1,6 @@
 import { Button, Checkbox, FormControl, FormLabel, Input, Select, VStack } from '@chakra-ui/react'
 import { Select as RSelect } from 'chakra-react-select'
-import { SimpleBox } from 'components'
+import { SimpleBox } from 'components/app'
 
 function Sidebar() {
   return (

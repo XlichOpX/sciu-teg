@@ -1,4 +1,5 @@
-import { BaseLayout, HeadingWithSearch } from 'components'
+import { HeadingWithSearch } from 'components/app'
+import { BaseLayout } from 'components/layouts'
 import { ReceiptList } from 'components/receipts'
 import Head from 'next/head'
 import { NextPageWithLayout } from '../_app'

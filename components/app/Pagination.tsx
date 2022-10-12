@@ -1,6 +1,6 @@
-import { Flex, Button, VisuallyHidden, Text } from '@chakra-ui/react'
+import { Button, Flex, Text, VisuallyHidden } from '@chakra-ui/react'
 
-function Pagination({
+export const Pagination = ({
   page = 1,
   pages = 20,
   setPage = () => null
@@ -8,7 +8,7 @@ function Pagination({
   page?: number
   setPage?: (page: number) => void
   pages?: number
-}) {
+}) => {
   const totalButtons = pages >= 3 ? 3 : pages
   const inFirstPages = page < totalButtons
   const inLastPages = page > pages - totalButtons
@@ -60,5 +60,3 @@ function Pagination({
     </>
   )
 }
-
-export default Pagination

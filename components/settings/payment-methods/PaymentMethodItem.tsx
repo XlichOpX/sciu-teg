@@ -1,6 +1,6 @@
 import { Text } from '@chakra-ui/react'
 import { PaymentMethod } from '@prisma/client'
-import { SimpleBox } from 'components'
+import { SimpleBox } from 'components/app'
 import { PaymentMethodInput } from 'types/paymentMethod'
 import EditPaymentMethodModal from './EditPaymentMethodModal'
 

@@ -12,7 +12,7 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import { Select } from 'chakra-react-select'
-import { CancelButton, EditButton, SaveButton } from 'components'
+import { CancelButton, EditButton, SaveButton } from 'components/app'
 import { BsTrash } from 'react-icons/bs'
 
 function EditRoleModal() {

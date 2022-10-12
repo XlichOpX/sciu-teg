@@ -25,7 +25,7 @@ import {
   useDisclosure,
   VisuallyHidden
 } from '@chakra-ui/react'
-import { CancelButton, SaveButton } from 'components'
+import { CancelButton, SaveButton } from 'components/app'
 import { BsPlusLg, BsWalletFill } from 'react-icons/bs'
 
 function ChargeSelectionModal(props: ButtonProps) {

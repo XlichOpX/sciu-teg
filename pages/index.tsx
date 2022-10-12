@@ -1,5 +1,5 @@
 import { Button, Container, Heading, useToast } from '@chakra-ui/react'
-import { BaseLayout } from 'components'
+import { BaseLayout } from 'components/layouts'
 import Head from 'next/head'
 import { NextPageWithLayout } from './_app'
 

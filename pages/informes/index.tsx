@@ -1,5 +1,5 @@
 import { Divider, Heading, Text } from '@chakra-ui/react'
-import { BaseLayout, SidebarLayout } from 'components'
+import { BaseLayout, SidebarLayout } from 'components/layouts'
 import { Sidebar } from 'components/reports'
 import Head from 'next/head'
 import { NextPageWithLayout } from 'pages/_app'

@@ -8,7 +8,7 @@ import {
   ModalOverlay,
   useDisclosure
 } from '@chakra-ui/react'
-import { CancelButton, EditButton, SaveButton } from 'components'
+import { CancelButton, EditButton, SaveButton } from 'components/app'
 import ExchangeRateForm from './ExchangeRateForm'
 
 function EditExchangeRateModal() {

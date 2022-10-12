@@ -1,9 +1,9 @@
 import { Container } from '@chakra-ui/react'
 import Head from 'next/head'
 import { ReactNode } from 'react'
-import Navbar from '../app/Navbar'
+import { Navbar } from '../app/Navbar'
 
-const BaseLayout = ({ children }: { children: ReactNode }) => (
+export const BaseLayout = ({ children }: { children: ReactNode }) => (
   <>
     <Head>
       <title>SCIU</title>
@@ -17,5 +17,3 @@ const BaseLayout = ({ children }: { children: ReactNode }) => (
     </Container>
   </>
 )
-
-export default BaseLayout

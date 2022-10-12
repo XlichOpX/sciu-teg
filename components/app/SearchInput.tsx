@@ -1,16 +1,16 @@
-import { useForm } from 'react-hook-form'
-import type { SubmitHandler } from 'react-hook-form'
-import { InputGroup, Input, InputRightElement } from '@chakra-ui/react'
-import { MdSearch } from 'react-icons/md'
+import { Input, InputGroup, InputRightElement } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import type { SubmitHandler } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
+import { MdSearch } from 'react-icons/md'
 import { debounce } from 'utils/debounce'
+import { z } from 'zod'
 
 const schema = z.object({ text: z.string() })
 export type SearchInput = z.infer<typeof schema>
 export type SearchSubmitHandler = SubmitHandler<SearchInput>
 
-function SearchInput({
+export const SearchInput = ({
   placeholder,
   onChange = () => null,
   onSubmit = () => null
@@ -18,7 +18,7 @@ function SearchInput({
   placeholder: string
   onChange?: SearchSubmitHandler
   onSubmit?: SearchSubmitHandler
-}) {
+}) => {
   const {
     handleSubmit,
     register,
@@ -40,5 +40,3 @@ function SearchInput({
     </form>
   )
 }
-
-export default SearchInput

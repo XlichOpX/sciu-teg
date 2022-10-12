@@ -1,6 +1,6 @@
 import { Text } from '@chakra-ui/react'
 import { User } from '@prisma/client'
-import { SimpleBox } from 'components'
+import { SimpleBox } from 'components/app'
 import EditUserModal from './EditUserModal'
 
 function UserItem({ user }: { user: User }) {

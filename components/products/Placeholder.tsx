@@ -1,5 +1,5 @@
 import { Divider, SimpleGrid, SkeletonText } from '@chakra-ui/react'
-import { SimpleBox } from 'components'
+import { SimpleBox } from 'components/app'
 
 function Placeholder() {
   return (

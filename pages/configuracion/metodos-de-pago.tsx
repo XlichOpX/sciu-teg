@@ -1,5 +1,5 @@
 import { Alert, Divider, Flex } from '@chakra-ui/react'
-import { SearchInput } from 'components'
+import { SearchInput } from 'components/app'
 import { Layout } from 'components/settings'
 import CreatePaymentMethodModal from 'components/settings/payment-methods/CreatePaymentMethodModal'
 import PaymentMethodsList from 'components/settings/payment-methods/PaymentMethodsList'

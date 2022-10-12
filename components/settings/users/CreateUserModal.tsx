@@ -15,7 +15,7 @@ import {
   VStack
 } from '@chakra-ui/react'
 import { Select } from 'chakra-react-select'
-import { CancelButton, CreateButton, SaveButton } from 'components'
+import { CancelButton, CreateButton, SaveButton } from 'components/app'
 
 function CreateUserModal() {
   const { isOpen, onClose, onOpen } = useDisclosure()

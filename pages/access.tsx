@@ -1,4 +1,4 @@
-import LoginBtn from '../components/app/LoginBtn'
+import { LoginBtn } from '../components/app'
 
 import { withIronSessionSsr } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
