@@ -1,6 +1,6 @@
 import { TableContainer, Table, Thead, Tr, Th, Tbody, Td, Checkbox } from '@chakra-ui/react'
 
-function MonthlyPayments() {
+function Items({ billings }: { billings: any[] }) {
   return (
     <TableContainer>
       <Table>
@@ -15,21 +15,19 @@ function MonthlyPayments() {
         </Thead>
 
         <Tbody>
-          {Array(6)
-            .fill(1)
-            .map((e, i) => (
-              <Tr key={i}>
-                <Td pl={0}>Mensualidad #{i + 1}</Td>
-                <Td textAlign="center">$20</Td>
-                <Td textAlign="center" pr={0}>
-                  <Checkbox />
-                </Td>
-              </Tr>
-            ))}
+          {billings.map((b, i) => (
+            <Tr key={i}>
+              <Td pl={0}>{b.productName}</Td>
+              <Td textAlign="center">{b.amount}</Td>
+              <Td textAlign="center" pr={0}>
+                <Checkbox />
+              </Td>
+            </Tr>
+          ))}
         </Tbody>
       </Table>
     </TableContainer>
   )
 }
 
-export default MonthlyPayments
+export default Items
