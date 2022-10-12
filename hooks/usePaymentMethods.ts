@@ -1,5 +1,4 @@
 import { useToast } from '@chakra-ui/react'
-import { PaymentMethod } from '@prisma/client'
 import { useState } from 'react'
 import {
   createPaymentMethod as createPaymentMethodSv,
@@ -11,7 +10,7 @@ import { PaymentMethodInput } from 'types/paymentMethod'
 
 export const usePaymentMethods = () => {
   const [search, setSearch] = useState('')
-  const { data, error, mutate } = useSWR<PaymentMethod[], Error>('/api/paymentMethod')
+  const { data, error, mutate } = useSWR<any[], Error>('/api/paymentMethod')
   const toast = useToast()
 
   const createPaymentMethod = async (data: PaymentMethodInput) => {

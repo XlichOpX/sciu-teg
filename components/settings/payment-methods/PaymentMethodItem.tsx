@@ -1,5 +1,4 @@
 import { Text } from '@chakra-ui/react'
-import { PaymentMethod } from '@prisma/client'
 import { SimpleBox } from 'components/app'
 import { PaymentMethodInput } from 'types/paymentMethod'
 import { EditPaymentMethodModal } from './EditPaymentMethodModal'
@@ -9,12 +8,14 @@ export const PaymentMethodItem = ({
   onUpdate,
   onDelete
 }: {
-  paymentMethod: PaymentMethod
+  paymentMethod: any
   onUpdate: (data: PaymentMethodInput) => Promise<void>
   onDelete: () => Promise<void>
 }) => (
   <SimpleBox as="li" display="flex" justifyContent="space-between">
-    <Text fontWeight="bold">{paymentMethod.name}</Text>
+    <Text fontWeight="bold">
+      {paymentMethod.name} - {paymentMethod.currency.symbol}
+    </Text>
     <EditPaymentMethodModal paymentMethod={paymentMethod} onSubmit={onUpdate} onDelete={onDelete} />
   </SimpleBox>
 )
