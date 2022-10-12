@@ -22,7 +22,7 @@ interface Props {
 
 const defaultStockValue = 15
 
-const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Props) => {
+export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Props) => {
   const { categories } = useCategories()
 
   const {
@@ -90,5 +90,3 @@ const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Props) => 
     </VStack>
   )
 }
-
-export default ProductForm

@@ -10,15 +10,12 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
-import { useId } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { productSchema } from 'schema/productSchema'
 import type { ProductInput } from 'types/product'
-import ProductForm from './ProductForm'
+import { ProductForm } from './ProductForm'
 
-function CreateProductModal({ onSubmit }: { onSubmit: SubmitHandler<ProductInput> }) {
-  const formId = useId()
-
+export const CreateProductModal = ({ onSubmit }: { onSubmit: SubmitHandler<ProductInput> }) => {
   const formHook = useForm<ProductInput>({
     resolver: zodResolver(productSchema),
     defaultValues: { stock: -1 }
@@ -40,7 +37,7 @@ function CreateProductModal({ onSubmit }: { onSubmit: SubmitHandler<ProductInput
           <ModalBody>
             <ProductForm
               formHook={formHook}
-              id={formId}
+              id="CreateProductForm"
               onSubmit={async (data) => {
                 await onSubmit(data)
                 onClose()
@@ -53,7 +50,7 @@ function CreateProductModal({ onSubmit }: { onSubmit: SubmitHandler<ProductInput
             <SaveButton
               colorScheme="blue"
               type="submit"
-              form={formId}
+              form="CreateProductForm"
               disabled={formHook.formState.isSubmitting}
             />
           </ModalFooter>
@@ -62,5 +59,3 @@ function CreateProductModal({ onSubmit }: { onSubmit: SubmitHandler<ProductInput
     </>
   )
 }
-
-export default CreateProductModal

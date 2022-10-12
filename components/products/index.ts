@@ -1,4 +1,8 @@
-export { default as ProductList } from './ProductList'
-export { default as ProductItem } from './ProductItem'
-export { default as Placeholder } from './Placeholder'
-export { default as ProductForm } from './ProductForm'
+// created from 'create-ts-index'
+
+export * from './CreateProductModal';
+export * from './EditProductModal';
+export * from './Placeholder';
+export * from './ProductForm';
+export * from './ProductItem';
+export * from './ProductList';

@@ -10,13 +10,12 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
-import { useId } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { productSchema } from 'schema/productSchema'
 import type { ProductInput } from 'types/product'
-import ProductForm from './ProductForm'
+import { ProductForm } from './ProductForm'
 
-function EditProductModal({
+export const EditProductModal = ({
   onDelete,
   onSubmit,
   defaultValues
@@ -24,9 +23,8 @@ function EditProductModal({
   onDelete: () => void
   defaultValues: ProductInput
   onSubmit: SubmitHandler<ProductInput>
-}) {
+}) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const formId = useId()
 
   const formHook = useForm<ProductInput>({
     resolver: zodResolver(productSchema),
@@ -48,7 +46,7 @@ function EditProductModal({
           <ModalBody>
             <ProductForm
               formHook={formHook}
-              id={formId}
+              id="EditProductForm"
               onSubmit={async (data) => {
                 await onSubmit(data)
                 onClose()
@@ -64,12 +62,14 @@ function EditProductModal({
               mr="auto"
             />
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton type="submit" form={formId} disabled={formHook.formState.isSubmitting} />
+            <SaveButton
+              type="submit"
+              form="EditProductForm"
+              disabled={formHook.formState.isSubmitting}
+            />
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
   )
 }
-
-export default EditProductModal

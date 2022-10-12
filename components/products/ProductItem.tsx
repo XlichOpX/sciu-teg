@@ -4,9 +4,9 @@ import { SubmitHandler } from 'react-hook-form'
 import { BsBoxSeam, BsCurrencyDollar } from 'react-icons/bs'
 import { MdOutlineCategory } from 'react-icons/md'
 import { ProductInput, ProductWithCategory } from 'types/product'
-import EditProductModal from './EditProductModal'
+import { EditProductModal } from './EditProductModal'
 
-function ProductItem({
+export const ProductItem = ({
   product: { categoryId, category, name, price, stock },
   onUpdate,
   onDelete
@@ -14,36 +14,32 @@ function ProductItem({
   product: ProductWithCategory
   onUpdate: SubmitHandler<ProductInput>
   onDelete: () => void
-}) {
-  return (
-    <SimpleBox>
-      <Flex alignItems="center" justifyContent="space-between">
-        <Heading as="h2" size="sm" noOfLines={2}>
-          {name}
-        </Heading>
+}) => (
+  <SimpleBox>
+    <Flex alignItems="center" justifyContent="space-between">
+      <Heading as="h2" size="sm" noOfLines={2}>
+        {name}
+      </Heading>
 
-        <EditProductModal
-          defaultValues={{ categoryId, name, price, stock }}
-          onSubmit={onUpdate}
-          onDelete={onDelete}
-        />
-      </Flex>
+      <EditProductModal
+        defaultValues={{ categoryId, name, price, stock }}
+        onSubmit={onUpdate}
+        onDelete={onDelete}
+      />
+    </Flex>
 
-      <Divider my={2} />
+    <Divider my={2} />
 
-      <VStack align="flex-start">
-        <HStack as="p">
-          <BsCurrencyDollar /> <span>Precio: {price}</span>
-        </HStack>
-        <HStack as="p">
-          <BsBoxSeam /> <span>Inventario: {stock >= 0 ? stock : 'No aplica'}</span>
-        </HStack>
-        <HStack as="p">
-          <MdOutlineCategory /> <span>Categoría: {category.name}</span>
-        </HStack>
-      </VStack>
-    </SimpleBox>
-  )
-}
-
-export default ProductItem
+    <VStack align="flex-start">
+      <HStack as="p">
+        <BsCurrencyDollar /> <span>Precio: {price}</span>
+      </HStack>
+      <HStack as="p">
+        <BsBoxSeam /> <span>Inventario: {stock >= 0 ? stock : 'No aplica'}</span>
+      </HStack>
+      <HStack as="p">
+        <MdOutlineCategory /> <span>Categoría: {category.name}</span>
+      </HStack>
+    </VStack>
+  </SimpleBox>
+)
