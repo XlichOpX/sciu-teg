@@ -1,8 +1,7 @@
 import { Divider, Flex } from '@chakra-ui/react'
 import { SearchInput } from 'components/app'
 import { SettingsLayout } from 'components/settings'
-import CreateUserModal from 'components/settings/users/CreateUserModal'
-import UserList from 'components/settings/users/UserList'
+import { CreateUserModal, UserList } from 'components/settings/users'
 import useUsers from 'hooks/useUsers'
 import { NextPageWithLayout } from 'pages/_app'
 

@@ -17,7 +17,7 @@ import {
 import { Select } from 'chakra-react-select'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
 
-function CreateUserModal() {
+export const CreateUserModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
@@ -99,5 +99,3 @@ function CreateUserModal() {
     </>
   )
 }
-
-export default CreateUserModal

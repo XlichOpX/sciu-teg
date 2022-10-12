@@ -15,7 +15,7 @@ import { Select } from 'chakra-react-select'
 import { CancelButton, EditButton, SaveButton } from 'components/app'
 import { BsTrash } from 'react-icons/bs'
 
-function EditUserModal() {
+export const EditUserModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
@@ -58,5 +58,3 @@ function EditUserModal() {
     </>
   )
 }
-
-export default EditUserModal
