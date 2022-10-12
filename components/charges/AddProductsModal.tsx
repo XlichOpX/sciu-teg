@@ -23,7 +23,7 @@ import {
 } from '@chakra-ui/react'
 import { CancelButton, CreateButton } from 'components/app'
 
-function AddProductsModal(props: ButtonProps) {
+export const AddProductsModal = (props: ButtonProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -88,5 +88,3 @@ function AddProductsModal(props: ButtonProps) {
     </>
   )
 }
-
-export default AddProductsModal

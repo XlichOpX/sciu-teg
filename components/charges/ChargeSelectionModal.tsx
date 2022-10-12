@@ -28,7 +28,7 @@ import {
 import { CancelButton, SaveButton } from 'components/app'
 import { BsPlusLg, BsWalletFill } from 'react-icons/bs'
 
-function ChargeSelectionModal(props: ButtonProps) {
+export const ChargeSelectionModal = (props: ButtonProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -116,5 +116,3 @@ function ChargeSelectionModal(props: ButtonProps) {
     </>
   )
 }
-
-export default ChargeSelectionModal

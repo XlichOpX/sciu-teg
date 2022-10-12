@@ -1,7 +1,6 @@
 import { Alert, Flex } from '@chakra-ui/react'
 import { HeadingWithSearch } from 'components/app'
-import { ChargeSelectionModal, Items, StudentInfo } from 'components/charges'
-import AddProductsModal from 'components/charges/AddProductsModal'
+import { AddProductsModal, ChargeSelectionModal, Items, StudentInfo } from 'components/charges'
 import { BaseLayout } from 'components/layouts'
 import useBillings from 'hooks/useBillings'
 import Head from 'next/head'

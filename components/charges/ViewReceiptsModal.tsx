@@ -12,7 +12,7 @@ import {
 import { ReceiptList } from 'components/receipts'
 import { BsFileText } from 'react-icons/bs'
 
-function ViewReceiptsModal() {
+export const ViewReceiptsModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <>
@@ -38,5 +38,3 @@ function ViewReceiptsModal() {
     </>
   )
 }
-
-export default ViewReceiptsModal
