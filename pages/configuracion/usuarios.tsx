@@ -1,6 +1,6 @@
 import { Divider, Flex } from '@chakra-ui/react'
 import { SearchInput } from 'components/app'
-import { Layout } from 'components/settings'
+import { SettingsLayout } from 'components/settings'
 import CreateUserModal from 'components/settings/users/CreateUserModal'
 import UserList from 'components/settings/users/UserList'
 import useUsers from 'hooks/useUsers'
@@ -27,6 +27,6 @@ const UsersSettings: NextPageWithLayout = () => {
   )
 }
 
-UsersSettings.getLayout = (page) => <Layout title="Usuarios">{page}</Layout>
+UsersSettings.getLayout = (page) => <SettingsLayout title="Usuarios">{page}</SettingsLayout>
 
 export default UsersSettings

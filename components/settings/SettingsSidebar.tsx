@@ -29,7 +29,7 @@ const links = [
   }
 ]
 
-function Sidebar() {
+export const SettingsSidebar = () => {
   const { asPath } = useRouter()
   return (
     <>
@@ -54,5 +54,3 @@ function Sidebar() {
     </>
   )
 }
-
-export default Sidebar

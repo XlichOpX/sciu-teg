@@ -1,6 +1,6 @@
 import { Divider, Flex } from '@chakra-ui/react'
 import { Pagination, SearchInput } from 'components/app'
-import { Layout } from 'components/settings'
+import { SettingsLayout } from 'components/settings'
 import CreateRoleModal from 'components/settings/roles/CreateRoleModal'
 import RoleList from 'components/settings/roles/RoleList'
 import useRoles from 'hooks/useRoles'
@@ -27,6 +27,6 @@ const RoleSettings: NextPageWithLayout = () => {
   )
 }
 
-RoleSettings.getLayout = (page) => <Layout title="Roles">{page}</Layout>
+RoleSettings.getLayout = (page) => <SettingsLayout title="Roles">{page}</SettingsLayout>
 
 export default RoleSettings

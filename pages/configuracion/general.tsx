@@ -10,7 +10,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Parameters } from '@prisma/client'
 import { SaveButton } from 'components/app'
-import { Layout } from 'components/settings'
+import { SettingsLayout } from 'components/settings'
 import useParameters from 'hooks/useParameters'
 import { NextPageWithLayout } from 'pages/_app'
 import { useEffect } from 'react'
@@ -84,6 +84,6 @@ const GeneralSettings: NextPageWithLayout = () => {
   )
 }
 
-GeneralSettings.getLayout = (page) => <Layout title="General">{page}</Layout>
+GeneralSettings.getLayout = (page) => <SettingsLayout title="General">{page}</SettingsLayout>
 
 export default GeneralSettings

@@ -1,6 +1,6 @@
 import { Divider } from '@chakra-ui/react'
 import { Pagination } from 'components/app'
-import { Layout } from 'components/settings'
+import { SettingsLayout } from 'components/settings'
 import ExchangeRatesList from 'components/settings/exchange-rates/ExchangeRatesList'
 import UpdateExchangeRateModal from 'components/settings/exchange-rates/UpdateExchangeRateModal'
 import { NextPageWithLayout } from 'pages/_app'
@@ -18,6 +18,8 @@ const ExchangeRatesSettings: NextPageWithLayout = () => {
   )
 }
 
-ExchangeRatesSettings.getLayout = (page) => <Layout title="Tasas de cambio">{page}</Layout>
+ExchangeRatesSettings.getLayout = (page) => (
+  <SettingsLayout title="Tasas de cambio">{page}</SettingsLayout>
+)
 
 export default ExchangeRatesSettings

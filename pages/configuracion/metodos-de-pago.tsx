@@ -1,6 +1,6 @@
 import { Alert, Divider, Flex } from '@chakra-ui/react'
 import { SearchInput } from 'components/app'
-import { Layout } from 'components/settings'
+import { SettingsLayout } from 'components/settings'
 import CreatePaymentMethodModal from 'components/settings/payment-methods/CreatePaymentMethodModal'
 import PaymentMethodsList from 'components/settings/payment-methods/PaymentMethodsList'
 import usePaymentMethods from 'hooks/usePaymentMethods'
@@ -45,6 +45,8 @@ const PaymentMethodsSettings: NextPageWithLayout = () => {
   )
 }
 
-PaymentMethodsSettings.getLayout = (page) => <Layout title="Métodos de pago">{page}</Layout>
+PaymentMethodsSettings.getLayout = (page) => (
+  <SettingsLayout title="Métodos de pago">{page}</SettingsLayout>
+)
 
 export default PaymentMethodsSettings
