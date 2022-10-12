@@ -15,7 +15,7 @@ import { Select } from 'chakra-react-select'
 import { CancelButton, EditButton, SaveButton } from 'components/app'
 import { BsTrash } from 'react-icons/bs'
 
-export const EditRoleModal = () => {
+export const EditRoleModal = ({ name }: { name: string }) => {
   const { onOpen, isOpen, onClose } = useDisclosure()
   return (
     <>
@@ -25,7 +25,7 @@ export const EditRoleModal = () => {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            <h3>Editar rol: Admin</h3>
+            <h3>Editar rol: {name}</h3>
           </ModalHeader>
           <ModalCloseButton />
 
