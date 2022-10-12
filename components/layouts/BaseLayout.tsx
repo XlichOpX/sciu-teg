@@ -1,7 +1,7 @@
 import { Container } from '@chakra-ui/react'
 import Head from 'next/head'
 import { ReactNode } from 'react'
-import Navbar from './Navbar'
+import Navbar from '../Navbar'
 
 const BaseLayout = ({ children }: { children: ReactNode }) => (
   <>

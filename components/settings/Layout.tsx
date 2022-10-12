@@ -1,6 +1,6 @@
 import { Divider, Heading } from '@chakra-ui/react'
-import BaseLayout from 'components/BaseLayout'
-import SidebarLayout from 'components/SidebarLayout'
+import BaseLayout from 'components/layouts/BaseLayout'
+import SidebarLayout from 'components/layouts/SidebarLayout'
 import Head from 'next/head'
 import { ReactNode } from 'react'
 import Sidebar from './Sidebar'
