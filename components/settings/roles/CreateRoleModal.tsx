@@ -16,7 +16,7 @@ import {
 import { Select } from 'chakra-react-select'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
 
-function CreateRoleModal() {
+export const CreateRoleModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
@@ -64,5 +64,3 @@ function CreateRoleModal() {
     </>
   )
 }
-
-export default CreateRoleModal
