@@ -16,7 +16,7 @@ import { categorySchema } from 'schema/categorySchema'
 import type { CategoryInput } from 'types/category'
 import { CategoryForm } from './CategoryForm'
 
-export function EditCategoryModal({
+export const EditCategoryModal = ({
   onDelete,
   onSubmit,
   defaultValues
@@ -24,7 +24,7 @@ export function EditCategoryModal({
   onDelete: () => void
   defaultValues: CategoryInput
   onSubmit: SubmitHandler<CategoryInput>
-}) {
+}) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const formId = useId()
 

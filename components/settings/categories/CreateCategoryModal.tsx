@@ -15,7 +15,7 @@ import { categorySchema } from 'schema/categorySchema'
 import { CategoryInput } from 'types/category'
 import { CategoryForm } from './CategoryForm'
 
-export function CreateCategoryModal({ onSubmit }: { onSubmit: SubmitHandler<CategoryInput> }) {
+export const CreateCategoryModal = ({ onSubmit }: { onSubmit: SubmitHandler<CategoryInput> }) => {
   const { onOpen, isOpen, onClose } = useDisclosure()
 
   const formHook = useForm<CategoryInput>({ resolver: zodResolver(categorySchema) })
