@@ -1,8 +1,8 @@
 import { Conversion } from '@prisma/client'
-import prisma from '../../../lib/prisma'
+import dayjs from 'dayjs'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import z from 'zod'
-import dayjs from 'dayjs'
 
 export default async function conversionHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
@@ -38,7 +38,7 @@ export default async function conversionHandler(req: NextApiRequest, res: NextAp
       })
       if (!updateConversion) res.status(404).end(`Conversion not found`)
       if (dayjs(updateConversion.date).add(30, 'minutes') < dayjs())
-        res.status(404).end(`Conversion can't update`)
+        res.status(404).end(`Can't Conversion update`)
       res.status(201).send(updateConversion || {})
       break
     case 'DELETE':
