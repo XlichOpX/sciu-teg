@@ -1,7 +1,7 @@
 import { Role } from '@prisma/client'
-import prisma from '../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import z from 'zod'
+import prisma from '../../../lib/prisma'
 
 export default async function roleHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
@@ -19,7 +19,8 @@ export default async function roleHandler(req: NextApiRequest, res: NextApiRespo
   switch (method) {
     case 'GET':
       //obtenemos a UN rol
-      const role: Role | null = await prisma.role.findFirst({
+      const role = await prisma.role.findFirst({
+        include: { permissions: true },
         where: { id: Number(id) }
       })
       if (!role) res.status(404).end(`Role not found`)
