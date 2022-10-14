@@ -1,8 +1,8 @@
+import { withIronSessionApiRoute } from 'iron-session/next'
 import { compare } from 'lib/crypter'
 import { ironOptions } from 'lib/ironSession'
-import { NextApiRequest, NextApiResponse } from 'next'
-import { withIronSessionApiRoute } from 'iron-session/next'
 import prisma from 'lib/prisma'
+import { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
 export default withIronSessionApiRoute(loginRoute, ironOptions)
@@ -23,7 +23,7 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
     // retrieve user password from database
     const user = await prisma.user.findFirst({
       where: { username },
-      include: { roles: { include: { permissions: true } }, status: true }
+      include: { status: true }
     })
     // validate that username exists in db
     if (!user) return invalidCredentials(res)
@@ -33,7 +33,7 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
 
     if (!isValid) return invalidCredentials(res)
 
-    const { roles, id, status } = user
+    const { id, status } = user
 
     // validate that user status is different from inactive
     if (status.id === 0) return res.status(403).json('User is inactive. Contact an admin.')
@@ -49,8 +49,8 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
     // save iSession cookie
     await req.session.save()
 
-    // respond with a CookieUser object.
-    res.json({ id, status, roles, username })
+    // respond with a ok response.
+    res.json({ ok: true })
   } catch (error) {
     if (error instanceof Error) {
       return res.status(500).json({ error: error.message })

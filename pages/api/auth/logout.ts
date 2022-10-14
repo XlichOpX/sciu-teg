@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 export default withIronSessionApiRoute(logoutRoute, ironOptions)
 
-function logoutRoute(req: NextApiRequest, res: NextApiResponse<{ isDestroy: boolean }>) {
+function logoutRoute(req: NextApiRequest, res: NextApiResponse<{ ok: boolean }>) {
   req.session.destroy()
-  return res.json({ isDestroy: true })
+  return res.json({ ok: true })
 }
