@@ -1,7 +1,10 @@
 import { Prisma } from '@prisma/client'
-import { productSchema } from 'schema/productSchema'
-import prisma from '../../../lib/prisma'
+import { withIronSessionApiRoute } from 'iron-session/next'
+import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { productSchema } from 'schema/productSchema'
+import { canUnserDo } from 'utils/checkPermissions'
 
 export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
   select: {
@@ -15,8 +18,12 @@ export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
 })
 
 // GET|POST /api/product
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  const { body, method, query } = req
+export default withIronSessionApiRoute(handle, ironOptions)
+
+async function handle(req: NextApiRequest, res: NextApiResponse) {
+  const { body, method, query, session } = req
+
+  if (!canUnserDo(session, 'READ_PRODUCT')) return res.status(403).send(`Can't read this.`)
 
   switch (method) {
     case 'GET':
@@ -38,10 +45,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         orderBy: { name: 'asc' }
       })
       const count = await prisma.product.count({ where: search })
-      console.log(count)
       return res.json({ count, result: products })
     case 'POST':
       // creamos UN producto
+      if (!canUnserDo(session, 'EDIT_PRODUCT')) return res.status(403).send(`Can't edit this.`)
       try {
         const data = productSchema.parse(body)
         const result = await prisma.product.create({

@@ -1,11 +1,19 @@
 import { Product } from '@prisma/client'
-import prisma from '../../../lib/prisma'
+import { withIronSessionApiRoute } from 'iron-session/next'
+import { ironOptions } from 'lib/ironSession'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { canUnserDo } from 'utils/checkPermissions'
 import z from 'zod'
+import prisma from '../../../lib/prisma'
 
-export default async function productHandler(req: NextApiRequest, res: NextApiResponse) {
+export default withIronSessionApiRoute(productHandler, ironOptions)
+
+async function productHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
+  const { session } = req
   const idValidation = z.preprocess((value) => Number(value), z.number().positive())
+
+  if (!canUnserDo(session, 'READ_PRODUCT')) return res.status(403).send(`Can't read this.`)
 
   const {
     body,
@@ -28,6 +36,8 @@ export default async function productHandler(req: NextApiRequest, res: NextApiRe
       break
     case 'PUT':
       //actualizamos a UN producto
+      if (!canUnserDo(session, 'EDIT_PRODUCT')) return res.status(403).send(`Can't edit this.`)
+
       const updateProduct: Product = await prisma.product.update({
         data: { ...body },
         where: {
@@ -38,11 +48,12 @@ export default async function productHandler(req: NextApiRequest, res: NextApiRe
       res.status(201).send(updateProduct || {})
       break
     case 'DELETE':
-      //eliminamos a UN producto 
-      const existRelation = await prisma.productSale.count({where: { productId: Number(id)}})
-      
-      if( existRelation > 0 )
-        res.status(409).end(`Exists relation receipts`)
+      //eliminamos a UN producto
+      if (!canUnserDo(session, 'DELETE_PRODUCT')) return res.status(403).send(`Can't delete this.`)
+
+      const existRelation = await prisma.productSale.count({ where: { productId: Number(id) } })
+
+      if (existRelation > 0) res.status(409).end(`Exists relation receipts`)
 
       const delProduct: Product = await prisma.product.delete({ where: { id: Number(id) } })
       res.status(202).send(delProduct)
