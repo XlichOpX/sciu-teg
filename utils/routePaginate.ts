@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client'
+import dayjs from 'lib/dayjs'
 import { NextApiRequestQuery } from 'next/dist/server/api-utils'
 
 export function routePaginate({ limit, offset }: NextApiRequestQuery) {
@@ -10,9 +11,15 @@ export function routePaginate({ limit, offset }: NextApiRequestQuery) {
   }
 }
 
-export function search(keyword?: string | string[], mode?: Prisma.QueryMode): Prisma.StringFilter {
+export function search<T>(keyword?: string | string[], mode?: Prisma.QueryMode): T | undefined {
+  const keyw = Array.isArray(keyword) ? keyword[0] : keyword
+
+  if (!keyw) return undefined
+
+  if (dayjs(keyw).isValid()) return { gte: dayjs(keyw).toDate() } as unknown as T
+
   return {
-    contains: Array.isArray(keyword) ? keyword[0] : keyword,
+    contains: keyw,
     mode: mode || 'insensitive'
-  }
+  } as unknown as T
 }
