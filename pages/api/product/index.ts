@@ -30,14 +30,15 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
     case 'GET':
       // destructuring limit and offset values from query params
       const { keyword } = query
-
+      const where = { name: search<Prisma.StringFilter>(keyword) }
       // obtenemos TODOS los productos
       const result = await prisma.product.findMany({
         ...productWithCategory,
         ...routePaginate(query),
-        where: { name: search(keyword) }
+        where
       })
-      const count = await prisma.product.count({ where: { name: search(keyword) } })
+
+      const count = await prisma.product.count({ where })
 
       return res.json({ count, result })
 
