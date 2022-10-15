@@ -5,6 +5,7 @@ import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { productSchema } from 'schema/productSchema'
 import { canUnserDo } from 'utils/checkPermissions'
+import { routePaginate, search } from 'utils/routePaginate'
 
 export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
   select: {
@@ -23,29 +24,23 @@ export default withIronSessionApiRoute(handle, ironOptions)
 async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { body, method, query, session } = req
 
-  if (!canUnserDo(session, 'READ_PRODUCT')) return res.status(403).send(`Can't read this.`)
+  if (!canUnserDo(session, 'READ_PRODUCTS')) return res.status(403).send(`Can't read this.`)
 
   switch (method) {
     case 'GET':
       // destructuring limit and offset values from query params
-      const { limit, offset, keyword } = query
+      const { keyword } = query
 
-      // validate values to pagination
-      const take = Number(Array.isArray(limit) ? limit[0] : limit) || 5
-      const skip = Number(Array.isArray(offset) ? offset[0] : offset) || 0
-      const search: Prisma.ProductWhereInput = {
-        name: { contains: Array.isArray(keyword) ? keyword[0] : keyword, mode: 'insensitive' }
-      }
       // obtenemos TODOS los productos
-      const products = await prisma.product.findMany({
+      const result = await prisma.product.findMany({
         ...productWithCategory,
-        take,
-        skip,
-        where: search,
-        orderBy: { name: 'asc' }
+        ...routePaginate(query),
+        where: { name: search(keyword) }
       })
-      const count = await prisma.product.count({ where: search })
-      return res.json({ count, result: products })
+      const count = await prisma.product.count({ where: { name: search(keyword) } })
+
+      return res.json({ count, result })
+
     case 'POST':
       // creamos UN producto
       if (!canUnserDo(session, 'EDIT_PRODUCT')) return res.status(403).send(`Can't edit this.`)
