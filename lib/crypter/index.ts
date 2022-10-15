@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import CryptoJS from 'crypto-js'
 const { SECRET } = process.env
 
@@ -26,4 +27,17 @@ export function encrypt(msg: string): string[] {
 export function compare(toCompare: string, msg: string): boolean {
   const comparer = encrypt(toCompare)[1]
   return comparer === msg ? (msg === comparer ? true : false) : false
+}
+
+export function secretCrypt(secret: Prisma.SecretCreateInput) {
+  for (const key in secret) {
+    if (Object.prototype.hasOwnProperty.call(secret, key)) {
+      const property = secret[key as keyof Prisma.SecretCreateInput]
+      if (key.includes('answer')) {
+        const encrypted = typeof property === 'string' ? encrypt(property) : []
+        secret[key as keyof Prisma.SecretCreateInput] = encrypted[1]
+      }
+    }
+  }
+  return secret
 }
