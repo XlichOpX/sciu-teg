@@ -101,6 +101,7 @@ model Receipt {
   id              Int           @id @default(autoincrement())
   personId        Int
   createdAt       DateTime      @default(now())
+  amount          Float         @default(0)
   person          Person        @relation(fields: [personId], references: [id])
   charges         Charge[]
   chargedProducts ProductSale[]
@@ -239,4 +240,9 @@ model Billing {
   product     Product  @relation(fields: [productId], references: [id])
   semester    Semester @relation(fields: [semesterId], references: [id])
   student     Student  @relation(fields: [studentId], references: [id])
+}
+
+model SecretQuestion {
+  id       Int    @id @default(autoincrement())
+  question String @db.VarChar(128)
 }
