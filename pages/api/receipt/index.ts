@@ -16,11 +16,12 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
     case 'GET':
       if (!canUnserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
       // destructuring limit and offset values from query params
-      const { keyword } = query
+      const { keyword, document } = query
       const searchQuery = search(keyword)
       // obtenemos TODOS los productos
 
       const where: Prisma.ReceiptWhereInput = {
+        person: { docNumber: document ? search(document) : document },
         OR: [
           { person: { firstName: searchQuery } },
           { person: { middleName: searchQuery } },
@@ -31,6 +32,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
       const count = await prisma.receipt.count({ where })
       //obtenemos TODOS los recibos
+      // Recibos con información escencial de la persona
       const result = await prisma.receipt.findMany({
         select: {
           amount: true,
