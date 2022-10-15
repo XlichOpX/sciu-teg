@@ -10,16 +10,16 @@ export default withIronSessionApiRoute(productHandler, ironOptions)
 
 async function productHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
-  const { session } = req
   const idValidation = z.preprocess((value) => Number(value), z.number().positive())
 
-  if (!canUnserDo(session, 'READ_PRODUCT')) return res.status(403).send(`Can't read this.`)
-
   const {
+    session,
     body,
     method,
     query: { id }
   } = req
+
+  if (!canUnserDo(session, 'READ_PRODUCT')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
