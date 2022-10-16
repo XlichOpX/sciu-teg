@@ -153,12 +153,6 @@ const Receipts: NextPage = () => {
                 </Td>
               </Tr>
             ))}
-            <Tr>
-              <Td colSpan={3}></Td>
-              <Td textAlign="right" pr={0} fontWeight="bold" borderTop="1px" borderTopColor="black">
-                {receipt.charges.reduce((ac: number, c: any) => ac + c.amount, 0)}
-              </Td>
-            </Tr>
           </Tfoot>
         </Table>
       </TableContainer>
