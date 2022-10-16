@@ -1,5 +1,5 @@
 import { useToast } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   createProduct as createProductSv,
   deleteProduct as deleteProductSv,
@@ -7,20 +7,17 @@ import {
 } from 'services/products'
 import useSWR from 'swr'
 import { GetProductsResponse, ProductInput } from 'types/product'
+import { calcPages } from 'utils/calcPages'
 import { usePagination } from './usePagination'
 
 export const useProducts = ({ itemsPerPage }: { itemsPerPage: number }) => {
-  const [search, setSearch] = useState('')
+  const [search, setSearchState] = useState('')
   const toast = useToast()
 
   const { page, offset, limit, setPage } = usePagination({ itemsPerPage })
   const { data, error, mutate } = useSWR<GetProductsResponse, Error>(
     `/api/product?offset=${offset}&limit=${limit}${search ? `&keyword=${search}` : ''}`
   )
-
-  useEffect(() => {
-    setPage(1)
-  }, [search, setPage])
 
   const createProduct = async (data: ProductInput) => {
     await createProductSv(data)
@@ -51,8 +48,11 @@ export const useProducts = ({ itemsPerPage }: { itemsPerPage: number }) => {
     count: data?.count,
     page,
     setPage,
-    setSearch,
-    pages: data?.count && Math.ceil(data.count / itemsPerPage),
+    setSearch: (search: string) => {
+      setSearchState(search)
+      setPage(1)
+    },
+    pages: data?.count && calcPages(data.count, itemsPerPage),
     error,
     isLoading: !data && !error,
     updateProduct,

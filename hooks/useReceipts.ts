@@ -1,18 +1,26 @@
+import { useState } from 'react'
 import useSWR from 'swr'
+import { calcPages } from 'utils/calcPages'
 import { usePagination } from './usePagination'
 
 export const useReceipts = ({ itemsPerPage }: { itemsPerPage: number }) => {
+  const [search, setSearchState] = useState('')
   const { page, offset, limit, setPage } = usePagination({ itemsPerPage })
   const { data, error } = useSWR<{ count: number; result: any[] }, Error>(
-    `/api/receipt?offset=${offset}&limit=${limit}`
+    `/api/receipt?offset=${offset}&limit=${limit}&keyword=${search}`
   )
+
   return {
     receipts: data?.result,
     count: data?.count,
     error,
     isLoading: !data && !error,
     page,
-    pages: data?.count && Math.ceil(data.count / itemsPerPage),
-    setPage
+    pages: data?.count && calcPages(data.count, itemsPerPage),
+    setPage,
+    setSearch: (search: string) => {
+      setSearchState(search)
+      setPage(1)
+    }
   }
 }

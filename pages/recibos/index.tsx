@@ -6,14 +6,18 @@ import Head from 'next/head'
 import { NextPageWithLayout } from '../_app'
 
 const Receipts: NextPageWithLayout = () => {
-  const { receipts, pages, page, setPage } = useReceipts({ itemsPerPage: 20 })
+  const { receipts, pages, page, setPage, setSearch } = useReceipts({ itemsPerPage: 20 })
   return (
     <>
       <Head>
         <title>Recibos</title>
       </Head>
 
-      <HeadingWithSearch title="Recibos" placeholder="Buscar recibos" />
+      <HeadingWithSearch
+        title="Recibos"
+        placeholder="Buscar recibos"
+        onChange={({ text }) => setSearch(text)}
+      />
 
       {receipts && <ReceiptList receipts={receipts} />}
       {!!pages && pages > 0 && <Pagination page={page} pages={pages} setPage={setPage} />}
