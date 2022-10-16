@@ -17,7 +17,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       if (!canUnserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
       // destructuring limit and offset values from query params
       const { keyword, document } = query
-      const searchQuery = search(keyword)
+      const searchQuery = search<Prisma.StringFilter>(keyword)
       // obtenemos TODOS los productos
 
       const where: Prisma.ReceiptWhereInput = {
