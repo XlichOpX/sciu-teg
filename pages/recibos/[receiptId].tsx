@@ -125,10 +125,10 @@ const Receipts: NextPage = () => {
             {receipt.chargedProducts.map((cp: any) => (
               <Tr key={cp.id}>
                 <Td pl={0}>{cp.product.name}</Td>
-                <Td textAlign="center">{cp.price}</Td>
+                <Td textAlign="center">{cp.price.toFixed(2)}</Td>
                 <Td textAlign="center">{cp.quantity}</Td>
                 <Td pr={0} textAlign="right">
-                  {cp.price * cp.quantity}
+                  {(cp.price * cp.quantity).toFixed(2)}
                 </Td>
               </Tr>
             ))}
@@ -140,7 +140,7 @@ const Receipts: NextPage = () => {
                 TOTAL
               </Td>
               <Td fontWeight="bold" pr={0} textAlign="right">
-                {receipt.amount}
+                {receipt.amount.toFixed(2)}
               </Td>
             </Tr>
             {receipt.charges.map((c: any) => (
@@ -149,7 +149,7 @@ const Receipts: NextPage = () => {
                   {c.paymentMethod.name} - {c.paymentMethod.currency.symbol}
                 </Td>
                 <Td fontWeight="bold" pr={0} textAlign="right">
-                  {c.amount}
+                  {c.amount.toFixed(2)}
                 </Td>
               </Tr>
             ))}
