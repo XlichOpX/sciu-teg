@@ -1,3 +1,4 @@
+import { Alert } from '@chakra-ui/react'
 import { HeadingWithSearch, Pagination } from 'components/app'
 import { BaseLayout } from 'components/layouts'
 import { ReceiptList } from 'components/receipts'
@@ -19,7 +20,8 @@ const Receipts: NextPageWithLayout = () => {
         onChange={({ text }) => setSearch(text)}
       />
 
-      {receipts && <ReceiptList receipts={receipts} />}
+      {receipts && receipts.length > 0 && <ReceiptList receipts={receipts} />}
+      {receipts && receipts.length === 0 && <Alert>No hay resultados...</Alert>}
       {!!pages && pages > 0 && <Pagination page={page} pages={pages} setPage={setPage} />}
     </>
   )
