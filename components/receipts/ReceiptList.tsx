@@ -1,5 +1,4 @@
 import { Table, TableContainer, Tbody, Td, Th, Thead, ThemingProps, Tr } from '@chakra-ui/react'
-import { Pagination } from 'components/app'
 import dayjs from 'dayjs'
 
 export const ReceiptList = ({
@@ -41,7 +40,5 @@ export const ReceiptList = ({
         </Tbody>
       </Table>
     </TableContainer>
-
-    <Pagination />
   </>
 )
