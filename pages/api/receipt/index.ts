@@ -17,7 +17,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       if (!canUnserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
 
       // destructuring limit and offset values from query params
-      const { keyword } = query
+      const { keyword, document } = query
       const searchQuery = stringSearch(keyword)
 
       // obtenemos TODOS los productos
@@ -29,7 +29,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
               { person: { middleName: searchQuery } },
               { person: { secondLastName: searchQuery } },
               { person: { firstLastName: searchQuery } },
-              { id: intSearch(keyword) }
+              { id: intSearch(keyword) || intSearch(document) }
             ]
           }
         : {}
