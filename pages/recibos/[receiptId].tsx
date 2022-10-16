@@ -2,8 +2,10 @@ import {
   Button,
   Container,
   Divider,
+  Flex,
   Heading,
   HStack,
+  Spinner,
   Stack,
   Table,
   TableContainer,
@@ -15,11 +17,25 @@ import {
   Thead,
   Tr
 } from '@chakra-ui/react'
+import dayjs from 'dayjs'
+import { useParameters, useReceipt } from 'hooks'
 import { NextPage } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { BsPrinterFill, BsXLg } from 'react-icons/bs'
 
 const Receipts: NextPage = () => {
+  const router = useRouter()
+  const { receipt } = useReceipt(Number(router.query.receiptId))
+  const { parameters } = useParameters()
+
+  if (!receipt || !parameters)
+    return (
+      <Flex w="100vw" h="100vh" display="flex" alignItems="center" justifyContent="center">
+        <Spinner size="lg" />
+      </Flex>
+    )
+
   const print = () => {
     window.print()
   }
@@ -27,7 +43,7 @@ const Receipts: NextPage = () => {
   return (
     <Container maxW="container.lg" py={4}>
       <Head>
-        <title>Recibo X</title>
+        <title>Recibo {receipt?.id}</title>
       </Head>
 
       <Stack
@@ -50,14 +66,15 @@ const Receipts: NextPage = () => {
             }
           }}
         >
-          Instituto Universitario X <br />
-          RIF: J-12345678-9
+          {parameters.institute}
           <br />
-          Calle cualquiera, Esq. de Nadie
+          RIF: {parameters.rif}
           <br />
-          Un lugar de la mancha
+          {parameters.address}
           <br />
-          Tlfno: 0212 1234567
+          {parameters.population}
+          <br />
+          {parameters.phone}
           <br />
         </Text>
       </Stack>
@@ -73,16 +90,20 @@ const Receipts: NextPage = () => {
           }
         }}
       >
-        <Text>Persona: Yhan Montaño</Text>
-        <Text>Cédula: 29784799</Text>
-        <Text>Fecha: 2022-09-19 20:02:00</Text>
+        <Text>
+          Persona: {receipt.person.firstName} {receipt.person.firstLastName}
+        </Text>
+        <Text>
+          {receipt.person.docType.type}-{receipt.person.docNumber}
+        </Text>
+        <Text>Fecha: {dayjs(receipt.createdAt).format('MM/DD/YYYY h:mm A')}</Text>
       </Stack>
 
       <Divider my={4} />
 
       <HStack as="h1" fontWeight="bold" justify="space-between" align="center">
         <span>RECIBO DE PAGO</span>
-        <span>N° 7</span>
+        <span>N° {receipt.id}</span>
       </HStack>
 
       <Divider my={4} />
@@ -92,31 +113,50 @@ const Receipts: NextPage = () => {
           <Thead>
             <Tr>
               <Th pl={0}>Concepto</Th>
-              <Th>Forma de pago</Th>
+              <Th textAlign="center">Precio</Th>
+              <Th textAlign="center">Cantidad</Th>
               <Th textAlign="right" pr={0}>
-                Monto
+                Total
               </Th>
             </Tr>
           </Thead>
 
           <Tbody>
-            <Tr>
-              <Td pl={0}>Mensualidad</Td>
-              <Td>Efectivo</Td>
-              <Td pr={0} textAlign="right">
-                Bs. 20
-              </Td>
-            </Tr>
+            {receipt.chargedProducts.map((cp: any) => (
+              <Tr key={cp.id}>
+                <Td pl={0}>{cp.product.name}</Td>
+                <Td textAlign="center">{cp.price}</Td>
+                <Td textAlign="center">{cp.quantity}</Td>
+                <Td pr={0} textAlign="right">
+                  {cp.price * cp.quantity}
+                </Td>
+              </Tr>
+            ))}
           </Tbody>
 
           <Tfoot>
             <Tr>
-              <Td></Td>
-              <Td fontWeight="bold" textAlign="right">
+              <Td colSpan={3} pl={0} fontWeight="bold">
                 TOTAL
               </Td>
               <Td fontWeight="bold" pr={0} textAlign="right">
-                Bs. 20
+                {receipt.amount}
+              </Td>
+            </Tr>
+            {receipt.charges.map((c: any) => (
+              <Tr key={c.id}>
+                <Td colSpan={3} fontWeight="bold" pl={6}>
+                  {c.paymentMethod.name} - {c.paymentMethod.currency.symbol}
+                </Td>
+                <Td fontWeight="bold" pr={0} textAlign="right">
+                  {c.amount}
+                </Td>
+              </Tr>
+            ))}
+            <Tr>
+              <Td colSpan={3}></Td>
+              <Td textAlign="right" pr={0} fontWeight="bold" borderTop="1px" borderTopColor="black">
+                {receipt.charges.reduce((ac: number, c: any) => ac + c.amount, 0)}
               </Td>
             </Tr>
           </Tfoot>
