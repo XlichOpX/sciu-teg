@@ -1,12 +1,15 @@
 import { Table, TableContainer, Tbody, Td, Th, Thead, ThemingProps, Tr } from '@chakra-ui/react'
 import { Pagination } from 'components/app'
+import dayjs from 'dayjs'
 
 export const ReceiptList = ({
   size,
-  showIdCol = true
+  showIdCol = true,
+  receipts
 }: {
   size?: ThemingProps<'Table'>['size']
   showIdCol?: boolean
+  receipts: any[]
 }) => (
   <>
     <TableContainer>
@@ -14,23 +17,27 @@ export const ReceiptList = ({
         <Thead>
           <Tr>
             <Th pl={0}>Fecha</Th>
-            <Th>Recibo N°</Th>
-            {showIdCol && <Th>Cédula</Th>}
+            <Th textAlign="center">Recibo N°</Th>
+            {showIdCol && <Th textAlign="center">Cédula</Th>}
             <Th pr={0}>Monto</Th>
           </Tr>
         </Thead>
 
         <Tbody>
-          {Array(20)
-            .fill(1)
-            .map((e, i) => (
-              <Tr key={i}>
-                <Td pl={0}>10/09/2022</Td>
-                <Td>123456</Td>
-                {showIdCol && <Td>29784799</Td>}
-                <Td pr={0}>$40</Td>
-              </Tr>
-            ))}
+          {receipts.map((r) => (
+            <Tr key={r.id}>
+              <Td pl={0}>{dayjs(r.createdAt).format('YYYY/MM/DD')}</Td>
+              <Td textAlign="center">{r.id}</Td>
+              {showIdCol && (
+                <Td textAlign="center">
+                  {r.person.docType.type}-{r.person.docNumber}
+                </Td>
+              )}
+              <Td pr={0} textAlign="right">
+                {r.amount}
+              </Td>
+            </Tr>
+          ))}
         </Tbody>
       </Table>
     </TableContainer>
