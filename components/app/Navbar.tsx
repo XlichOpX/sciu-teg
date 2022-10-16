@@ -25,7 +25,7 @@ const links = [
     text: <MdSettings />
   },
   {
-    href: '/logout',
+    href: '/api/auth/logout',
     title: 'Cerrar sesión',
     text: <MdLogout />
   }
