@@ -34,6 +34,9 @@ model Student {
   careerId          Int
   statusId          Int
   currentSemester   Int
+  createAt          DateTime      @default(now())
+  updateAt          DateTime?
+  updatedStatus     DateTime?
   career            Career        @relation(fields: [careerId], references: [id])
   person            Person        @relation(fields: [personId], references: [id])
   status            StudentStatus @relation(fields: [statusId], references: [id])
@@ -228,18 +231,18 @@ model Permission {
 }
 
 model Billing {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   studentId   Int
   semesterId  Int
   productId   Int
-  isCharged   Boolean  @default(false)
-  createAt    DateTime @default(now())
-  updateAt    DateTime @default(now())
-  productName String   @db.VarChar(64)
+  isCharged   Boolean   @default(false)
+  createAt    DateTime  @default(now())
+  updateAt    DateTime?
+  productName String    @db.VarChar(64)
   amount      Float
-  product     Product  @relation(fields: [productId], references: [id])
-  semester    Semester @relation(fields: [semesterId], references: [id])
-  student     Student  @relation(fields: [studentId], references: [id])
+  product     Product   @relation(fields: [productId], references: [id])
+  semester    Semester  @relation(fields: [semesterId], references: [id])
+  student     Student   @relation(fields: [studentId], references: [id])
 }
 
 model SecretQuestion {
