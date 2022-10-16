@@ -19,17 +19,23 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       const { keyword, document } = query
       const searchQuery = search<Prisma.StringFilter>(keyword)
       // obtenemos TODOS los productos
+      console.log(document)
+      const where: Prisma.ReceiptWhereInput =
+        keyword || document
+          ? {
+              person: {
+                OR: [
+                  { docNumber: search<Prisma.StringFilter>(document) },
+                  { firstName: searchQuery },
+                  { middleName: searchQuery },
+                  { secondLastName: searchQuery },
+                  { firstLastName: searchQuery }
+                ]
+              }
+            }
+          : {}
 
-      const where: Prisma.ReceiptWhereInput = {
-        person: { docNumber: document ? search(document) : document },
-        OR: [
-          { person: { firstName: searchQuery } },
-          { person: { middleName: searchQuery } },
-          { person: { secondLastName: searchQuery } },
-          { person: { firstLastName: searchQuery } }
-        ]
-      }
-
+      console.log(JSON.stringify({ where }))
       const count = await prisma.receipt.count({ where })
       //obtenemos TODOS los recibos
       // Recibos con información escencial de la persona

@@ -14,9 +14,12 @@ export function routePaginate({ limit, offset }: NextApiRequestQuery) {
 export function search<T>(keyword?: string | string[], mode?: Prisma.QueryMode): T | undefined {
   const keyw = Array.isArray(keyword) ? keyword[0] : keyword
 
-  if (!keyw) return undefined
+  console.log({ keyw })
 
-  if (dayjs(keyw).isValid()) return { gte: dayjs(keyw).toDate() } as unknown as T
+  if (typeof keyw === 'undefined') return keyw
+
+  if (dayjs(keyw).isValid() && isNaN(keyw as unknown as number))
+    return { gte: dayjs(keyw).toDate() } as unknown as T
 
   return {
     contains: keyw,
