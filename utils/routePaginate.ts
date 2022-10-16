@@ -14,8 +14,6 @@ export function routePaginate({ limit, offset }: NextApiRequestQuery) {
 export function search<T>(keyword?: string | string[], mode?: Prisma.QueryMode): T | undefined {
   const keyw = Array.isArray(keyword) ? keyword[0] : keyword
 
-  console.log({ keyw })
-
   if (typeof keyw === 'undefined') return keyw
 
   if (dayjs(keyw).isValid() && isNaN(keyw as unknown as number))
@@ -25,4 +23,30 @@ export function search<T>(keyword?: string | string[], mode?: Prisma.QueryMode):
     contains: keyw,
     mode: mode || 'insensitive'
   } as unknown as T
+}
+
+export function dateTimeSearch(keyword?: string | string[]): Prisma.DateTimeFilter | undefined {
+  const keyw = Array.isArray(keyword) ? keyword[0] : keyword
+  if (typeof keyw === 'undefined') return keyw
+  return { gte: dayjs(keyw).toDate() }
+}
+
+export function intSearch(keyword?: string | string[]): Prisma.IntFilter | undefined {
+  const keyw = Array.isArray(keyword) ? keyword[0] : keyword
+  if (typeof keyw === 'undefined' || isNaN(Number(keyw))) return undefined
+  return {
+    equals: Number(keyw)
+  }
+}
+
+export function stringSearch(
+  keyword?: string | string[],
+  mode?: Prisma.QueryMode
+): Prisma.StringFilter | undefined {
+  const keyw = Array.isArray(keyword) ? keyword[0] : keyword
+  if (typeof keyw === 'undefined') return keyw
+  return {
+    contains: keyw,
+    mode: mode || 'insensitive'
+  }
 }

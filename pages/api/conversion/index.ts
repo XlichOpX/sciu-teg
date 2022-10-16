@@ -1,9 +1,9 @@
-import { Conversion, Prisma } from '@prisma/client'
+import { Conversion } from '@prisma/client'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { canUnserDo } from 'utils/checkPermissions'
-import { routePaginate, search } from 'utils/routePaginate'
+import { dateTimeSearch, routePaginate } from 'utils/routePaginate'
 import prisma from '../../../lib/prisma'
 
 // GET|POST /api/conversion
@@ -17,7 +17,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       try {
         const { after } = query
 
-        const where = { date: search<Prisma.DateTimeFilter>(after) }
+        const where = { date: dateTimeSearch(after) }
 
         //obtenemos TODAS las conversiones
         const result = await prisma.conversion.findMany({

@@ -5,7 +5,7 @@ import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { productSchema } from 'schema/productSchema'
 import { canUnserDo } from 'utils/checkPermissions'
-import { routePaginate, search } from 'utils/routePaginate'
+import { routePaginate, stringSearch } from 'utils/routePaginate'
 
 export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
   select: {
@@ -30,7 +30,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
     case 'GET':
       // destructuring limit and offset values from query params
       const { keyword } = query
-      const where = { name: search<Prisma.StringFilter>(keyword) }
+      const where = { name: stringSearch(keyword) }
       // obtenemos TODOS los productos
       const result = await prisma.product.findMany({
         ...productWithCategory,

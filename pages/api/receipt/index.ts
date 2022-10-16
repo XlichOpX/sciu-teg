@@ -4,7 +4,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { canUnserDo } from 'utils/checkPermissions'
-import { routePaginate, search } from 'utils/routePaginate'
+import { intSearch, routePaginate, stringSearch } from 'utils/routePaginate'
 
 // GET|POST /api/receipt
 export default withIronSessionApiRoute(handle, ironOptions)
@@ -15,25 +15,24 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case 'GET':
       if (!canUnserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
+
       // destructuring limit and offset values from query params
-      const { keyword, document } = query
-      const searchQuery = search<Prisma.StringFilter>(keyword)
+      const { keyword } = query
+      const searchQuery = stringSearch(keyword)
+
       // obtenemos TODOS los productos
-      console.log(document)
-      const where: Prisma.ReceiptWhereInput =
-        keyword || document
-          ? {
-              person: {
-                OR: [
-                  { docNumber: search<Prisma.StringFilter>(document) },
-                  { firstName: searchQuery },
-                  { middleName: searchQuery },
-                  { secondLastName: searchQuery },
-                  { firstLastName: searchQuery }
-                ]
-              }
-            }
-          : {}
+      const where: Prisma.ReceiptWhereInput = keyword
+        ? {
+            OR: [
+              { person: { docNumber: searchQuery } },
+              { person: { firstName: searchQuery } },
+              { person: { middleName: searchQuery } },
+              { person: { secondLastName: searchQuery } },
+              { person: { firstLastName: searchQuery } },
+              { id: intSearch(keyword) }
+            ]
+          }
+        : {}
 
       console.log(JSON.stringify({ where }))
       const count = await prisma.receipt.count({ where })
