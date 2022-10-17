@@ -25,7 +25,7 @@ export const ViewReceiptsModal = () => {
           <ModalHeader>Recibos de Fulano</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <ReceiptList showIdCol={false} />
+            <ReceiptList receipts={[]} showIdCol={false} />
           </ModalBody>
 
           <ModalFooter>
