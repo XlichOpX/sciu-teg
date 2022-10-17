@@ -31,12 +31,12 @@ export const CreateConversionModal = () => {
           <ModalCloseButton />
 
           <ModalBody>
-            <ConversionForm />
+            <ConversionForm id="CreateConversionForm" onSubmit={(data) => console.log(data)} />
           </ModalBody>
 
           <ModalFooter>
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton />
+            <SaveButton type="submit" form="CreateConversionForm" />
           </ModalFooter>
         </ModalContent>
       </Modal>
