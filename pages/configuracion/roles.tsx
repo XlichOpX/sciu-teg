@@ -1,5 +1,5 @@
 import { Divider, Flex } from '@chakra-ui/react'
-import { Pagination, SearchInput } from 'components/app'
+import { SearchInput } from 'components/app'
 import { SettingsLayout } from 'components/settings'
 import { CreateRoleModal, RoleList } from 'components/settings/roles'
 import { useRoles } from 'hooks'
@@ -20,8 +20,6 @@ const RoleSettings: NextPageWithLayout = () => {
           <RoleList.Item key={r.id} role={r} />
         ))}
       </RoleList>
-
-      <Pagination />
     </>
   )
 }
