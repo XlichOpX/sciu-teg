@@ -2,11 +2,11 @@ import { Text, VStack } from '@chakra-ui/react'
 import { Conversion } from '@prisma/client'
 import { SimpleBox } from 'components/app'
 import dayjs from 'dayjs'
-import { EditExchangeRateModal } from './EditExchangeRateModal'
+import { EditConversionModal } from './EditConversionModal'
 
-export const ExchangeRatesItem = ({ conversion }: { conversion: Conversion }) => (
+export const ConversionItem = ({ conversion }: { conversion: Conversion }) => (
   <SimpleBox as="li" pos="relative">
-    <EditExchangeRateModal />
+    <EditConversionModal />
 
     <VStack align="stretch">
       <p>

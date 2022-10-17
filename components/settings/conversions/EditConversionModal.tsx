@@ -9,9 +9,9 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import { CancelButton, EditButton, SaveButton } from 'components/app'
-import { ExchangeRateForm } from './ExchangeRateForm'
+import { ConversionForm } from './ConversionForm'
 
-export const EditExchangeRateModal = () => {
+export const EditConversionModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
@@ -27,7 +27,7 @@ export const EditExchangeRateModal = () => {
           <ModalCloseButton />
 
           <ModalBody>
-            <ExchangeRateForm />
+            <ConversionForm />
           </ModalBody>
 
           <ModalFooter>

@@ -11,9 +11,9 @@ import {
 } from '@chakra-ui/react'
 import { CancelButton, SaveButton } from 'components/app'
 import { BsArrowRepeat } from 'react-icons/bs'
-import { ExchangeRateForm } from './ExchangeRateForm'
+import { ConversionForm } from './ConversionForm'
 
-export const UpdateExchangeRateModal = () => {
+export const CreateConversionModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
@@ -31,7 +31,7 @@ export const UpdateExchangeRateModal = () => {
           <ModalCloseButton />
 
           <ModalBody>
-            <ExchangeRateForm />
+            <ConversionForm />
           </ModalBody>
 
           <ModalFooter>
