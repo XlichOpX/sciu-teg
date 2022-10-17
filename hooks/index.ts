@@ -2,6 +2,7 @@
 
 export * from './useBillings'
 export * from './useCategories'
+export * from './useConversions'
 export * from './useCurrencies'
 export * from './usePagination'
 export * from './useParameters'

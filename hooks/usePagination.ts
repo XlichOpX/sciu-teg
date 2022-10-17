@@ -22,7 +22,7 @@ export const usePagination = ({
 
   useLayoutEffect(() => {
     scrollToTop && window.scroll({ top: 0 })
-  }, [scrollToTop])
+  }, [page, scrollToTop])
 
   return {
     offset: (page - 1) * itemsPerPage,

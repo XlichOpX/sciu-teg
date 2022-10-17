@@ -1,12 +1,11 @@
 import { SimpleGrid } from '@chakra-ui/react'
+import { ReactNode } from 'react'
 import { ExchangeRatesItem } from './ExchangeRatesItem'
 
-export const ExchangeRatesList = () => (
+export const ExchangeRatesList = ({ children }: { children: ReactNode }) => (
   <SimpleGrid as="ul" listStyleType="none" minChildWidth="2xs" gap={4}>
-    {Array(12)
-      .fill(1)
-      .map((_, i) => (
-        <ExchangeRatesItem key={i} />
-      ))}
+    {children}
   </SimpleGrid>
 )
+
+ExchangeRatesList.Item = ExchangeRatesItem
