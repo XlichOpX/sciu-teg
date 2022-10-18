@@ -7,14 +7,32 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react'
 import { CancelButton, SaveButton } from 'components/app'
+import { useMatchMutate } from 'hooks'
 import { BsArrowRepeat } from 'react-icons/bs'
-import { ConversionForm } from './ConversionForm'
+import { createConversion } from 'services/conversions'
+import { ConversionForm, ConversionFormSubmitHandler } from './ConversionForm'
 
 export const CreateConversionModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
+  const toast = useToast()
+  const matchMutate = useMatchMutate()
+
+  const onCreate: ConversionFormSubmitHandler = async (data) => {
+    try {
+      await createConversion(data)
+      await matchMutate('^/api/conversion/*')
+      onClose()
+      toast({ status: 'success', description: 'Tasa de cambio actualizada' })
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({ status: 'error', description: 'Ocurrió un error al crear la tasa de cambio' })
+      }
+    }
+  }
 
   return (
     <>
@@ -31,7 +49,7 @@ export const CreateConversionModal = () => {
           <ModalCloseButton />
 
           <ModalBody>
-            <ConversionForm id="CreateConversionForm" onSubmit={(data) => console.log(data)} />
+            <ConversionForm id="CreateConversionForm" onSubmit={onCreate} />
           </ModalBody>
 
           <ModalFooter>
