@@ -22,7 +22,10 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         //obtenemos TODAS las conversiones
         const result = await prisma.conversion.findMany({
           ...routePaginate(query),
-          where
+          where,
+          orderBy: {
+            date: 'asc'
+          }
         })
 
         const count = await prisma.conversion.count({ where })
