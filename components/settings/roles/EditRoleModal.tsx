@@ -1,5 +1,4 @@
 import {
-  Button,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -11,14 +10,15 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { Permission } from '@prisma/client'
-import { CancelButton, EditButton, SaveButton } from 'components/app'
+import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
 import { roleKeysMatcher, useMatchMutate } from 'hooks'
-import { BsTrash } from 'react-icons/bs'
-import { updateRole } from 'services/roles'
+import { useState } from 'react'
+import { deleteRole, updateRole } from 'services/roles'
 import { RoleForm, RoleFormSubmitHandler } from './RoleForm'
 
 export const EditRoleModal = ({ role }: { role: any }) => {
   const { onOpen, isOpen, onClose } = useDisclosure()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const permissions = role.permissions.map((p: Permission) => ({
     value: p.id,
@@ -31,6 +31,7 @@ export const EditRoleModal = ({ role }: { role: any }) => {
 
   const onUpdate: RoleFormSubmitHandler = async (data) => {
     const permissions = data.permissions.map((p) => ({ id: p.value }))
+    setIsSubmitting(true)
     try {
       await updateRole(role.id, { ...data, permissions: { set: permissions } })
       await matchMutate(roleKeysMatcher)
@@ -38,6 +39,22 @@ export const EditRoleModal = ({ role }: { role: any }) => {
       toast({ status: 'success', description: 'Rol actualizado' })
     } catch {
       toast({ status: 'error', description: 'Ocurrió un error al actualizar el rol' })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const onDelete = async () => {
+    setIsSubmitting(true)
+    try {
+      await deleteRole(role.id)
+      await matchMutate(roleKeysMatcher)
+      onClose()
+      toast({ status: 'success', description: 'Rol eliminado' })
+    } catch {
+      toast({ status: 'error', description: 'Ocurrió un error al actualizar el rol' })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -56,12 +73,15 @@ export const EditRoleModal = ({ role }: { role: any }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button mr="auto" colorScheme="red" variant="outline" title="Eliminar rol">
-              <BsTrash />
-            </Button>
+            <DeleteButton
+              onDelete={onDelete}
+              confirmBody="¿Está seguro de eliminar este rol?"
+              disabled={isSubmitting}
+              mr="auto"
+            />
 
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton type="submit" form="EditRoleModal" />
+            <SaveButton type="submit" form="EditRoleModal" disabled={isSubmitting} />
           </ModalFooter>
         </ModalContent>
       </Modal>
