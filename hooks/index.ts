@@ -2,7 +2,9 @@
 
 export * from './useBillings'
 export * from './useCategories'
+export * from './useConversions'
 export * from './useCurrencies'
+export * from './useMatchMutate'
 export * from './usePagination'
 export * from './useParameters'
 export * from './usePaymentMethods'

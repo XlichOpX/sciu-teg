@@ -1,4 +1,4 @@
-import { Alert, Divider, Flex, Text } from '@chakra-ui/react'
+import { Alert, Divider, Flex } from '@chakra-ui/react'
 import { Pagination, SearchInput } from 'components/app'
 import { BaseLayout } from 'components/layouts'
 import { CreateProductModal, Placeholder, ProductItem, ProductList } from 'components/products'
@@ -49,14 +49,14 @@ const Products: NextPageWithLayout = () => {
             ))}
           </ProductList>
 
+          {products.length === 0 && <Alert>Sin resultados...</Alert>}
+
           {!!pages && pages > 0 && (
             <>
               <Divider my={4} />
               <Pagination page={page} setPage={setPage} pages={pages} />
             </>
           )}
-
-          {products.length === 0 && <Text textAlign="center">No hay productos...</Text>}
         </>
       )}
     </>

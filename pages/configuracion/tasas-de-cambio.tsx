@@ -1,24 +1,36 @@
-import { Divider } from '@chakra-ui/react'
+import { Alert, Divider } from '@chakra-ui/react'
 import { Pagination } from 'components/app'
 import { SettingsLayout } from 'components/settings'
-import { ExchangeRatesList, UpdateExchangeRateModal } from 'components/settings/exchange-rates'
+import { ConversionList, CreateConversionModal } from 'components/settings/conversions'
+import { useConversions } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
-const ExchangeRatesSettings: NextPageWithLayout = () => {
+const ConversionsSettings: NextPageWithLayout = () => {
+  const { conversions, error, page, pages, setPage } = useConversions({ itemsPerPage: 21 })
   return (
     <>
-      <UpdateExchangeRateModal />
+      <CreateConversionModal />
       <Divider my={4} />
 
-      <ExchangeRatesList />
+      <ConversionList>
+        {conversions?.map((c) => (
+          <ConversionList.Item key={c.id} conversion={c} />
+        ))}
+      </ConversionList>
 
-      <Pagination />
+      {conversions && <Pagination page={page} pages={pages} setPage={setPage} />}
+
+      {error && (
+        <Alert status="error" my={4}>
+          {error.message}
+        </Alert>
+      )}
     </>
   )
 }
 
-ExchangeRatesSettings.getLayout = (page) => (
+ConversionsSettings.getLayout = (page) => (
   <SettingsLayout title="Tasas de cambio">{page}</SettingsLayout>
 )
 
-export default ExchangeRatesSettings
+export default ConversionsSettings

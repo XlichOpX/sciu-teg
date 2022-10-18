@@ -7,14 +7,32 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react'
 import { CancelButton, SaveButton } from 'components/app'
+import { useMatchMutate } from 'hooks'
 import { BsArrowRepeat } from 'react-icons/bs'
-import { ExchangeRateForm } from './ExchangeRateForm'
+import { createConversion } from 'services/conversions'
+import { ConversionForm, ConversionFormSubmitHandler } from './ConversionForm'
 
-export const UpdateExchangeRateModal = () => {
+export const CreateConversionModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
+  const toast = useToast()
+  const matchMutate = useMatchMutate()
+
+  const onCreate: ConversionFormSubmitHandler = async (data) => {
+    try {
+      await createConversion(data)
+      await matchMutate('^/api/conversion/*')
+      onClose()
+      toast({ status: 'success', description: 'Tasa de cambio actualizada' })
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({ status: 'error', description: 'Ocurrió un error al crear la tasa de cambio' })
+      }
+    }
+  }
 
   return (
     <>
@@ -31,12 +49,12 @@ export const UpdateExchangeRateModal = () => {
           <ModalCloseButton />
 
           <ModalBody>
-            <ExchangeRateForm />
+            <ConversionForm id="CreateConversionForm" onSubmit={onCreate} />
           </ModalBody>
 
           <ModalFooter>
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton />
+            <SaveButton type="submit" form="CreateConversionForm" />
           </ModalFooter>
         </ModalContent>
       </Modal>

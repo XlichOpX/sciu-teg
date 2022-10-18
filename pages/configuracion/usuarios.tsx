@@ -1,4 +1,4 @@
-import { Divider, Flex } from '@chakra-ui/react'
+import { Alert, Divider, Flex } from '@chakra-ui/react'
 import { SearchInput } from 'components/app'
 import { SettingsLayout } from 'components/settings'
 import { CreateUserModal, UserList } from 'components/settings/users'
@@ -6,7 +6,7 @@ import { useUsers } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
 const UsersSettings: NextPageWithLayout = () => {
-  const { users, setSearch } = useUsers()
+  const { users, error, setSearch } = useUsers()
 
   return (
     <>
@@ -22,6 +22,8 @@ const UsersSettings: NextPageWithLayout = () => {
           <UserList.Item key={u.id} user={u} />
         ))}
       </UserList>
+
+      {error && <Alert status="error">{error.message}</Alert>}
     </>
   )
 }
