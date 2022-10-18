@@ -18,7 +18,7 @@ export const ConversionForm = ({ onSubmit, ...props }: ConversionFormProps) => {
   } = useForm<FormInput>({ resolver: zodResolver(validationSchema) })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} {...props}>
+    <form onSubmit={handleSubmit(onSubmit)} {...props} noValidate>
       <SimpleGrid columns={2} gap={4}>
         <FormControl isInvalid={!!errors.dolar}>
           <FormLabel>Dólar</FormLabel>
@@ -37,6 +37,7 @@ export const ConversionForm = ({ onSubmit, ...props }: ConversionFormProps) => {
 }
 
 type FormInput = z.infer<typeof validationSchema>
+export type ConversionFormSubmitHandler = SubmitHandler<FormInput>
 interface ConversionFormProps extends Omit<ComponentPropsWithoutRef<'form'>, 'onSubmit'> {
-  onSubmit: SubmitHandler<FormInput>
+  onSubmit: ConversionFormSubmitHandler
 }
