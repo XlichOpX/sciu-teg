@@ -4,31 +4,35 @@ import { SimpleBox } from 'components/app'
 import dayjs from 'dayjs'
 import { EditConversionModal } from './EditConversionModal'
 
-export const ConversionItem = ({ conversion }: { conversion: Conversion }) => (
-  <SimpleBox as="li" pos="relative">
-    <EditConversionModal />
+export const ConversionItem = ({ conversion }: { conversion: Conversion }) => {
+  const isRecent = dayjs(conversion.date).add(30, 'minute').isAfter(dayjs())
 
-    <VStack align="stretch">
-      <p>
-        <Text as="span" fontWeight="bold">
-          Fecha:
-        </Text>{' '}
-        {dayjs(conversion.date).format('MM/DD/YYYY h:mm A')}
-      </p>
+  return (
+    <SimpleBox as="li" pos="relative">
+      {isRecent && <EditConversionModal />}
 
-      <p>
-        <Text as="span" fontWeight="bold">
-          Dólar:
-        </Text>{' '}
-        {conversion.dolar.toFixed(2)}
-      </p>
+      <VStack align="stretch">
+        <p>
+          <Text as="span" fontWeight="bold">
+            Fecha:
+          </Text>{' '}
+          {dayjs(conversion.date).format('MM/DD/YYYY h:mm A')}
+        </p>
 
-      <p>
-        <Text as="span" fontWeight="bold">
-          Euro:
-        </Text>{' '}
-        {conversion.euro.toFixed(2)}
-      </p>
-    </VStack>
-  </SimpleBox>
-)
+        <p>
+          <Text as="span" fontWeight="bold">
+            Dólar:
+          </Text>{' '}
+          {conversion.dolar.toFixed(2)}
+        </p>
+
+        <p>
+          <Text as="span" fontWeight="bold">
+            Euro:
+          </Text>{' '}
+          {conversion.euro.toFixed(2)}
+        </p>
+      </VStack>
+    </SimpleBox>
+  )
+}
