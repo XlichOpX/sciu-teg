@@ -10,12 +10,12 @@ const validationSchema = z.object({
   euro: z.number().positive()
 })
 
-export const ConversionForm = ({ onSubmit, ...props }: ConversionFormProps) => {
+export const ConversionForm = ({ onSubmit, defaultValues, ...props }: ConversionFormProps) => {
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<FormInput>({ resolver: zodResolver(validationSchema) })
+  } = useForm<FormInput>({ resolver: zodResolver(validationSchema), defaultValues })
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} {...props} noValidate>
@@ -40,4 +40,5 @@ type FormInput = z.infer<typeof validationSchema>
 export type ConversionFormSubmitHandler = SubmitHandler<FormInput>
 interface ConversionFormProps extends Omit<ComponentPropsWithoutRef<'form'>, 'onSubmit'> {
   onSubmit: ConversionFormSubmitHandler
+  defaultValues?: FormInput
 }

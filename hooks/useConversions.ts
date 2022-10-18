@@ -16,3 +16,5 @@ export const useConversions = ({ itemsPerPage = 20 } = {}) => {
     pages: data?.count && calcPages(data.count, itemsPerPage)
   }
 }
+
+export const conversionKeysMatcher = '^/api/conversion/*'

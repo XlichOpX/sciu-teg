@@ -9,7 +9,7 @@ export const ConversionItem = ({ conversion }: { conversion: Conversion }) => {
 
   return (
     <SimpleBox as="li" pos="relative">
-      {isRecent && <EditConversionModal />}
+      {isRecent && <EditConversionModal conversion={conversion} />}
 
       <VStack align="stretch">
         <p>
