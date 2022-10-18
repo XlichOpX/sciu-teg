@@ -7,3 +7,5 @@ export const useRoles = () => {
   const { data, error } = useSWR<Role[], Error>('/api/role')
   return { roles: data?.filter((r) => r.name.toLowerCase().includes(search)), error, setSearch }
 }
+
+export const roleKeysMatcher = '^/api/role*'
