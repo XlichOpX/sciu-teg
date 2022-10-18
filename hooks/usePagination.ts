@@ -29,8 +29,9 @@ export const usePagination = ({
     limit: itemsPerPage,
     page,
     setPage: (page: number) => {
-      router.query.page = page.toString()
-      router.push(router)
+      const url = new URL(window.location.origin + router.asPath)
+      url.searchParams.set('page', page.toString())
+      router.push(url)
     }
   }
 }
