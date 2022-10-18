@@ -24,7 +24,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           ...routePaginate(query),
           where,
           orderBy: {
-            date: 'asc'
+            date: 'desc'
           }
         })
 
