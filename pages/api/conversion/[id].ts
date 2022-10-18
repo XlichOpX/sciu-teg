@@ -28,6 +28,12 @@ export default async function conversionHandler(req: NextApiRequest, res: NextAp
       break
     case 'PUT':
       //actualizamos a UNA conversión
+      const conversionToUpdate = await prisma.conversion.findFirst({ where: { id: Number(id) } })
+
+      if (!conversionToUpdate) return res.status(404).end(`Conversion not found`)
+
+      if (dayjs(conversionToUpdate.date).add(30, 'minutes') < dayjs())
+        res.status(404).end(`Can't Conversion update`)
       const updateConversion: Conversion = await prisma.conversion.update({
         data: {
           ...body
@@ -36,9 +42,6 @@ export default async function conversionHandler(req: NextApiRequest, res: NextAp
           id: Number(id)
         }
       })
-      if (!updateConversion) res.status(404).end(`Conversion not found`)
-      if (dayjs(updateConversion.date).add(30, 'minutes') < dayjs())
-        res.status(404).end(`Can't Conversion update`)
       res.status(201).send(updateConversion || {})
       break
     case 'DELETE':
