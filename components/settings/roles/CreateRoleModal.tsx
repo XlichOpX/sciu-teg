@@ -1,7 +1,4 @@
 import {
-  FormControl,
-  FormLabel,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -10,14 +7,29 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
-  VStack
+  useToast
 } from '@chakra-ui/react'
-
-import { Select } from 'chakra-react-select'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
+import { roleKeysMatcher, useMatchMutate } from 'hooks'
+import { createRole } from 'services/roles'
+import { RoleForm, RoleFormSubmitHandler } from './RoleForm'
 
 export const CreateRoleModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
+  const toast = useToast()
+  const matchMutate = useMatchMutate()
+
+  const onCreate: RoleFormSubmitHandler = async (data) => {
+    const permissions = data.permissions.map((p) => ({ id: p.value }))
+    try {
+      await createRole({ ...data, permissions: { connect: permissions } })
+      await matchMutate(roleKeysMatcher)
+      onClose()
+      toast({ status: 'success', description: 'Rol creado' })
+    } catch {
+      toast({ status: 'error', description: 'Ocurrió un error al crear el rol' })
+    }
+  }
 
   return (
     <>
@@ -25,39 +37,19 @@ export const CreateRoleModal = () => {
         Crear rol
       </CreateButton>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
-            <h2>Crear rol</h2>
-          </ModalHeader>
+          <ModalHeader>Crear rol</ModalHeader>
           <ModalCloseButton />
 
           <ModalBody>
-            <VStack as="form" align="stretch" autoComplete="off">
-              <FormControl>
-                <FormLabel>Nombre del rol</FormLabel>
-                <Input />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Permisos</FormLabel>
-                <Select
-                  placeholder="Seleccionar permisos..."
-                  isMulti
-                  options={[
-                    { value: 'x', label: 'Permiso X' },
-                    { value: 'y', label: 'Permiso Y' },
-                    { value: 'z', label: 'Permiso Z' }
-                  ]}
-                />
-              </FormControl>
-            </VStack>
+            <RoleForm id="CreateRoleForm" onSubmit={onCreate} />
           </ModalBody>
 
           <ModalFooter>
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton />
+            <SaveButton type="submit" form="CreateRoleForm" />
           </ModalFooter>
         </ModalContent>
       </Modal>

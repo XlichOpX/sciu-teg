@@ -17,4 +17,4 @@ export const useConversions = ({ itemsPerPage = 20 } = {}) => {
   }
 }
 
-export const conversionKeysMatcher = '^/api/conversion/*'
+export const conversionKeysMatcher = '^/api/conversion*'

@@ -5,7 +5,7 @@ import { EditRoleModal } from './EditRoleModal'
 
 export const RoleItem = ({ role }: { role: Role }) => (
   <SimpleBox as="li" pos="relative">
-    <EditRoleModal name={role.name} />
+    <EditRoleModal role={role} />
     <Heading as="h2" size="sm" mb={2}>
       {role.name}
     </Heading>
