@@ -16,6 +16,7 @@ import { NextPageWithLayout } from 'pages/_app'
 import { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { parametersSchema } from 'schema/parametersSchema'
+import { createParameters } from 'services/parameters'
 
 const GeneralSettings: NextPageWithLayout = () => {
   const { parameters, updateParameters } = useParameters()
@@ -32,9 +33,10 @@ const GeneralSettings: NextPageWithLayout = () => {
   }, [parameters, reset])
 
   const onSubmit: SubmitHandler<Parameters> = async (data) => {
-    if (!parameters) return
-    console.log({ isDirty })
     if (!isDirty) return
+    if (!parameters) {
+      return await createParameters(data)
+    }
     await updateParameters(parameters.id, data)
   }
 
