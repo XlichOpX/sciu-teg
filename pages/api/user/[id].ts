@@ -1,11 +1,11 @@
 import { User } from '@prisma/client'
-import { withIronSessionApiRoute } from 'iron-session/next/dist'
+import { withIronSessionApiRoute } from 'iron-session/next'
 import { encrypt, secretCrypt } from 'lib/crypter'
 import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { canUnserDo } from 'utils/checkPermissions'
 import z from 'zod'
-import prisma from '../../../lib/prisma'
 
 export default withIronSessionApiRoute(userHandler, ironOptions)
 
