@@ -57,13 +57,13 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
   const semester = await prisma.semester.findFirst({ orderBy: { endDate: 'desc' } })
   if (!semester) return res.status(404).end(`Current Semester not found`)
 
-  const where: Prisma.BillingWhereInput = {
-    student: { id: { equals: student?.id } },
-    semesterId: { equals: semester?.id }
-  }
-
   // Contamos si existen cobros efectuados al semestre actual
-  const billingCount = await prisma.billing.count({ where })
+  const billingCount = await prisma.billing.count({
+    where: {
+      student: { id: { equals: student?.id } },
+      semesterId: { equals: semester?.id }
+    }
+  })
 
   const monthsOfSemester = semester ? calculateMonths(semester) : 0
   // Obtenemos el producto 'mensualidad' de la base de datos
@@ -199,7 +199,7 @@ function constructBilling(
   student: Student,
   semester: Semester,
   productName: string,
-  dateToPay: Date
+  dateToPay: Date | null
 ) {
   return {
     amount: product.price,
