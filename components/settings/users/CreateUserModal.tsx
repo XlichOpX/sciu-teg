@@ -16,9 +16,11 @@ import {
 } from '@chakra-ui/react'
 import { Select } from 'chakra-react-select'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
+import { useRoles } from 'hooks'
 
 export const CreateUserModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
+  const { selectOptions } = useRoles()
 
   return (
     <>
@@ -77,15 +79,7 @@ export const CreateUserModal = () => {
 
               <FormControl>
                 <FormLabel>Roles</FormLabel>
-                <Select
-                  placeholder="Seleccionar roles..."
-                  isMulti
-                  options={[
-                    { value: 'admin', label: 'Admin' },
-                    { value: 'plebeyo', label: 'Plebeyo' },
-                    { value: 'don-nadie', label: 'Don Nadie' }
-                  ]}
-                />
+                <Select placeholder="Seleccionar roles..." isMulti options={selectOptions} />
               </FormControl>
             </VStack>
           </ModalBody>
