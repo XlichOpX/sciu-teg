@@ -33,6 +33,7 @@ const GeneralSettings: NextPageWithLayout = () => {
 
   const onSubmit: SubmitHandler<Parameters> = async (data) => {
     if (!parameters) return
+    console.log({ isDirty })
     if (!isDirty) return
     await updateParameters(parameters.id, data)
   }
@@ -43,7 +44,12 @@ const GeneralSettings: NextPageWithLayout = () => {
         Datos de la Institución
       </Heading>
 
-      <VStack as="form" align="stretch" gap={4} onSubmit={handleSubmit(onSubmit)}>
+      <VStack
+        as="form"
+        align="stretch"
+        gap={4}
+        onSubmit={handleSubmit(onSubmit, (error) => console.log(error))}
+      >
         <SimpleGrid columns={[1, 2]} gap={4}>
           <FormControl isInvalid={!!errors.institute}>
             <FormLabel>Nombre</FormLabel>
