@@ -1,4 +1,4 @@
-import { Box, Button, Container, Link, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, Container, Link, useColorModeValue, useDisclosure } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { MdLogout, MdMenu, MdSettings } from 'react-icons/md'
 
@@ -33,9 +33,10 @@ const links = [
 
 export const Navbar = () => {
   const { getButtonProps, getDisclosureProps, isOpen, onClose } = useDisclosure()
+  const bg = useColorModeValue('white', 'gray.800')
 
   return (
-    <Box as="nav" shadow="base" pos="sticky" top={0} bgColor="white" zIndex={20}>
+    <Box as="nav" shadow="base" pos="sticky" top={0} bgColor={bg} zIndex={20}>
       <Container
         maxW="container.xl"
         display="flex"
