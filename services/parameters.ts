@@ -7,3 +7,10 @@ export async function updateParameters(id: number, data: Parameters) {
     body: data
   })
 }
+
+export async function createParameters(data: Parameters) {
+  await fetch(`/api/parameters`, {
+    method: 'POST',
+    body: data
+  })
+}
