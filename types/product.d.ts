@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
+import { productWithCategory } from 'prisma/queries'
 import { productSchema } from 'schema/productSchema'
-import { productWithCategory } from 'pages/api/product'
 import { z } from 'zod'
 // select base para las query de producto, sirve además para generar el tipo
 

@@ -1,22 +1,11 @@
-import { Prisma } from '@prisma/client'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { productWithCategory } from 'prisma/queries'
 import { productSchema } from 'schema/productSchema'
 import { canUnserDo } from 'utils/checkPermissions'
 import { routePaginate, stringSearch } from 'utils/routePaginate'
-
-export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
-  select: {
-    id: true,
-    name: true,
-    stock: true,
-    price: true,
-    categoryId: true,
-    category: { select: { name: true } }
-  }
-})
 
 // GET|POST /api/product
 export default withIronSessionApiRoute(handle, ironOptions)
