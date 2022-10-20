@@ -8,6 +8,7 @@ import {
   Thead,
   ThemingProps,
   Tr,
+  useColorModeValue,
   VisuallyHidden
 } from '@chakra-ui/react'
 import dayjs from 'dayjs'
@@ -21,8 +22,10 @@ export const ReceiptList = ({
   size?: ThemingProps<'Table'>['size']
   showIdCol?: boolean
   receipts: any[]
-}) => (
-  <>
+}) => {
+  const hoverColor = useColorModeValue('gray.50', 'whiteAlpha.100')
+
+  return (
     <TableContainer>
       <Table size={size}>
         <Thead>
@@ -36,7 +39,7 @@ export const ReceiptList = ({
 
         <Tbody>
           {receipts.map((r) => (
-            <Tr key={r.id} pos="relative" _hover={{ backgroundColor: 'gray.50' }}>
+            <Tr key={r.id} pos="relative" _hover={{ backgroundColor: hoverColor }}>
               <Td pl={0}>{dayjs(r.createdAt).format('YYYY/MM/DD')}</Td>
               <Td textAlign="center">
                 {r.id}
@@ -59,5 +62,5 @@ export const ReceiptList = ({
         </Tbody>
       </Table>
     </TableContainer>
-  </>
-)
+  )
+}
