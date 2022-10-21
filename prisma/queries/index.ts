@@ -10,3 +10,19 @@ export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
     category: { select: { name: true } }
   }
 })
+
+export const receiptWithPerson = Prisma.validator<Prisma.ReceiptArgs>()({
+  select: {
+    amount: true,
+    createdAt: true,
+    id: true,
+    person: {
+      select: {
+        docType: { select: { type: true } },
+        docNumber: true,
+        firstName: true,
+        firstLastName: true
+      }
+    }
+  }
+})
