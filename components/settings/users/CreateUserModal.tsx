@@ -1,7 +1,4 @@
 import {
-  FormControl,
-  FormLabel,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -9,25 +6,42 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  SimpleGrid,
-  StackDivider,
   useDisclosure,
-  VStack
+  useToast
 } from '@chakra-ui/react'
-import { Select } from 'chakra-react-select'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
-import { useRoles } from 'hooks'
+import { useMatchMutate, userKeysMatcher } from 'hooks'
+import { useState } from 'react'
+import { createUser } from 'services/users'
+import { UserForm, UserFormSubmitHandler } from './UserForm'
 
 export const CreateUserModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { selectOptions } = useRoles()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const toast = useToast()
+  const matchMutate = useMatchMutate()
+
+  const onCreate: UserFormSubmitHandler = async (data) => {
+    setIsSubmitting(true)
+    try {
+      await createUser(data)
+      await matchMutate(userKeysMatcher)
+      toast({ status: 'success', description: 'Usuario creado con éxito' })
+      onClose()
+    } catch {
+      toast({ status: 'error', description: 'Ocurrió un error al crear el usuario' })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <>
       <CreateButton colorScheme="blue" onClick={onOpen}>
         Crear usuario
       </CreateButton>
-      <Modal isOpen={isOpen} onClose={onClose}>
+
+      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -36,57 +50,12 @@ export const CreateUserModal = () => {
           <ModalCloseButton />
 
           <ModalBody>
-            <VStack as="form" align="stretch" divider={<StackDivider />} autoComplete="off">
-              <SimpleGrid columns={[1, 2]} gap={4}>
-                <FormControl>
-                  <FormLabel>Nombre de usuario</FormLabel>
-                  <Input />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Contraseña</FormLabel>
-                  <Input type="password" autoComplete="new-password" />
-                </FormControl>
-              </SimpleGrid>
-
-              <SimpleGrid columns={[1, 2]} gap={4}>
-                <FormControl>
-                  <FormLabel>Pregunta #1</FormLabel>
-                  <Input />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Respuesta</FormLabel>
-                  <Input type="password" />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Pregunta #2</FormLabel>
-                  <Input />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Respuesta</FormLabel>
-                  <Input type="password" />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Pregunta #3</FormLabel>
-                  <Input />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Respuesta</FormLabel>
-                  <Input type="password" />
-                </FormControl>
-              </SimpleGrid>
-
-              <FormControl>
-                <FormLabel>Roles</FormLabel>
-                <Select placeholder="Seleccionar roles..." isMulti options={selectOptions} />
-              </FormControl>
-            </VStack>
+            <UserForm onSubmit={onCreate} id="CreateUserForm" />
           </ModalBody>
 
           <ModalFooter>
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton />
+            <SaveButton type="submit" form="CreateUserForm" disabled={isSubmitting} />
           </ModalFooter>
         </ModalContent>
       </Modal>

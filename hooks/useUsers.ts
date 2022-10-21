@@ -7,3 +7,5 @@ export const useUsers = () => {
   const { data, error } = useSWR<User[], Error>('/api/user')
   return { users: data?.filter((u) => u.username.toLowerCase().includes(search)), error, setSearch }
 }
+
+export const userKeysMatcher = '^/api/user*'
