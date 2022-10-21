@@ -20,6 +20,7 @@ model Person {
   email          String    @unique @db.VarChar(254)
   cellphone      String?   @db.VarChar(24)
   landline       String    @db.VarChar(24)
+  updatedAt      DateTime? @updatedAt
   address        Address   @relation(fields: [addressId], references: [id])
   docType        DocType   @relation(fields: [docTypeId], references: [id])
   client         Client?
@@ -34,9 +35,9 @@ model Student {
   careerId          Int
   statusId          Int
   currentSemester   Int
-  createAt          DateTime      @default(now())
-  updateAt          DateTime?
   updatedStatus     DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime?     @updatedAt
   career            Career        @relation(fields: [careerId], references: [id])
   person            Person        @relation(fields: [personId], references: [id])
   status            StudentStatus @relation(fields: [statusId], references: [id])
@@ -48,13 +49,17 @@ model Client {
   id           Int        @id @default(autoincrement())
   occupationId Int
   personId     Int        @unique
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime?  @updatedAt
   occupation   Occupation @relation(fields: [occupationId], references: [id])
   person       Person     @relation(fields: [personId], references: [id])
 }
 
 model Occupation {
-  id        Int      @id @default(autoincrement())
-  ocupation String   @db.VarChar(40)
+  id        Int       @id @default(autoincrement())
+  ocupation String    @db.VarChar(40)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
   clients   Client[]
 }
 
@@ -62,15 +67,19 @@ model StudentStatus {
   id          Int       @id @default(autoincrement())
   status      String    @db.VarChar(30)
   description String    @db.VarChar(64)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
   students    Student[]
 }
 
 model Enrollment {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   semesterId Int
   studentId  Int
-  semester   Semester @relation(fields: [semesterId], references: [id])
-  student    Student  @relation(fields: [studentId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
+  semester   Semester  @relation(fields: [semesterId], references: [id])
+  student    Student   @relation(fields: [studentId], references: [id])
 }
 
 model Semester {
@@ -78,25 +87,33 @@ model Semester {
   startDate   DateTime
   endDate     DateTime
   semester    String       @db.VarChar(30)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime?    @updatedAt
   billings    Billing[]
   enrollments Enrollment[]
 }
 
 model Career {
-  id       Int       @id @default(autoincrement())
-  career   String    @db.VarChar(40)
-  students Student[]
+  id        Int       @id @default(autoincrement())
+  career    String    @db.VarChar(40)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  students  Student[]
 }
 
 model DocType {
-  id      Int      @id @default(autoincrement())
-  type    String   @db.VarChar(4)
-  persons Person[]
+  id        Int       @id @default(autoincrement())
+  type      String    @db.VarChar(4)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  persons   Person[]
 }
 
 model Address {
-  id           Int      @id @default(autoincrement())
-  shortAddress String   @db.VarChar(120)
+  id           Int       @id @default(autoincrement())
+  shortAddress String    @db.VarChar(120)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
   persons      Person[]
 }
 
@@ -105,6 +122,7 @@ model Receipt {
   personId        Int
   createdAt       DateTime      @default(now())
   amount          Float         @default(0)
+  updatedAt       DateTime?     @updatedAt
   person          Person        @relation(fields: [personId], references: [id])
   charges         Charge[]
   chargedProducts ProductSale[]
@@ -116,25 +134,31 @@ model Product {
   stock        Int
   price        Float
   categoryId   Int
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime?     @updatedAt
   category     Category      @relation(fields: [categoryId], references: [id])
   billings     Billing[]
   productSales ProductSale[]
 }
 
 model ProductSale {
-  id        Int     @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   productId Int
   receiptId Int
   quantity  Int
   price     Float
-  product   Product @relation(fields: [productId], references: [id])
-  receipt   Receipt @relation(fields: [receiptId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  product   Product   @relation(fields: [productId], references: [id])
+  receipt   Receipt   @relation(fields: [receiptId], references: [id])
 }
 
 model Category {
   id          Int       @id @default(autoincrement())
   name        String    @db.VarChar(64)
   description String    @db.VarChar(128)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
   products    Product[]
 }
 
@@ -145,17 +169,21 @@ model Charge {
   date            DateTime
   receiptId       Int
   conversionId    Int
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime?     @updatedAt
   conversion      Conversion    @relation(fields: [conversionId], references: [id])
   paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
   receipt         Receipt       @relation(fields: [receiptId], references: [id])
 }
 
 model PaymentMethod {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(26)
-  description String   @db.VarChar(64)
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(26)
+  description String    @db.VarChar(64)
   currencyId  Int
-  currency    Currency @relation(fields: [currencyId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
+  currency    Currency  @relation(fields: [currencyId], references: [id])
   charges     Charge[]
 }
 
@@ -163,54 +191,65 @@ model Currency {
   id             Int             @id @default(autoincrement())
   symbol         String          @db.VarChar(4)
   name           String          @db.VarChar(32)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime?       @updatedAt
   paymentMethods PaymentMethod[]
 }
 
 model Conversion {
-  id      Int      @id @default(autoincrement())
-  date    DateTime @default(now())
-  dolar   Float
-  euro    Float
-  charges Charge[]
+  id        Int       @id @default(autoincrement())
+  date      DateTime  @default(now())
+  dolar     Float
+  euro      Float
+  updatedAt DateTime? @updatedAt
+  charges   Charge[]
 }
 
 model Parameters {
-  id         Int    @id @default(autoincrement())
-  institute  String @db.VarChar(128)
-  rif        String @db.VarChar(28)
-  phone      String @db.VarChar(32)
-  population String @db.VarChar(64)
-  address    String @db.VarChar(128)
+  id         Int       @id @default(autoincrement())
+  institute  String    @db.VarChar(128)
+  rif        String    @db.VarChar(28)
+  phone      String    @db.VarChar(32)
+  population String    @db.VarChar(64)
+  address    String    @db.VarChar(128)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
 }
 
 model User {
-  id       Int        @id @default(autoincrement())
-  personId Int        @unique
-  username String     @db.VarChar(32)
-  password String     @db.VarChar
-  secretId Int        @unique
-  statusId Int
-  person   Person     @relation(fields: [personId], references: [id])
-  secret   Secret     @relation(fields: [secretId], references: [id])
-  status   UserStatus @relation(fields: [statusId], references: [id])
-  roles    Role[]
+  id        Int        @id @default(autoincrement())
+  personId  Int        @unique
+  username  String     @db.VarChar(32)
+  password  String     @db.VarChar
+  secretId  Int        @unique
+  statusId  Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?  @updatedAt
+  person    Person     @relation(fields: [personId], references: [id])
+  secret    Secret     @relation(fields: [secretId], references: [id])
+  status    UserStatus @relation(fields: [statusId], references: [id])
+  roles     Role[]
 }
 
 model Secret {
-  id            Int    @id @default(autoincrement())
-  questionOne   String @db.VarChar(128)
-  answerOne     String @db.VarChar(128)
-  questionTwo   String @db.VarChar(128)
-  answerTwo     String @db.VarChar(128)
-  questionThree String @db.VarChar(128)
-  answerThree   String @db.VarChar(128)
+  id            Int       @id @default(autoincrement())
+  questionOne   String    @db.VarChar(128)
+  answerOne     String    @db.VarChar(128)
+  questionTwo   String    @db.VarChar(128)
+  answerTwo     String    @db.VarChar(128)
+  questionThree String    @db.VarChar(128)
+  answerThree   String    @db.VarChar(128)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
   user          User?
 }
 
 model UserStatus {
-  id          Int    @id @default(autoincrement())
-  status      String @db.VarChar(30)
-  description String @db.VarChar(64)
+  id          Int       @id @default(autoincrement())
+  status      String    @db.VarChar(30)
+  description String    @db.VarChar(64)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
   users       User[]
 }
 
@@ -219,14 +258,18 @@ model Role {
   name        String       @db.VarChar(30)
   level       Int
   description String       @db.VarChar(64)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime?    @updatedAt
   permissions Permission[]
   users       User[]
 }
 
 model Permission {
-  id          Int    @id @default(autoincrement())
-  permission  String @db.VarChar(30)
-  description String @db.VarChar(64)
+  id          Int       @id @default(autoincrement())
+  permission  String    @db.VarChar(30)
+  description String    @db.VarChar(64)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
   roles       Role[]
 }
 
@@ -240,12 +283,16 @@ model Billing {
   updateAt    DateTime?
   productName String    @db.VarChar(64)
   amount      Float
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
   product     Product   @relation(fields: [productId], references: [id])
   semester    Semester  @relation(fields: [semesterId], references: [id])
   student     Student   @relation(fields: [studentId], references: [id])
 }
 
 model SecretQuestion {
-  id       Int    @id @default(autoincrement())
-  question String @db.VarChar(128)
+  id        Int       @id @default(autoincrement())
+  question  String    @db.VarChar(128)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
