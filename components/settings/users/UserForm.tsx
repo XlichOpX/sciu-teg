@@ -1,75 +1,68 @@
 import {
-  Divider,
-  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Heading,
   Input,
-  Select,
   SimpleGrid,
-  VStack
+  Stack
 } from '@chakra-ui/react'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Select as RSelect } from 'chakra-react-select'
-import { useDocTypes, useRoles, useUserStatus } from 'hooks'
-import type { SubmitHandler, UseFormRegister } from 'react-hook-form'
-import { Controller, useForm } from 'react-hook-form'
+import { useRoles } from 'hooks'
+import type { SubmitHandler, UseFormReturn } from 'react-hook-form'
+import { Controller } from 'react-hook-form'
 import { userSchema } from 'schema/userSchema'
 import { z } from 'zod'
 
-export type UserFormData = z.infer<typeof userSchema>
+export const userFormSchema = userSchema
+  .omit({ person: true, personId: true })
+  .merge(z.object({ passwordConfirm: z.string() }))
+  .refine((val) => val.password === val.passwordConfirm, {
+    message: 'Las contraseñas no coinciden',
+    path: ['passwordConfirm']
+  })
+export type UserFormData = z.infer<typeof userFormSchema>
 export type UserFormSubmitHandler = SubmitHandler<UserFormData>
 
 interface UserFormProps {
-  onSubmit: UserFormSubmitHandler
+  onSubmit: SubmitHandler<UserFormData>
+  formHook: UseFormReturn<UserFormData>
   id: string
 }
 
-export const UserForm = ({ onSubmit, id }: UserFormProps) => {
+export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
+  const { selectOptions } = useRoles()
+
   const {
-    handleSubmit,
     register,
+    handleSubmit,
     control,
     formState: { errors }
-  } = useForm<UserFormData>({
-    resolver: zodResolver(userSchema)
-  })
-  const { selectOptions } = useRoles()
-  const { userStatus } = useUserStatus()
+  } = formHook
 
   return (
-    <VStack
+    <Stack
+      gap={2}
       as="form"
-      align="stretch"
       onSubmit={handleSubmit(onSubmit, (errors) => console.log(errors))}
       id={id}
-      gap={4}
-      noValidate
     >
-      <Heading as="h3" size="sm">
-        Datos personales
-      </Heading>
-      <PersonInputs register={register} />
+      <FormControl isInvalid={!!errors.username}>
+        <FormLabel>Nombre de usuario</FormLabel>
+        <Input {...register('username')} />
+        <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
+      </FormControl>
 
-      <Divider />
+      <FormControl isInvalid={!!errors.password}>
+        <FormLabel>Contraseña</FormLabel>
+        <Input type="password" autoComplete="new-password" {...register('password')} />
+        <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
+      </FormControl>
 
-      <Heading as="h3" size="sm">
-        Datos del usuario
-      </Heading>
-      <SimpleGrid columns={[1, 2]} gap={4}>
-        <FormControl isInvalid={!!errors.username}>
-          <FormLabel>Nombre de usuario</FormLabel>
-          <Input {...register('username')} />
-          <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
-        </FormControl>
-
-        <FormControl isInvalid={!!errors.password}>
-          <FormLabel>Contraseña</FormLabel>
-          <Input type="password" autoComplete="new-password" {...register('password')} />
-          <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
-        </FormControl>
-      </SimpleGrid>
+      <FormControl isInvalid={!!errors.passwordConfirm}>
+        <FormLabel>Confirmar contraseña</FormLabel>
+        <Input type="password" autoComplete="new-password" {...register('passwordConfirm')} />
+        <FormErrorMessage>{errors.passwordConfirm?.message}</FormErrorMessage>
+      </FormControl>
 
       <SimpleGrid columns={[1, 2]} gap={4}>
         <FormControl isInvalid={!!errors.secret?.questionOne}>
@@ -80,7 +73,7 @@ export const UserForm = ({ onSubmit, id }: UserFormProps) => {
 
         <FormControl isInvalid={!!errors.secret?.answerOne}>
           <FormLabel>Respuesta</FormLabel>
-          <Input type="password" {...register('secret.answerOne')} />
+          <Input {...register('secret.answerOne')} />
           <FormErrorMessage>{errors.secret?.answerOne?.message}</FormErrorMessage>
         </FormControl>
 
@@ -92,7 +85,7 @@ export const UserForm = ({ onSubmit, id }: UserFormProps) => {
 
         <FormControl isInvalid={!!errors.secret?.answerTwo}>
           <FormLabel>Respuesta</FormLabel>
-          <Input type="password" {...register('secret.answerTwo')} />
+          <Input {...register('secret.answerTwo')} />
           <FormErrorMessage>{errors.secret?.answerTwo?.message}</FormErrorMessage>
         </FormControl>
 
@@ -104,9 +97,11 @@ export const UserForm = ({ onSubmit, id }: UserFormProps) => {
 
         <FormControl isInvalid={!!errors.secret?.answerThree}>
           <FormLabel>Respuesta</FormLabel>
-          <Input type="password" {...register('secret.answerThree')} />
+          <Input {...register('secret.answerThree')} />
           <FormErrorMessage>{errors.secret?.answerThree?.message}</FormErrorMessage>
         </FormControl>
+
+        <Input hidden defaultValue={1} {...register('statusId', { valueAsNumber: true })} />
       </SimpleGrid>
 
       <Controller
@@ -126,84 +121,6 @@ export const UserForm = ({ onSubmit, id }: UserFormProps) => {
           </FormControl>
         )}
       />
-
-      <FormControl isInvalid={!!errors.statusId}>
-        <FormLabel>Status</FormLabel>
-        <Select {...register('statusId', { valueAsNumber: true })}>
-          {userStatus?.map((us) => (
-            <option key={us.id} value={us.id}>
-              {us.status}
-            </option>
-          ))}
-        </Select>
-        <FormErrorMessage>{errors.statusId?.message}</FormErrorMessage>
-      </FormControl>
-    </VStack>
-  )
-}
-
-const PersonInputs = ({ register }: { register: UseFormRegister<UserFormData> }) => {
-  const { docTypes } = useDocTypes()
-
-  return (
-    <SimpleGrid columns={[1, 2]} gap={4}>
-      <FormControl>
-        <FormLabel>Primer nombre</FormLabel>
-        <Input {...register('person.firstName')} />
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Segundo nombre</FormLabel>
-        <Input {...register('person.middleName')} />
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Primer apellido</FormLabel>
-        <Input {...register('person.firstLastName')} />
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Segundo apellido</FormLabel>
-        <Input {...register('person.secondLastName')} />
-      </FormControl>
-
-      <div>
-        <FormLabel htmlFor="docNumber">Documento de identidad</FormLabel>
-        <Flex>
-          <FormControl w="33%">
-            <FormLabel hidden>Tipo de documento</FormLabel>
-            <Select
-              {...register('person.docTypeId', { valueAsNumber: true })}
-              borderRightRadius={0}
-            >
-              {docTypes?.map((dt) => (
-                <option key={dt.id} value={dt.id}>
-                  {dt.type}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl id="docNumber">
-            <Input {...register('person.docNumber')} borderLeftRadius={0} />
-          </FormControl>
-        </Flex>
-      </div>
-
-      <FormControl>
-        <FormLabel>Email</FormLabel>
-        <Input type="email" {...register('person.email')} />
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Teléfono</FormLabel>
-        <Input type="tel" {...register('person.landline')} />
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Dirección</FormLabel>
-        <Input {...register('person.address')} />
-      </FormControl>
-    </SimpleGrid>
+    </Stack>
   )
 }
