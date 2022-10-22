@@ -1,6 +1,6 @@
 import { Charge } from '@prisma/client'
-import prisma from '../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import prisma from '../../../lib/prisma'
 
 // GET|POST /api/charge
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
@@ -9,7 +9,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   switch (method) {
     case 'GET':
       //obtenemos TODOS los cargos
-      const charges: Charge[] | null = await prisma.charge.findMany()
+      const charges: Charge[] = await prisma.charge.findMany()
 
       if (!charges) return res.status(404).end(`Charges not found`)
       res.status(200).send(charges)

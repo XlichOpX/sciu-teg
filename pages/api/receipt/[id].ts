@@ -2,6 +2,7 @@ import { Receipt } from '@prisma/client'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { receiptWithAll } from 'prisma/queries'
 import { canUnserDo } from 'utils/checkPermissions'
 import z from 'zod'
 import prisma from '../../../lib/prisma'
@@ -27,45 +28,9 @@ async function receiptHandler(req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case 'GET':
       //obtenemos a UN recibo
+
       const receipt = await prisma.receipt.findFirst({
-        select: {
-          amount: true,
-          chargedProducts: {
-            select: {
-              id: true,
-              price: true,
-              product: { select: { name: true } },
-              quantity: true
-            }
-          },
-          charges: {
-            select: {
-              amount: true,
-              conversion: { select: { dolar: true, euro: true } },
-              id: true,
-              paymentMethod: {
-                select: {
-                  currency: { select: { name: true, symbol: true } },
-                  name: true,
-                  id: true
-                }
-              }
-            }
-          },
-          createdAt: true,
-          id: true,
-          person: {
-            select: {
-              address: { select: { shortAddress: true } },
-              docNumber: true,
-              docType: { select: { type: true } },
-              firstLastName: true,
-              firstName: true,
-              middleName: true,
-              secondLastName: true
-            }
-          }
-        },
+        ...receiptWithAll,
         where: { id: Number(id) }
       })
       if (!receipt) res.status(404).end(`Receipt not found`)

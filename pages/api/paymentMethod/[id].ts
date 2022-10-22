@@ -1,7 +1,7 @@
 import { PaymentMethod } from '@prisma/client'
-import prisma from '../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import z from 'zod'
+import prisma from '../../../lib/prisma'
 
 export default async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
@@ -19,8 +19,8 @@ export default async function paymentMethodHandler(req: NextApiRequest, res: Nex
   switch (method) {
     case 'GET':
       //obtenemos a UN método de pago
-      const paymentMethod: PaymentMethod | null = await prisma.paymentMethod.findFirst({
-        include : {currency : true },
+      const paymentMethod = await prisma.paymentMethod.findFirst({
+        include: { currency: true },
         where: { id: Number(id) }
       })
       if (!paymentMethod) res.status(404).end(`PaymentMethod not found`)
@@ -41,7 +41,9 @@ export default async function paymentMethodHandler(req: NextApiRequest, res: Nex
       break
     case 'DELETE':
       //eliminamos a UN método de pago
-      const delAddress: PaymentMethod = await prisma.paymentMethod.delete({ where: { id: Number(id) } })
+      const delAddress: PaymentMethod = await prisma.paymentMethod.delete({
+        where: { id: Number(id) }
+      })
       res.status(202).send(delAddress)
       break
     default:

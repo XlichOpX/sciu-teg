@@ -1,7 +1,8 @@
 import { Person } from '@prisma/client'
-import prisma from '../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { personWithAllData } from 'prisma/queries'
 import z from 'zod'
+import prisma from '../../../lib/prisma'
 
 export default async function personHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
@@ -19,15 +20,9 @@ export default async function personHandler(req: NextApiRequest, res: NextApiRes
   switch (method) {
     case 'GET':
       //obtenemos a UNA persona
+
       const person: Person | null = await prisma.person.findFirst({
-        include: {
-          address: true,
-          client: true,
-          docType: true,
-          receipts: false,
-          student: true,
-          user: true
-        },
+        ...personWithAllData,
         where: { id: Number(id) }
       })
       if (!person) res.status(404).end(`Person not found`)

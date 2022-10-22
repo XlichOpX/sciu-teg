@@ -1,6 +1,7 @@
 import { PaymentMethod } from '@prisma/client'
-import prisma from '../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { paymentMethodWithConversion } from 'prisma/queries'
+import prisma from '../../../lib/prisma'
 
 // GET|POST /api/paymentMethod
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
@@ -9,8 +10,8 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   switch (method) {
     case 'GET':
       //obtenemos TODOS los métodos de pago
-      const paymentMethod: PaymentMethod[] | null = await prisma.paymentMethod.findMany({
-        include: { currency: { select: { name: true, symbol: true } } }
+      const paymentMethod = await prisma.paymentMethod.findMany({
+        ...paymentMethodWithConversion
       })
 
       if (!paymentMethod) return res.status(404).end(`PaymentMethods not found`)

@@ -1,7 +1,8 @@
 import { Charge } from '@prisma/client'
-import prisma from '../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { chargeWithPaymentMethodAndConversion } from 'prisma/queries'
 import z from 'zod'
+import prisma from '../../../lib/prisma'
 
 export default async function chargeHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
@@ -19,9 +20,9 @@ export default async function chargeHandler(req: NextApiRequest, res: NextApiRes
   switch (method) {
     case 'GET':
       //obtenemos a UN cargo
-      const charge: Charge | null = await prisma.charge.findFirst({
-        where: { id: Number(id) },
-        include : { paymentMethod: true }
+      const charge = await prisma.charge.findFirst({
+        ...chargeWithPaymentMethodAndConversion,
+        where: { id: Number(id) }
       })
       if (!charge) res.status(404).end(`Charge not found`)
       res.status(200).send(charge)

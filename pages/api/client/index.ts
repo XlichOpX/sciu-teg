@@ -1,6 +1,7 @@
 import { Client } from '@prisma/client'
-import prisma from '../../../lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { clientWithPersonAndOccupation } from 'prisma/queries'
+import prisma from '../../../lib/prisma'
 
 // GET|POST /api/client
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
@@ -9,8 +10,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   switch (method) {
     case 'GET':
       //obtenemos TODAS los clientes
-      const clients: Client[] | null = await prisma.client.findMany({
-        include: { person: true, occupation: true }
+
+      const clients: Client[] = await prisma.client.findMany({
+        ...clientWithPersonAndOccupation
       })
 
       if (!clients) return res.status(404).end(`Clients not found`)

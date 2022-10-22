@@ -4,6 +4,7 @@ import dayjs from 'lib/dayjs'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { billing, studentWithPersonCareerAndStatus } from 'prisma/queries'
 import { canUnserDo } from 'utils/checkPermissions'
 import { z } from 'zod'
 // Validate typeof id
@@ -34,21 +35,7 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
 
   //Obtenemos al estudiante a partir de su número de identificación (Document Number)
   const student = await prisma.student.findFirst({
-    include: {
-      person: {
-        select: {
-          firstName: true,
-          firstLastName: true,
-          secondLastName: true,
-          docNumber: true,
-          middleName: true,
-          address: { select: { shortAddress: true } },
-          regDate: true
-        }
-      },
-      career: { select: { career: true } },
-      status: { select: { id: true, status: true } }
-    },
+    ...studentWithPersonCareerAndStatus,
     where: { person: { docNumber: Array.isArray(docNum) ? docNum[0] : docNum } }
   })
   if (!student) return res.status(404).end(`Student not found`)
@@ -108,16 +95,7 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
   if (billingCount === 0 && student.status.id === MATRICULADO) await createBilling()
 
   let billings = await prisma.billing.findMany({
-    select: {
-      id: true,
-      isCharged: true,
-      product: true,
-      productName: true,
-      amount: true,
-      semester: true,
-      createAt: true,
-      updateAt: true
-    },
+    ...billing,
     where: {
       student: { id: { equals: student?.id } },
       isCharged: { equals: false }
@@ -164,16 +142,7 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
   if (latePaymentData.length > 0) await prisma.billing.createMany({ data })
 
   billings = await prisma.billing.findMany({
-    select: {
-      id: true,
-      isCharged: true,
-      product: true,
-      productName: true,
-      amount: true,
-      semester: true,
-      createAt: true,
-      updateAt: true
-    },
+    ...billing,
     where: {
       student: { id: { equals: student?.id } },
       isCharged: { equals: false }

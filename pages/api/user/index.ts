@@ -3,6 +3,7 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { encrypt, secretCrypt } from 'lib/crypter'
 import { ironOptions } from 'lib/ironSession'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { userEssencials } from 'prisma/queries'
 import { canUnserDo } from 'utils/checkPermissions'
 import prisma from '../../../lib/prisma'
 
@@ -21,7 +22,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       case 'GET':
         //obtenemos TODOS los usuarios
         const users = await prisma.user.findMany({
-          select: { id: true, status: true, username: true }
+          ...userEssencials
         })
 
         if (!users) return res.status(404).end(`Users not found`)
