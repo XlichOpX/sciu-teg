@@ -1,6 +1,6 @@
 import { Text } from '@chakra-ui/react'
 import { SimpleBox } from 'components/app'
-import { PaymentMethodInput } from 'types/paymentMethod'
+import { PaymentMethodInput, PaymentMethodWithConversion } from 'types/paymentMethod'
 import { EditPaymentMethodModal } from './EditPaymentMethodModal'
 
 export const PaymentMethodItem = ({
@@ -8,7 +8,7 @@ export const PaymentMethodItem = ({
   onUpdate,
   onDelete
 }: {
-  paymentMethod: any
+  paymentMethod: PaymentMethodWithConversion
   onUpdate: (data: PaymentMethodInput) => Promise<void>
   onDelete: () => Promise<void>
 }) => (

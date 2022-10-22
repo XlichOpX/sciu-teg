@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import NLink from 'next/link'
+import { ReceiptWithPerson } from 'types/receipt'
 
 export const ReceiptList = ({
   size,
@@ -21,7 +22,7 @@ export const ReceiptList = ({
 }: {
   size?: ThemingProps<'Table'>['size']
   showIdCol?: boolean
-  receipts: any[]
+  receipts: ReceiptWithPerson[]
 }) => {
   const hoverColor = useColorModeValue('gray.50', 'whiteAlpha.100')
 

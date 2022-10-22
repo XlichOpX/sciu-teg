@@ -122,7 +122,7 @@ const Receipts: NextPage = () => {
           </Thead>
 
           <Tbody>
-            {receipt.chargedProducts.map((cp: any) => (
+            {receipt.chargedProducts.map((cp) => (
               <Tr key={cp.id}>
                 <Td pl={0}>{cp.product.name}</Td>
                 <Td textAlign="center">{cp.price.toFixed(2)}</Td>
@@ -143,7 +143,7 @@ const Receipts: NextPage = () => {
                 {receipt.amount.toFixed(2)}
               </Td>
             </Tr>
-            {receipt.charges.map((c: any) => (
+            {receipt.charges.map((c) => (
               <Tr key={c.id}>
                 <Td colSpan={3} fontWeight="bold" pl={6}>
                   {c.paymentMethod.name} - {c.paymentMethod.currency.symbol}

@@ -6,11 +6,11 @@ import {
   updatePaymentMethod as updatePaymentMethodSv
 } from 'services/paymentMethods'
 import useSWR from 'swr'
-import { PaymentMethodInput } from 'types/paymentMethod'
+import { PaymentMethodInput, PaymentMethodWithConversion } from 'types/paymentMethod'
 
 export const usePaymentMethods = () => {
   const [search, setSearch] = useState('')
-  const { data, error, mutate } = useSWR<any[], Error>('/api/paymentMethod')
+  const { data, error, mutate } = useSWR<PaymentMethodWithConversion[], Error>('/api/paymentMethod')
   const toast = useToast()
 
   const createPaymentMethod = async (data: PaymentMethodInput) => {

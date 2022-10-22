@@ -1,6 +1,7 @@
 import { Checkbox, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
+import { BillingComparatorArgs } from 'types/billing'
 
-export const Items = ({ billings }: { billings: any[] }) => (
+export const Items = ({ billings }: { billings: BillingComparatorArgs[] }) => (
   <TableContainer>
     <Table>
       <Thead>
@@ -14,8 +15,8 @@ export const Items = ({ billings }: { billings: any[] }) => (
       </Thead>
 
       <Tbody>
-        {billings.map((b, i) => (
-          <Tr key={i}>
+        {billings.map((b) => (
+          <Tr key={b.id}>
             <Td pl={0}>{b.productName}</Td>
             <Td textAlign="center">{b.amount}</Td>
             <Td textAlign="center" pr={0}>

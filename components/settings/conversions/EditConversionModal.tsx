@@ -17,6 +17,7 @@ import { deleteConversion, updateConversion } from 'services/conversions'
 import { ConversionForm, ConversionFormSubmitHandler } from './ConversionForm'
 
 export const EditConversionModal = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   conversion: { id, date, ...defaultValues }
 }: {
   conversion: Conversion
