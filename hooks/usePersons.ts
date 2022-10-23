@@ -12,7 +12,14 @@ export const usePersons = () => {
 
   const selectOptions = data?.result.map((p) => ({
     value: p.id,
-    label: [p.firstName, p.middleName, p.firstLastName, p.secondLastName].join(' ')
+    label: [
+      p.firstName,
+      p.middleName,
+      p.firstLastName,
+      p.secondLastName,
+      '- DI:',
+      p.docNumber
+    ].join(' ')
   }))
 
   return {
