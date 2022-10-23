@@ -5,6 +5,7 @@ import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { NextApiRequestQuery } from 'next/dist/server/api-utils'
 import { receiptWithPerson } from 'prisma/queries'
+import { receiptCreateSchemaInput } from 'schema/receiptSchema'
 import { GetReceiptWithPersonResponse } from 'types/receipt'
 import { canUnserDo } from 'utils/checkPermissions'
 import { intSearch, routePaginate, stringSearch } from 'utils/routePaginate'
@@ -21,8 +22,8 @@ async function handle(
     case 'GET':
       if (!canUnserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
       try {
-        const result = await getReceipts(query, prisma)
-        res.json(result)
+        const response = await getReceipts(query, prisma)
+        res.json(response)
       } catch (error) {
         res.status(500).end(`Hubo un error:\n${JSON.stringify(error, null, 2)}`)
       }
@@ -32,9 +33,104 @@ async function handle(
       if (!canUnserDo(session, 'CREATE_RECEIPT')) return res.status(403).send(`Can't create this.`)
       //creamos UN recibo
       try {
-        const result = await prisma.receipt.create({
-          data: { ...body }
-        })
+        //validate
+
+        const validBody = receiptCreateSchemaInput.safeParse(body)
+        if (!validBody.success) {
+          console.log({ validBody })
+          return res.status(403).end(`Error, not all data send`)
+        }
+
+        // preparamos los 'Productos cobrados'
+        let chargedProducts: Prisma.ProductSaleCreateNestedManyWithoutReceiptInput
+        if (!validBody.data.products /* sí NO hay productos, entraré */) {
+          if (!validBody.data.billings /* Sí NO hay facturas, entraré */) {
+            console.log({ validBody })
+            return res.status(403).send(`Bad Request, not billings or products found`)
+          }
+
+          // Si el if da false, existen billing, entonces los usaremos para crear los cargos.
+          //crear a partir de billing
+          const { billings } = validBody.data
+
+          // Generamos un arreglo de chargeProduct y cambiamos el estado 'isCharged' del 'billing' a true. SIN el Id de Receipt.
+          const chargedProductData: Prisma.ProductSaleCreateManyReceiptInput[] = await Promise.all(
+            billings.map(async (billingId) => {
+              const billing = await prisma.billing.update({
+                data: { isCharged: true },
+                where: { id: billingId },
+                select: { amount: true, productId: true }
+              })
+
+              return {
+                price: billing.amount,
+                productId: billing.productId,
+                billingId: billingId
+              } as Prisma.ProductSaleCreateManyReceiptInput
+            })
+          )
+          chargedProducts = { createMany: { data: chargedProductData } }
+        } else {
+          //en caso de que sí existan los productos.
+          // Creamos a partir de productos
+          const { products } = validBody.data
+
+          // Generamos un arreglo de chargeProduct, buscando la información en la base de datos primero. SIN el Id de Receipt.
+          const chargedProductData: Prisma.ProductSaleCreateManyReceiptInput[] = await Promise.all(
+            products.map(async ({ id, quantity }) => {
+              const product = await prisma.product.findFirst({
+                where: { id }
+              })
+
+              return {
+                price: product?.price,
+                productId: id,
+                quantity
+              } as Prisma.ProductSaleCreateManyReceiptInput
+            })
+          )
+          chargedProducts = { createMany: { data: chargedProductData } }
+        }
+
+        // Preparamos los datos de los cargos a crear/subir con el recibo :D
+
+        const chargesData: Prisma.ChargeCreateManyReceiptInput[] = validBody.data.charges.map(
+          (charge) => {
+            const { amount, paymentMethod } = charge
+            const { conversion, id, metaPayment } = paymentMethod
+            return {
+              amount,
+              conversionId: conversion,
+              paymentMethodId: id,
+              metaPayment
+            } as Prisma.ChargeCreateManyReceiptInput
+          }
+        )
+        const charges: Prisma.ChargeCreateNestedManyWithoutReceiptInput = {
+          create: chargesData
+        }
+
+        // Preparamos el cuerpo para crear el recibo
+        const receiptInput: Prisma.ReceiptCreateArgs = {
+          data: {
+            amount: validBody.data.amount,
+            chargedProducts,
+            personId: validBody.data.person,
+            charges
+          },
+          select: {
+            person: true,
+            amount: true,
+            chargedProducts: true,
+            charges: true,
+            id: true,
+            createdAt: true
+          }
+        }
+
+        // Creamos el recibo
+        const result = await prisma.receipt.create(receiptInput)
+
         res.status(201).send(result)
       } catch (error) {
         if (error instanceof Error) {
@@ -81,3 +177,70 @@ const getReceipts = async (
   console.log(result)
   return { count, result }
 }
+
+/*
+recibimos todos los datos del front 
+necesitamos:
+
+para el recibo:
+- id de la persona
+- monto total del recibo
+
+para cada cargo: 
+- id de cada payment_method
+- monto que se cobró por ese método
+- id del recibo
+- id de la conversión
+- la meta data del payment_method
+
+para cada product_receipt: 
+- id del producto 
+- id del billing
+- monto del billing
+- id del recibo
+- cantidad del producto (si aplica)
+
+validamos su existencia 
+*/
+// podría extraer data de isValid para facilitar la comprensión.
+/*
+body:{
+  amount: float,
+  person: { id : number} | number,
+  product: {
+    id: number,
+    quantity : number | undefined,
+  },
+  billing : number[] | undefined,
+  charge: [{
+    amount : float,
+    payment_method : {
+      id: number,
+      meta_data : object, 
+      conversion: id
+    }
+  }],
+}
+*/
+// utilizar producto para crear los receipt_product
+/*
+casos que manejar: 
+- sí no tiene productos, tiene billing, entonces usar billing para buscar el nombre del producto (mensualidad del mes tal...) y su información
+- si tiene producto y no tieen billing, entonces usar el producto para buscar toda la info requerida
+- si envian un producto y un billing diferentes a usar?
+*/
+/*
+organizamos y mapeamos
+registramos el recibo
+registramos los cargos
+cambiamos el estado de los facturados (billing) a true + creación de la relación entre el billing y el estudiante.
+Devolvemos el recibo como un GET receipt/[id]
+*/
+// const result = await prisma.receipt.create({
+//   data: {
+//     amount,
+//     personId,
+//     charges: { createMany: [{ amount, date, conversionId, paymentMethodId, metaPayment }] },
+//     chargedProducts: { createMany: [{ productId, quantity, price, billingId }] }
+//   }
+// })
