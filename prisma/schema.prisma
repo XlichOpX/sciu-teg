@@ -144,12 +144,14 @@ model Product {
 model ProductSale {
   id        Int       @id @default(autoincrement())
   productId Int
+  billingId Int?
   receiptId Int
-  quantity  Int
+  quantity  Int?
   price     Float
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   product   Product   @relation(fields: [productId], references: [id])
+  billing   Billing?  @relation(fields: [billingId], references: [id])
   receipt   Receipt   @relation(fields: [receiptId], references: [id])
 }
 
@@ -165,8 +167,8 @@ model Category {
 model Charge {
   id              Int           @id @default(autoincrement())
   paymentMethodId Int
+  metaPayment     Json?
   amount          Float
-  date            DateTime
   receiptId       Int
   conversionId    Int
   createdAt       DateTime      @default(now())
@@ -183,6 +185,7 @@ model PaymentMethod {
   currencyId  Int
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
+  metaPayment Json?
   currency    Currency  @relation(fields: [currencyId], references: [id])
   charges     Charge[]
 }
@@ -274,20 +277,21 @@ model Permission {
 }
 
 model Billing {
-  id          Int       @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   studentId   Int
   semesterId  Int
   productId   Int
-  isCharged   Boolean   @default(false)
-  createAt    DateTime  @default(now())
+  isCharged   Boolean       @default(false)
+  createAt    DateTime      @default(now())
   updateAt    DateTime?
-  productName String    @db.VarChar(64)
+  productName String        @db.VarChar(64)
   amount      Float
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt
-  product     Product   @relation(fields: [productId], references: [id])
-  semester    Semester  @relation(fields: [semesterId], references: [id])
-  student     Student   @relation(fields: [studentId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime?     @updatedAt
+  product     Product       @relation(fields: [productId], references: [id])
+  semester    Semester      @relation(fields: [semesterId], references: [id])
+  student     Student       @relation(fields: [studentId], references: [id])
+  ProductSale ProductSale[]
 }
 
 model SecretQuestion {
