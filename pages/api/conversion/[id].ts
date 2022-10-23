@@ -20,7 +20,7 @@ export default async function conversionHandler(req: NextApiRequest, res: NextAp
   switch (method) {
     case 'GET':
       //obtenemos a UNA conversión
-      const conversion: Conversion | null = await prisma.conversion.findFirst({
+      const conversion = await prisma.conversion.findFirst({
         where: { id: Number(id) }
       })
       if (!conversion) res.status(404).end(`Conversion not found`)
