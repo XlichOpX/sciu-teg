@@ -1,9 +1,9 @@
-import { Person } from '@prisma/client'
 import useSWR from 'swr'
+import { PersonListing } from 'types/person'
 
 export const usePersons = () => {
-  const { data, error } = useSWR<Person[], Error>('/api/person')
-  const selectOptions = data?.map((p) => ({
+  const { data, error } = useSWR<{ count: number; result: PersonListing[] }, Error>('/api/person')
+  const selectOptions = data?.result.map((p) => ({
     value: p.id,
     label: p.firstName + ' ' + p.firstLastName
   }))
@@ -11,7 +11,8 @@ export const usePersons = () => {
   return {
     persons: data,
     error,
-    selectOptions
+    selectOptions,
+    count: data?.count
   }
 }
 
