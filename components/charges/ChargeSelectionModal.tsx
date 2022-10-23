@@ -37,7 +37,7 @@ export const ChargeSelectionModal = (props: ButtonProps) => {
         Cobrar selección
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -52,7 +52,7 @@ export const ChargeSelectionModal = (props: ButtonProps) => {
                   <Tr>
                     <Th pl={0}>Producto</Th>
                     <Th textAlign="center">Cantidad</Th>
-                    <Th pr={0} colSpan={2}>
+                    <Th pr={0} textAlign="right" colSpan={2}>
                       Precio
                     </Th>
                   </Tr>
@@ -63,9 +63,9 @@ export const ChargeSelectionModal = (props: ButtonProps) => {
                     .map((_, i) => (
                       <Tr key={i}>
                         <Td pl={0}>Mensualidad #{i + 1}</Td>
-                        <Td>1</Td>
+                        <Td textAlign="center">1</Td>
                         <Td textAlign="right" pr={0}>
-                          $20
+                          20
                         </Td>
                       </Tr>
                     ))}
@@ -76,7 +76,7 @@ export const ChargeSelectionModal = (props: ButtonProps) => {
                       Total
                     </Td>
                     <Td pr={0} textAlign="right">
-                      $60
+                      60
                     </Td>
                   </Tr>
                 </Tfoot>
