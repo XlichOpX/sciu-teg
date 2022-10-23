@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { Select as RSelect } from 'chakra-react-select'
 import { useDocTypes, usePersons } from 'hooks'
+import debounce from 'just-debounce'
 import { Controller, type SubmitHandler, type UseFormReturn } from 'react-hook-form'
 import { personSchema } from 'schema/userSchema'
 import { z } from 'zod'
@@ -41,7 +42,8 @@ export const PersonForm = ({
   } = formHook
 
   const { docTypes } = useDocTypes()
-  const { selectOptions } = usePersons()
+  const { selectOptions, setSearch, isLoading } = usePersons()
+  const debouncedSetSearch = debounce(setSearch, 275)
 
   const isNewPerson = watch('isNewPerson')
 
@@ -62,6 +64,12 @@ export const PersonForm = ({
                 {...field}
                 value={selectOptions?.find((so) => so.value === field.value)}
                 onChange={(newValue) => field.onChange(newValue?.value)}
+                onInputChange={(nv, am) => {
+                  if (am.action === 'input-change') {
+                    debouncedSetSearch(nv)
+                  }
+                }}
+                isLoading={isLoading}
                 placeholder="Buscar persona..."
               />
             )}
