@@ -85,7 +85,7 @@ export const CreateUserModal = () => {
               <TabPanels>
                 <TabPanel>
                   <Checkbox
-                    defaultChecked
+                    defaultChecked={isNewPerson}
                     checked={isNewPerson}
                     onChange={(e) => setIsNewPerson(e.target.checked)}
                     mb={4}
