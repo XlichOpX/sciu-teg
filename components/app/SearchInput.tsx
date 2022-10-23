@@ -1,9 +1,9 @@
 import { Input, InputGroup, InputRightElement } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import debounce from 'just-debounce'
 import type { SubmitHandler } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import { MdSearch } from 'react-icons/md'
-import { debounce } from 'utils/debounce'
 import { z } from 'zod'
 
 const schema = z.object({ text: z.string() })
