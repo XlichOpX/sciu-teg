@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -23,17 +24,18 @@ import { useForm } from 'react-hook-form'
 import { BsArrowRight } from 'react-icons/bs'
 import { createUser } from 'services/users'
 import { PersonForm, PersonFormData, personFormSchema } from './PersonForm'
+import { PersonSelectForm, PersonSelectFormData, personSelectFormSchema } from './PersonSelectForm'
 import { UserForm, UserFormData, userFormSchema, UserFormSubmitHandler } from './UserForm'
 
 export const CreateUserModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
+  const [isNewPerson, setIsNewPerson] = useState(true)
+  const [person, setPerson] = useState<number | PersonFormData>()
   const [formStep, setFormStep] = useState(0)
   const toast = useToast()
   const matchMutate = useMatchMutate()
 
-  const userFormHook = useForm<UserFormData>({
-    resolver: zodResolver(userFormSchema)
-  })
+  const userFormHook = useForm<UserFormData>({ resolver: zodResolver(userFormSchema) })
 
   const personFormHook = useForm<PersonFormData>({
     resolver: zodResolver(personFormSchema),
@@ -41,23 +43,16 @@ export const CreateUserModal = () => {
     mode: 'onChange'
   })
 
+  const personSelectFormHook = useForm<PersonSelectFormData>({
+    resolver: zodResolver(personSelectFormSchema),
+    shouldUnregister: true,
+    mode: 'onChange'
+  })
+
   const onCreate: UserFormSubmitHandler = async (data) => {
-    const isPersonValid = await personFormHook.trigger()
-    if (!isPersonValid) return
-
-    const personData = personFormHook.getValues()
-    let personValue
-
-    if (personData.isNewPerson && personData.person) {
-      personValue = personData.person
-    } else if (personData.personId) {
-      personValue = personData.personId
-    } else {
-      return
-    }
-
+    if (!person) return
     try {
-      await createUser({ ...data, person: personValue })
+      await createUser({ ...data, person })
       await matchMutate(userKeysMatcher)
       toast({ status: 'success', description: 'Usuario creado con éxito' })
       onClose()
@@ -84,16 +79,41 @@ export const CreateUserModal = () => {
             <Tabs index={formStep} onChange={(index) => setFormStep(index)}>
               <TabList>
                 <Tab>1. Datos personales</Tab>
-                <Tab isDisabled={!personFormHook.formState.isValid}>2. Datos de acceso</Tab>
+                <Tab isDisabled={formStep === 0}>2. Datos de acceso</Tab>
               </TabList>
 
               <TabPanels>
                 <TabPanel>
-                  <PersonForm
-                    formHook={personFormHook}
-                    onSubmit={() => setFormStep(1)}
-                    id="PersonForm"
-                  />
+                  <Checkbox
+                    defaultChecked
+                    checked={isNewPerson}
+                    onChange={(e) => setIsNewPerson(e.target.checked)}
+                    mb={4}
+                  >
+                    Es una nueva persona
+                  </Checkbox>
+
+                  {isNewPerson && (
+                    <PersonForm
+                      id="PersonForm"
+                      formHook={personFormHook}
+                      onSubmit={(data) => {
+                        setFormStep(1)
+                        setPerson(data)
+                      }}
+                    />
+                  )}
+
+                  {!isNewPerson && (
+                    <PersonSelectForm
+                      id="PersonIdForm"
+                      formHook={personSelectFormHook}
+                      onSubmit={(data) => {
+                        setFormStep(1)
+                        setPerson(data.personId)
+                      }}
+                    />
+                  )}
                 </TabPanel>
 
                 <TabPanel>
@@ -104,14 +124,14 @@ export const CreateUserModal = () => {
           </ModalBody>
 
           <ModalFooter>
-            <CancelButton mr={3} onClick={onClose} />
+            <CancelButton mr="auto" onClick={onClose} />
 
             {formStep === 0 && (
               <Button
                 colorScheme="blue"
                 leftIcon={<BsArrowRight />}
                 type="submit"
-                form="PersonForm"
+                form={isNewPerson ? 'PersonForm' : 'PersonIdForm'}
               >
                 Siguiente
               </Button>
