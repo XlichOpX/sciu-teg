@@ -9,8 +9,9 @@ import {
   SimpleGrid,
   Stack
 } from '@chakra-ui/react'
+import { Select as RSelect } from 'chakra-react-select'
 import { useDocTypes, usePersons } from 'hooks'
-import { type SubmitHandler, type UseFormReturn } from 'react-hook-form'
+import { Controller, type SubmitHandler, type UseFormReturn } from 'react-hook-form'
 import { personSchema } from 'schema/userSchema'
 import { z } from 'zod'
 
@@ -35,7 +36,8 @@ export const PersonForm = ({
     register,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
+    control
   } = formHook
 
   const { docTypes } = useDocTypes()
@@ -51,24 +53,19 @@ export const PersonForm = ({
 
       <Stack as="form" gap={2} onSubmit={handleSubmit(onSubmit)} id={id}>
         {!isNewPerson && (
-          <FormControl isInvalid={!!errors.personId}>
-            <Select
-              {...register('personId', {
-                valueAsNumber: true
-              })}
-              defaultValue=""
-            >
-              <option value="" disabled>
-                Seleccionar persona existente...
-              </option>
-              {selectOptions?.map((so) => (
-                <option key={so.value} value={so.value}>
-                  {so.label}
-                </option>
-              ))}
-            </Select>
-            <FormErrorMessage>{errors.personId?.message}</FormErrorMessage>
-          </FormControl>
+          <Controller
+            control={control}
+            name="personId"
+            render={({ field }) => (
+              <RSelect
+                options={selectOptions}
+                {...field}
+                value={selectOptions?.find((so) => so.value === field.value)}
+                onChange={(newValue) => field.onChange(newValue?.value)}
+                placeholder="Buscar persona..."
+              />
+            )}
+          />
         )}
 
         {isNewPerson && (
