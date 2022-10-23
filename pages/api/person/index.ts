@@ -1,17 +1,22 @@
 import { Person, Prisma } from '@prisma/client'
+import { withIronSessionApiRoute } from 'iron-session/next/dist'
+import { ironOptions } from 'lib/ironSession'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { personListing } from 'prisma/queries'
+import { canUnserDo } from 'utils/checkPermissions'
 import { routePaginate, stringSearch } from 'utils/routePaginate'
 import prisma from '../../../lib/prisma'
 
 // GET|POST /api/person
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  const { body, method, query } = req
+export default withIronSessionApiRoute(handle, ironOptions)
+async function handle(req: NextApiRequest, res: NextApiResponse) {
+  const { body, method, query, session } = req
 
   switch (method) {
     case 'GET':
+      if (!canUnserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
+      //obtenemos TODAS las personas
       try {
-        //obtenemos TODAS las personas
         const { keyword } = query
         const searchQuery = stringSearch(keyword)
         const where: Prisma.PersonWhereInput = keyword
@@ -42,6 +47,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       }
       break
     case 'POST':
+      if (!canUnserDo(session, 'CREATE_PERSON')) return res.status(403).send(`Can't create this.`)
       //creamos UNA persona
       try {
         const result: Person = await prisma.person.create({
