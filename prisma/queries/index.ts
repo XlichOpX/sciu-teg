@@ -130,3 +130,20 @@ export const userEssencials = Prisma.validator<Prisma.UserArgs>()({
 export const roleWithPermissions = Prisma.validator<Prisma.RoleArgs>()({
   include: { permissions: true }
 })
+
+export const personListing: Prisma.PersonArgs = {
+  select: {
+    id: true,
+    cellphone: true,
+    firstName: true,
+    firstLastName: true,
+    middleName: true,
+    secondLastName: true,
+    student: { select: { id: true } },
+    client: { select: { id: true } },
+    docNumber: true,
+    docType: { select: { type: true } },
+    email: true,
+    address: { select: { shortAddress: true } }
+  }
+}
