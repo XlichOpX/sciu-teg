@@ -1,5 +1,6 @@
 import { Role } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { roleWithPermissions } from 'prisma/queries'
 import prisma from '../../../lib/prisma'
 
 // GET|POST /api/role
@@ -9,7 +10,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   switch (method) {
     case 'GET':
       //obtenemos TODOS los roles
-      const roles: Role[] | null = await prisma.role.findMany({ include: { permissions: true } })
+      const roles = await prisma.role.findMany(roleWithPermissions)
 
       if (!roles) return res.status(404).end(`Roles not found`)
       res.status(200).send(roles)
