@@ -57,6 +57,7 @@ export const receiptWithAll = Prisma.validator<Prisma.ReceiptArgs>()({
       select: {
         id: true,
         price: true,
+        billing: { select: { isCharged: true, productName: true } },
         product: { select: { name: true } },
         quantity: true
       }
