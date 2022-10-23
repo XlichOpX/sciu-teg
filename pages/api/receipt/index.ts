@@ -150,7 +150,7 @@ const getReceipts = async (
   prisma: PrismaClient
 ): Promise<GetReceiptWithPersonResponse> => {
   const { keyword, document } = query
-  const searchQuery = stringSearch(keyword)
+  const searchQuery = stringSearch(keyword) || stringSearch(document)
 
   // obtenemos TODOS los productos
   const where: Prisma.ReceiptWhereInput = keyword
@@ -161,7 +161,7 @@ const getReceipts = async (
           { person: { middleName: searchQuery } },
           { person: { secondLastName: searchQuery } },
           { person: { firstLastName: searchQuery } },
-          { id: intSearch(keyword) || intSearch(document) }
+          { id: intSearch(keyword) }
         ]
       }
     : {}
