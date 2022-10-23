@@ -1,21 +1,21 @@
 import { Divider, Flex } from '@chakra-ui/react'
+import { StudentWithPersonCareerAndStatus } from 'types/student'
 import { ViewReceiptsModal } from './ViewReceiptsModal'
 
 export const StudentInfo = ({
-  name,
-  docNumber,
-  career,
-  status
+  student: {
+    person: { firstName, middleName, firstLastName, secondLastName, docNumber },
+    career: { career },
+    status: { status }
+  }
 }: {
-  name: string
-  docNumber: string
-  career: string
-  status: string
+  student: StudentWithPersonCareerAndStatus
 }) => (
   <>
     <Flex gap={4} wrap="wrap" justifyContent="space-between" alignItems="center">
       <p>
-        Estudiante: {name} / Cédula: {docNumber} / Carrera: {career} / Estado: {status}
+        Estudiante: {[firstName, middleName, firstLastName, secondLastName].join(' ')} / Cédula:{' '}
+        {docNumber} / Carrera: {career} / Estado: {status}
       </p>
       <ViewReceiptsModal />
     </Flex>

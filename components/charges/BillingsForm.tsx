@@ -1,7 +1,7 @@
 import { Checkbox, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { BillingComparatorArgs } from 'types/billing'
 
-export const Items = ({ billings }: { billings: BillingComparatorArgs[] }) => (
+export const BillingsForm = ({ billings }: { billings: BillingComparatorArgs[] }) => (
   <TableContainer>
     <Table>
       <Thead>
