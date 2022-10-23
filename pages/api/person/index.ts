@@ -1,11 +1,11 @@
 import { Person, Prisma } from '@prisma/client'
-import { withIronSessionApiRoute } from 'iron-session/next/dist'
+import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { personListing } from 'prisma/queries'
 import { canUnserDo } from 'utils/checkPermissions'
 import { routePaginate, stringSearch } from 'utils/routePaginate'
-import prisma from '../../../lib/prisma'
 
 // GET|POST /api/person
 export default withIronSessionApiRoute(handle, ironOptions)

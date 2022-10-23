@@ -17,20 +17,25 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      // destructuring limit and offset values from query params
-      const { keyword } = query
-      const where = { name: stringSearch(keyword) }
-      // obtenemos TODOS los productos
-      const result = await prisma.product.findMany({
-        ...productWithCategory,
-        ...routePaginate(query),
-        where
-      })
+      try {
+        // destructuring limit and offset values from query params
+        const { keyword } = query
+        const where = { name: stringSearch(keyword) }
+        // obtenemos TODOS los productos
+        const result = await prisma.product.findMany({
+          ...productWithCategory,
+          ...routePaginate(query),
+          where
+        })
 
-      const count = await prisma.product.count({ where })
+        const count = await prisma.product.count({ where })
 
-      return res.json({ count, result })
-
+        return res.json({ count, result })
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
     case 'POST':
       // creamos UN producto
       if (!canUnserDo(session, 'EDIT_PRODUCT')) return res.status(403).send(`Can't edit this.`)
