@@ -41,20 +41,23 @@ async function handle(
           return res.status(403).end(`Error, not all data send`)
         }
 
+        if (
+          !validBody.data.products &&
+          !validBody.data.billings /* sí NO hay productos y Sí NO hay facturas, daré error */
+        ) {
+          console.log({ validBody })
+          return res.status(403).send(`Bad Request, not billings or products found`)
+        }
         // preparamos los 'Productos cobrados'
-        let chargedProducts: Prisma.ProductSaleCreateNestedManyWithoutReceiptInput
-        if (!validBody.data.products /* sí NO hay productos, entraré */) {
-          if (!validBody.data.billings /* Sí NO hay facturas, entraré */) {
-            console.log({ validBody })
-            return res.status(403).send(`Bad Request, not billings or products found`)
-          }
+        const chargedProductData: Prisma.ProductSaleCreateManyReceiptInput[] = []
 
-          // Si el if da false, existen billing, entonces los usaremos para crear los cargos.
+        if (validBody.data.billings) {
+          // Si el if da true, existen billing, entonces los usaremos para crear los cargos.
           //crear a partir de billing
           const { billings } = validBody.data
 
           // Generamos un arreglo de chargeProduct y cambiamos el estado 'isCharged' del 'billing' a true. SIN el Id de Receipt.
-          const chargedProductData: Prisma.ProductSaleCreateManyReceiptInput[] = await Promise.all(
+          const data = await Promise.all(
             billings.map(async (billingId) => {
               const billing = await prisma.billing.update({
                 data: { isCharged: true },
@@ -69,14 +72,18 @@ async function handle(
               } as Prisma.ProductSaleCreateManyReceiptInput
             })
           )
-          chargedProducts = { createMany: { data: chargedProductData } }
-        } else {
+
+          //concatenamos la data al arreglo externo a la validación
+          chargedProductData.concat(data)
+        }
+
+        if (validBody.data.products /* sí hay productos, entraré */) {
           //en caso de que sí existan los productos.
           // Creamos a partir de productos
           const { products } = validBody.data
 
           // Generamos un arreglo de chargeProduct, buscando la información en la base de datos primero. SIN el Id de Receipt.
-          const chargedProductData: Prisma.ProductSaleCreateManyReceiptInput[] = await Promise.all(
+          const data = await Promise.all(
             products.map(async ({ id, quantity }) => {
               const product = await prisma.product.findFirst({
                 where: { id }
@@ -89,7 +96,7 @@ async function handle(
               } as Prisma.ProductSaleCreateManyReceiptInput
             })
           )
-          chargedProducts = { createMany: { data: chargedProductData } }
+          chargedProductData.concat(data)
         }
 
         // Preparamos los datos de los cargos a crear/subir con el recibo :D
@@ -110,6 +117,9 @@ async function handle(
           create: chargesData
         }
 
+        const chargedProducts: Prisma.ProductSaleCreateNestedManyWithoutReceiptInput = {
+          createMany: { data: chargedProductData }
+        }
         // Preparamos el cuerpo para crear el recibo
         const receiptInput: Prisma.ReceiptCreateArgs = {
           data: {
