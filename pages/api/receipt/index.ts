@@ -176,7 +176,10 @@ const getReceipts = async (
   const result = await prisma.receipt.findMany({
     ...receiptWithPerson,
     ...routePaginate(query),
-    where
+    where,
+    orderBy: {
+      id: 'desc'
+    }
   })
   console.log(result)
   return { count, result }
