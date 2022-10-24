@@ -13,7 +13,6 @@ export function encrypt(msg: string): string[] {
   const k = SECRET
   const hashed = CryptoJS.SHA256(msg).toString()
   const hmached = CryptoJS.HmacSHA256(hashed, k).toString()
-  console.log(k)
   // pure text , SECRET text
   return [hashed, hmached]
 }

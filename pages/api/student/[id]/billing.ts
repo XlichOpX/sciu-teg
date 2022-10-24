@@ -108,9 +108,6 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
       where: { name: { contains: 'Recargo por Retardo', mode: 'insensitive' } }
     })
     if (!latePayment) return res.status(404).end(`Retarded Payment product not found`)
-    console.clear()
-    console.table(billings)
-    console.log(dayjs().format())
     //Validar que tan antiguo es el cobro no pagado.
     const latePaymentData = billings
       .map((billing) => {

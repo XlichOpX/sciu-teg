@@ -37,7 +37,6 @@ async function handle(
 
         const validBody = receiptCreateSchemaInput.safeParse(body)
         if (!validBody.success) {
-          console.log({ validBody })
           return res.status(403).end(`Error, not all data send`)
         }
 
@@ -45,7 +44,6 @@ async function handle(
           !validBody.data.products &&
           !validBody.data.billings /* sí NO hay productos y Sí NO hay facturas, daré error */
         ) {
-          console.log({ validBody })
           return res.status(403).send(`Bad Request, not billings or products found`)
         }
         // preparamos los 'Productos cobrados'
@@ -100,7 +98,6 @@ async function handle(
         }
 
         // Preparamos los datos de los cargos a crear/subir con el recibo :D
-        console.log(chargedProductData)
         const chargesData: Prisma.ChargeCreateManyReceiptInput[] = validBody.data.charges.map(
           (charge) => {
             const { amount, paymentMethod } = charge
@@ -130,8 +127,6 @@ async function handle(
           },
           ...receiptWithAll
         }
-
-        // console.log(JSON.stringify({ receiptInput }, null, 2))
         // Creamos el recibo
         const result = await prisma.receipt.create(receiptInput)
 
@@ -181,7 +176,6 @@ const getReceipts = async (
       id: 'desc'
     }
   })
-  console.log(result)
   return { count, result }
 }
 
