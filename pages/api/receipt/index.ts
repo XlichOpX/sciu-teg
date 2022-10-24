@@ -49,7 +49,7 @@ async function handle(
           return res.status(403).send(`Bad Request, not billings or products found`)
         }
         // preparamos los 'Productos cobrados'
-        const chargedProductData: Prisma.ProductSaleCreateManyReceiptInput[] = []
+        let chargedProductData: Prisma.ProductSaleCreateManyReceiptInput[] = []
 
         if (validBody.data.billings) {
           // Si el if da true, existen billing, entonces los usaremos para crear los cargos.
@@ -74,7 +74,7 @@ async function handle(
           )
 
           //concatenamos la data al arreglo externo a la validación
-          chargedProductData.concat(data)
+          chargedProductData = [...chargedProductData, ...data]
         }
 
         if (validBody.data.products /* sí hay productos, entraré */) {
@@ -96,11 +96,11 @@ async function handle(
               } as Prisma.ProductSaleCreateManyReceiptInput
             })
           )
-          chargedProductData.concat(data)
+          chargedProductData = [...chargedProductData, ...data]
         }
 
         // Preparamos los datos de los cargos a crear/subir con el recibo :D
-
+        console.log(chargedProductData)
         const chargesData: Prisma.ChargeCreateManyReceiptInput[] = validBody.data.charges.map(
           (charge) => {
             const { amount, paymentMethod } = charge
@@ -117,7 +117,7 @@ async function handle(
           create: chargesData
         }
 
-        const chargedProducts: Prisma.ProductSaleCreateNestedManyWithoutReceiptInput = {
+        const chargedProducts = {
           createMany: { data: chargedProductData }
         }
         // Preparamos el cuerpo para crear el recibo
@@ -131,6 +131,7 @@ async function handle(
           ...receiptWithAll
         }
 
+        // console.log(JSON.stringify({ receiptInput }, null, 2))
         // Creamos el recibo
         const result = await prisma.receipt.create(receiptInput)
 
