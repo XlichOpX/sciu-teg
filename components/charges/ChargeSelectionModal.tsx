@@ -1,11 +1,7 @@
 import {
   Button,
   ButtonProps,
-  FormControl,
-  Grid,
-  GridItem,
   Heading,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -13,7 +9,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Select,
   Table,
   TableContainer,
   Tbody,
@@ -26,8 +21,10 @@ import {
   VisuallyHidden
 } from '@chakra-ui/react'
 import { CancelButton, SaveButton } from 'components/app'
+import { useForm } from 'react-hook-form'
 import { BsPlusLg, BsWalletFill } from 'react-icons/bs'
 import { BillingComparatorArgs } from 'types/billing'
+import { ChargesForm, ChargesFormData } from './ChargesForm'
 
 interface ChargeSelectionModalProps extends ButtonProps {
   selectedBillings: BillingComparatorArgs[]
@@ -35,6 +32,8 @@ interface ChargeSelectionModalProps extends ButtonProps {
 
 export const ChargeSelectionModal = ({ selectedBillings, ...props }: ChargeSelectionModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const chargesFormHook = useForm<ChargesFormData>()
 
   return (
     <>
@@ -90,19 +89,7 @@ export const ChargeSelectionModal = ({ selectedBillings, ...props }: ChargeSelec
               Métodos de pago
             </Heading>
 
-            <form>
-              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                <FormControl as={GridItem}>
-                  <Select>
-                    <option>Efectivo</option>
-                  </Select>
-                </FormControl>
-
-                <FormControl as={GridItem}>
-                  <Input placeholder="Monto" />
-                </FormControl>
-              </Grid>
-            </form>
+            <ChargesForm formHook={chargesFormHook} />
 
             <Button mt={4} width="full" size="sm">
               <VisuallyHidden>Agregar método de pago</VisuallyHidden>
