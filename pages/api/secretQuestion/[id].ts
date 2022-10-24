@@ -5,9 +5,9 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { canUnserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
-export default withIronSessionApiRoute(addressHandler, ironOptions)
+export default withIronSessionApiRoute(secretQuestionHandler, ironOptions)
 
-async function addressHandler(req: NextApiRequest, res: NextApiResponse) {
+async function secretQuestionHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
   const idValidation = z.preprocess((value) => Number(value), z.number().positive())
 
@@ -17,20 +17,20 @@ async function addressHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUnserDo(session, 'READ_ADDRESS')) return res.status(403).send(`Can't read this.`)
+  if (!canUnserDo(session, 'READ_SECRETQUESTION')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
 
   switch (method) {
     case 'GET':
-      //obtenemos a UNA dirección
+      //obtenemos a UNA pregunta secreta
       try {
-        const address = await prisma.address.findFirst({
+        const secretQuestion = await prisma.secretQuestion.findFirst({
           where: { id: Number(id) }
         })
-        if (!address) res.status(404).end(`Address not found`)
-        res.status(200).send(address)
+        if (!secretQuestion) res.status(404).end(`SecretQuestion not found`)
+        res.status(200).send(secretQuestion)
       } catch (error) {
         if (error instanceof Error) {
           res.status(400).send(error.message)
@@ -38,15 +38,16 @@ async function addressHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_ADDRESS')) return res.status(403).send(`Can't edit this.`)
-      //actualizamos a UNA dirección
+      if (!canUnserDo(session, 'EDIT_SECRETQUESTION'))
+        return res.status(403).send(`Can't edit this.`)
+      //actualizamos a UNA pregunta secreta
       try {
-        const address = await prisma.address.findFirst({
+        const secretQuestion = await prisma.secretQuestion.findFirst({
           where: { id: Number(id) }
         })
-        if (!address) res.status(404).end(`Address not found`)
+        if (!secretQuestion) res.status(404).end(`SecretQuestion not found`)
 
-        const updateAddress = await prisma.address.update({
+        const updateSecretQuestion = await prisma.secretQuestion.update({
           data: {
             ...body
           },
@@ -54,7 +55,7 @@ async function addressHandler(req: NextApiRequest, res: NextApiResponse) {
             id: Number(id)
           }
         })
-        res.status(201).send(updateAddress)
+        res.status(201).send(updateSecretQuestion)
       } catch (error) {
         if (error instanceof Error) {
           res.status(400).send(error.message)
@@ -62,11 +63,12 @@ async function addressHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUnserDo(session, 'DELETE_ADDRESS')) return res.status(403).send(`Can't delete this.`)
-      //eliminamos a UNA dirección
+      if (!canUnserDo(session, 'DELETE_SECRETQUESTION'))
+        return res.status(403).send(`Can't delete this.`)
+      //eliminamos a UNA pregunta secreta
       try {
-        const delAddress = await prisma.address.delete({ where: { id: Number(id) } })
-        res.status(202).send(delAddress)
+        const delSecretQuestion = await prisma.secretQuestion.delete({ where: { id: Number(id) } })
+        res.status(202).send(delSecretQuestion)
       } catch (error) {
         if (error instanceof Error) {
           res.status(400).send(error.message)
