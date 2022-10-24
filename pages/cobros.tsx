@@ -58,6 +58,7 @@ const Charges: NextPageWithLayout = () => {
               width={{ base: 'full', sm: 'auto' }}
               selectedBillings={data.billings.filter((b) => selectedBillingsIDs.includes(b.id))}
               disabled={selectedBillingsIDs.length === 0}
+              personId={data.student.person.id}
             />
           </Flex>
         </>

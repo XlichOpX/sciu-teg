@@ -17,21 +17,47 @@ import {
   Th,
   Thead,
   Tr,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react'
 import { CancelButton, SaveButton } from 'components/app'
+import { SubmitHandler } from 'react-hook-form'
 import { BsWalletFill } from 'react-icons/bs'
+import { createReceipt } from 'services/receipts'
 import { BillingComparatorArgs } from 'types/billing'
-import { ChargesForm } from './ChargesForm'
+import { ChargesForm, ChargesFormData } from './ChargesForm'
 
 interface ChargeSelectionModalProps extends ButtonProps {
   selectedBillings: BillingComparatorArgs[]
+  personId: number
 }
 
-export const ChargeSelectionModal = ({ selectedBillings, ...props }: ChargeSelectionModalProps) => {
+export const ChargeSelectionModal = ({
+  selectedBillings,
+  personId,
+  ...props
+}: ChargeSelectionModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  const toast = useToast()
+
   const maxAmount = selectedBillings.reduce((ac, sb) => ac + sb.amount, 0)
+
+  const onRecordCharge: SubmitHandler<ChargesFormData> = async (data) => {
+    try {
+      const receipt = await createReceipt({
+        ...data,
+        billings: selectedBillings.map((sb) => sb.id),
+        amount: maxAmount,
+        person: personId
+      })
+      onClose()
+      toast({ status: 'success', description: 'Cobro registrado' })
+      window.open(window.location.origin + `/recibos/${receipt.id}`)
+    } catch {
+      toast({ status: 'error', description: 'Ocurrió un error al registrar el cobro' })
+    }
+  }
 
   return (
     <>
@@ -87,11 +113,7 @@ export const ChargeSelectionModal = ({ selectedBillings, ...props }: ChargeSelec
 
             <Divider mb={3} />
 
-            <ChargesForm
-              id="ChargesForm"
-              maxAmount={maxAmount}
-              onSubmit={(data) => console.log(data)}
-            />
+            <ChargesForm id="ChargesForm" maxAmount={maxAmount} onSubmit={onRecordCharge} />
           </ModalBody>
 
           <ModalFooter>
