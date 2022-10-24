@@ -1,11 +1,11 @@
 import { Receipt } from '@prisma/client'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { receiptWithAll } from 'prisma/queries'
 import { canUnserDo } from 'utils/checkPermissions'
 import z from 'zod'
-import prisma from '../../../lib/prisma'
 
 export default withIronSessionApiRoute(receiptHandler, ironOptions)
 

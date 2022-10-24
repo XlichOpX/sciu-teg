@@ -1,17 +1,17 @@
 import { Conversion } from '@prisma/client'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { canUnserDo } from 'utils/checkPermissions'
 import { dateTimeSearch, routePaginate } from 'utils/routePaginate'
-import prisma from '../../../lib/prisma'
 
 // GET|POST /api/conversion
 export default withIronSessionApiRoute(handle, ironOptions)
 
 async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { body, method, session, query } = req
-  if (!canUnserDo(session, 'READ_CONVERSIONS')) return res.status(403).send(`Can't read this.`)
+  if (!canUnserDo(session, 'READ_CONVERSION')) return res.status(403).send(`Can't read this.`)
   switch (method) {
     case 'GET':
       try {
@@ -37,9 +37,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         }
       }
       break
-
     case 'POST':
-      if (!canUnserDo(session, 'EDIT_CONVERSIONS')) return res.status(403).send(`Can't edit this.`)
+      if (!canUnserDo(session, 'EDIT_CONVERSION')) return res.status(403).send(`Can't edit this.`)
       try {
         //creamos UNA conversión
         const result: Conversion = await prisma.conversion.create({

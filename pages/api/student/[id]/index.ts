@@ -1,17 +1,23 @@
-import { Student } from '@prisma/client'
-import prisma from '../../../../lib/prisma'
+import { withIronSessionApiRoute } from 'iron-session/next'
+import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { studentWithPersonStatusCareerAndEnrolledSemesters } from 'prisma/queries'
+import { canUnserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
-export default async function studentHandler(req: NextApiRequest, res: NextApiResponse) {
+export default withIronSessionApiRoute(studentHandler, ironOptions)
+async function studentHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
   const idValidation = z.preprocess((value) => Number(value), z.number().positive())
 
   const {
     body,
     method,
-    query: { id }
+    query: { id },
+    session
   } = req
+  if (!canUnserDo(session, 'READ_STUDENT')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -19,28 +25,54 @@ export default async function studentHandler(req: NextApiRequest, res: NextApiRe
   switch (method) {
     case 'GET':
       //obtenemos a UN estudiante
-      const student: Student | null = await prisma.student.findFirst({
-        include: { person: true, status: true, career: true, enrolledSemesters: true },
-        where: { id: Number(id) }
-      })
-      if (!student) res.status(404).end(`Student not found`)
-      res.status(200).send(student)
+      try {
+        const student = await prisma.student.findFirst({
+          ...studentWithPersonStatusCareerAndEnrolledSemesters,
+          where: { id: Number(id) }
+        })
+        if (!student) res.status(404).end(`Student not found`)
+        res.status(200).send(student)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
       break
     case 'PUT':
+      if (!canUnserDo(session, 'EDIT_STUDENT')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN estudiante
-      const updateStudent: Student = await prisma.student.update({
-        data: { ...body },
-        where: {
-          id: Number(id)
+      try {
+        const student = await prisma.student.findFirst({
+          where: { id: Number(id) }
+        })
+        if (!student) res.status(404).end(`Student not found`)
+
+        const updateStudent = await prisma.student.update({
+          data: { ...body },
+          where: {
+            id: Number(id)
+          },
+          ...studentWithPersonStatusCareerAndEnrolledSemesters
+        })
+
+        res.status(201).send(updateStudent)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
         }
-      })
-      if (!updateStudent) res.status(404).end(`Student not found`)
-      res.status(201).send(updateStudent || {})
+      }
       break
     case 'DELETE':
+      if (!canUnserDo(session, 'DELETE_STUDENT')) return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN estudiante
-      const delStudent: Student = await prisma.student.delete({ where: { id: Number(id) } })
-      res.status(202).send(delStudent)
+      try {
+        const delStudent = await prisma.student.delete({ where: { id: Number(id) } })
+        res.status(202).send(delStudent)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
       break
     default:
       res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])

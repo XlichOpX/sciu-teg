@@ -6,6 +6,7 @@ import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { billing, studentWithPersonCareerAndStatus } from 'prisma/queries'
 import { canUnserDo } from 'utils/checkPermissions'
+import { stringSearch } from 'utils/routePaginate'
 import { z } from 'zod'
 // Validate typeof id
 const documentVal = z.string().min(1).max(12)
@@ -22,6 +23,7 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
     session
   } = req
   if (!canUnserDo(session, 'CREATE_BILLING')) return res.status(403).send(`Can't read this.`)
+
   // Validamos que el método utilizado sea GET.
   if (method !== 'GET') {
     res.setHeader('Allow', ['GET'])
@@ -30,125 +32,130 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
 
   // Validamos que el docNum sea un string válido (entre 1 y 12 carácteres)
   const { success } = documentVal.safeParse(docNum)
-
   if (!success) return res.status(404).send(`Document Number ${docNum} Not Allowed`)
 
   //Obtenemos al estudiante a partir de su número de identificación (Document Number)
-  const student = await prisma.student.findFirst({
-    ...studentWithPersonCareerAndStatus,
-    where: { person: { docNumber: Array.isArray(docNum) ? docNum[0] : docNum } }
-  })
-  if (!student) return res.status(404).end(`Student not found`)
+  try {
+    const student = await prisma.student.findFirst({
+      ...studentWithPersonCareerAndStatus,
+      where: { person: { docNumber: stringSearch(docNum) } }
+    })
+    if (!student) return res.status(404).end(`Student not found`)
 
-  // Obtenemos el semestre actual
-  const semester = await prisma.semester.findFirst({ orderBy: { endDate: 'desc' } })
-  if (!semester) return res.status(404).end(`Current Semester not found`)
+    // Obtenemos el semestre actual
+    const semester = await prisma.semester.findFirst({ orderBy: { endDate: 'desc' } })
+    if (!semester) return res.status(404).end(`Current Semester not found`)
 
-  // Contamos si existen cobros efectuados al semestre actual
-  const billingCount = await prisma.billing.count({
-    where: {
-      student: { id: { equals: student?.id } },
-      semesterId: { equals: semester?.id }
-    }
-  })
-
-  const monthsOfSemester = semester ? calculateMonths(semester) : 0
-  // Obtenemos el producto 'mensualidad' de la base de datos
-  const monthlyPayment = await prisma.product.findFirst({
-    where: { name: { contains: 'Mensualidad', mode: 'insensitive' } }
-  })
-  if (!monthlyPayment) return res.status(404).end(`Monthly Payment product not found`)
-  // Obtenemos el producto 'Inscripción' de la base de datos
-  const inscription = await prisma.product.findFirst({
-    where: { name: { contains: 'Inscripción', mode: 'insensitive' } }
-  })
-  if (!inscription) return res.status(404).end(`Inscription product not found`)
-
-  // Generamos los productos correspondiente al semestre (Todas las mensualidades para el semestre actual)
-  const createBilling = async () => {
-    const data: Prisma.Enumerable<Prisma.BillingCreateManyInput> = []
-    const dateToPay = dayjs(semester?.startDate).locale('es').set('date', 1)
-    // Iteramos los meses del semestre y creamos los objetos pertinentes de 'cobro'
-    for (let i = 0; i < monthsOfSemester; i++) {
-      const newMonth = dayjs(semester?.startDate).locale('es').add(i, 'month').format('MMMM')
-      const productName = `Mensualidad de ${newMonth} ${semester?.semester}`
-      const date = dateToPay.add(i, 'month').toDate()
-      data.push(constructBilling(monthlyPayment, student as Student, semester, productName, date))
-    }
-    // si el semestre tiene menos de 6 meses, entonces creamos una inscripción por cobra
-    if (monthsOfSemester < 6) {
-      const date = dateToPay.toDate()
-      data.push(
-        constructBilling(
-          inscription,
-          student as Student,
-          semester,
-          `Inscripción del semestre ${semester?.semester}`,
-          date
-        )
-      )
-    }
-
-    return await prisma.billing.createMany({ data })
-  }
-
-  if (billingCount === 0 && student.status.id === MATRICULADO) await createBilling()
-
-  let billings = await prisma.billing.findMany({
-    ...billing,
-    where: {
-      student: { id: { equals: student?.id } },
-      isCharged: { equals: false }
-    }
-  })
-
-  const latePayment = await prisma.product.findFirst({
-    where: { name: { contains: 'Recargo por Retardo', mode: 'insensitive' } }
-  })
-  if (!latePayment) return res.status(404).end(`Retarded Payment product not found`)
-  console.clear()
-  console.table(billings)
-  console.log(dayjs().format())
-  //Validar que tan antiguo es el cobro no pagado.
-  const latePaymentData = billings
-    .map((billing) => {
-      const {
-        product: { id }
-      } = billing
-      if (id === monthlyPayment.id && dayjs(billing.updateAt).add(15, 'days') <= dayjs()) {
-        const existLatePayment = billings.some((bill) => {
-          const differenceBothDates = dayjs(bill.updateAt).diff(dayjs(billing.updateAt))
-          const isDateEqual = differenceBothDates === 0
-          const isDelayed = bill.product.id === latePayment.id
-          return isDateEqual && isDelayed
-        })
-
-        // Crearemos un cobro x retardo pendiente.
-        if (!existLatePayment)
-          return constructBilling(
-            latePayment,
-            student as Student,
-            semester,
-            `Retardo de ${billing.productName}`,
-            billing.updateAt
-          )
-      } else {
-        return undefined
+    // Contamos si existen cobros efectuados al semestre actual
+    const billingCount = await prisma.billing.count({
+      where: {
+        student: { id: { equals: student?.id } },
+        semesterId: { equals: semester?.id }
       }
     })
-    .filter((e) => e !== undefined)
 
-  const data = latePaymentData as Prisma.Enumerable<Prisma.BillingCreateManyInput>
-  if (latePaymentData.length > 0) await prisma.billing.createMany({ data })
+    const monthsOfSemester = semester ? calculateMonths(semester) : 0
+    // Obtenemos el producto 'mensualidad' de la base de datos
+    const monthlyPayment = await prisma.product.findFirst({
+      where: { name: { contains: 'Mensualidad', mode: 'insensitive' } }
+    })
+    if (!monthlyPayment) return res.status(404).end(`Monthly Payment product not found`)
+    // Obtenemos el producto 'Inscripción' de la base de datos
+    const inscription = await prisma.product.findFirst({
+      where: { name: { contains: 'Inscripción', mode: 'insensitive' } }
+    })
+    if (!inscription) return res.status(404).end(`Inscription product not found`)
 
-  billings = await prisma.billing.findMany({
-    ...billing,
-    where: {
-      student: { id: { equals: student?.id } },
-      isCharged: { equals: false }
+    // Generamos los productos correspondiente al semestre (Todas las mensualidades para el semestre actual)
+    const createBilling = async () => {
+      const data: Prisma.Enumerable<Prisma.BillingCreateManyInput> = []
+      const dateToPay = dayjs(semester?.startDate).locale('es').set('date', 1)
+      // Iteramos los meses del semestre y creamos los objetos pertinentes de 'cobro'
+      for (let i = 0; i < monthsOfSemester; i++) {
+        const newMonth = dayjs(semester?.startDate).locale('es').add(i, 'month').format('MMMM')
+        const productName = `Mensualidad de ${newMonth} ${semester?.semester}`
+        const date = dateToPay.add(i, 'month').toDate()
+        data.push(constructBilling(monthlyPayment, student as Student, semester, productName, date))
+      }
+      // si el semestre tiene menos de 6 meses, entonces creamos una inscripción por cobra
+      if (monthsOfSemester < 6) {
+        const date = dateToPay.toDate()
+        data.push(
+          constructBilling(
+            inscription,
+            student as Student,
+            semester,
+            `Inscripción del semestre ${semester?.semester}`,
+            date
+          )
+        )
+      }
+
+      return await prisma.billing.createMany({ data })
     }
-  })
-  res.status(200).json({ student, billings })
+
+    if (billingCount === 0 && student.status.id === MATRICULADO) await createBilling()
+
+    let billings = await prisma.billing.findMany({
+      ...billing,
+      where: {
+        student: { id: { equals: student?.id } },
+        isCharged: { equals: false }
+      }
+    })
+
+    const latePayment = await prisma.product.findFirst({
+      where: { name: { contains: 'Recargo por Retardo', mode: 'insensitive' } }
+    })
+    if (!latePayment) return res.status(404).end(`Retarded Payment product not found`)
+    console.clear()
+    console.table(billings)
+    console.log(dayjs().format())
+    //Validar que tan antiguo es el cobro no pagado.
+    const latePaymentData = billings
+      .map((billing) => {
+        const {
+          product: { id }
+        } = billing
+        if (id === monthlyPayment.id && dayjs(billing.updateAt).add(15, 'days') <= dayjs()) {
+          const existLatePayment = billings.some((bill) => {
+            const differenceBothDates = dayjs(bill.updateAt).diff(dayjs(billing.updateAt))
+            const isDateEqual = differenceBothDates === 0
+            const isDelayed = bill.product.id === latePayment.id
+            return isDateEqual && isDelayed
+          })
+
+          // Crearemos un cobro x retardo pendiente.
+          if (!existLatePayment)
+            return constructBilling(
+              latePayment,
+              student as Student,
+              semester,
+              `Retardo de ${billing.productName}`,
+              billing.updateAt
+            )
+        } else {
+          return undefined
+        }
+      })
+      .filter((e) => e !== undefined)
+
+    const data = latePaymentData as Prisma.Enumerable<Prisma.BillingCreateManyInput>
+    if (latePaymentData.length > 0) await prisma.billing.createMany({ data })
+
+    billings = await prisma.billing.findMany({
+      ...billing,
+      where: {
+        student: { id: { equals: student?.id } },
+        isCharged: { equals: false }
+      }
+    })
+    res.status(200).json({ student, billings })
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).send(error.message)
+    }
+  }
 }
 
 //Función para calcular la duración en MESES de un semestre...

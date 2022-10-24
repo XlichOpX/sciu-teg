@@ -92,17 +92,23 @@ export const receiptWithAll = Prisma.validator<Prisma.ReceiptArgs>()({
   }
 })
 
+export const studentWithPersonStatusCareerAndEnrolledSemesters =
+  Prisma.validator<Prisma.StudentArgs>()({
+    include: { person: true, status: true, career: true, enrolledSemesters: true }
+  })
+
 export const studentWithPersonCareerAndStatus = Prisma.validator<Prisma.StudentArgs>()({
   include: {
     person: {
       select: {
-        firstName: true,
-        firstLastName: true,
-        secondLastName: true,
-        docNumber: true,
-        middleName: true,
         address: { select: { shortAddress: true } },
-        regDate: true
+        docNumber: true,
+        firstLastName: true,
+        firstName: true,
+        id: true,
+        middleName: true,
+        regDate: true,
+        secondLastName: true
       }
     },
     career: { select: { career: true } },
@@ -131,7 +137,7 @@ export const roleWithPermissions = Prisma.validator<Prisma.RoleArgs>()({
   include: { permissions: true }
 })
 
-export const personListing: Prisma.PersonArgs = {
+export const personListing = Prisma.validator<Prisma.PersonArgs>()({
   select: {
     id: true,
     cellphone: true,
@@ -146,4 +152,15 @@ export const personListing: Prisma.PersonArgs = {
     email: true,
     address: { select: { shortAddress: true } }
   }
-}
+})
+
+export const userWithAll = Prisma.validator<Prisma.UserArgs>()({
+  select: {
+    id: true,
+    person: true,
+    roles: { include: { permissions: true } },
+    secret: true,
+    status: true,
+    username: true
+  }
+})
