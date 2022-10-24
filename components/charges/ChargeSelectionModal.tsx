@@ -1,7 +1,7 @@
 import {
   Button,
   ButtonProps,
-  Heading,
+  Divider,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -17,14 +17,12 @@ import {
   Th,
   Thead,
   Tr,
-  useDisclosure,
-  VisuallyHidden
+  useDisclosure
 } from '@chakra-ui/react'
 import { CancelButton, SaveButton } from 'components/app'
-import { useForm } from 'react-hook-form'
-import { BsPlusLg, BsWalletFill } from 'react-icons/bs'
+import { BsWalletFill } from 'react-icons/bs'
 import { BillingComparatorArgs } from 'types/billing'
-import { ChargesForm, ChargesFormData } from './ChargesForm'
+import { ChargesForm } from './ChargesForm'
 
 interface ChargeSelectionModalProps extends ButtonProps {
   selectedBillings: BillingComparatorArgs[]
@@ -33,7 +31,7 @@ interface ChargeSelectionModalProps extends ButtonProps {
 export const ChargeSelectionModal = ({ selectedBillings, ...props }: ChargeSelectionModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const chargesFormHook = useForm<ChargesFormData>()
+  const maxAmount = selectedBillings.reduce((ac, sb) => ac + sb.amount, 0)
 
   return (
     <>
@@ -54,13 +52,14 @@ export const ChargeSelectionModal = ({ selectedBillings, ...props }: ChargeSelec
               <Table>
                 <Thead>
                   <Tr>
-                    <Th pl={0}>Producto</Th>
+                    <Th pl={0}>Concepto</Th>
                     <Th textAlign="center">Cantidad</Th>
                     <Th pr={0} textAlign="right" colSpan={2}>
                       Precio
                     </Th>
                   </Tr>
                 </Thead>
+
                 <Tbody>
                   {selectedBillings.map((sb) => (
                     <Tr key={sb.id}>
@@ -72,34 +71,34 @@ export const ChargeSelectionModal = ({ selectedBillings, ...props }: ChargeSelec
                     </Tr>
                   ))}
                 </Tbody>
+
                 <Tfoot>
                   <Tr fontWeight="bold">
                     <Td pl={0} colSpan={2}>
                       Total
                     </Td>
                     <Td pr={0} textAlign="right">
-                      {selectedBillings.reduce((ac, sb) => ac + sb.amount, 0)}
+                      {maxAmount}
                     </Td>
                   </Tr>
                 </Tfoot>
               </Table>
             </TableContainer>
 
-            <Heading as="h3" size="sm" my={4}>
-              Métodos de pago
-            </Heading>
+            <Divider mb={3} />
 
-            <ChargesForm formHook={chargesFormHook} />
-
-            <Button mt={4} width="full" size="sm">
-              <VisuallyHidden>Agregar método de pago</VisuallyHidden>
-              <BsPlusLg />
-            </Button>
+            <ChargesForm
+              id="ChargesForm"
+              maxAmount={maxAmount}
+              onSubmit={(data) => console.log(data)}
+            />
           </ModalBody>
 
           <ModalFooter>
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton>Registrar cobro</SaveButton>
+            <SaveButton type="submit" form="ChargesForm">
+              Registrar cobro
+            </SaveButton>
           </ModalFooter>
         </ModalContent>
       </Modal>
