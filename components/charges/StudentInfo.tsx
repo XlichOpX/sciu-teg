@@ -10,15 +10,17 @@ export const StudentInfo = ({
   }
 }: {
   student: StudentWithPersonCareerAndStatus
-}) => (
-  <>
-    <Flex gap={4} wrap="wrap" justifyContent="space-between" alignItems="center">
-      <p>
-        Estudiante: {[firstName, middleName, firstLastName, secondLastName].join(' ')} / Cédula:{' '}
-        {docNumber} / Carrera: {career} / Estado: {status}
-      </p>
-      <ViewReceiptsModal />
-    </Flex>
-    <Divider my={4} />
-  </>
-)
+}) => {
+  const fullName = [firstName, middleName, firstLastName, secondLastName].join(' ')
+  return (
+    <>
+      <Flex gap={4} wrap="wrap" justifyContent="space-between" alignItems="center">
+        <p>
+          Estudiante: {fullName} / Cédula: {docNumber} / Carrera: {career} / Estado: {status}
+        </p>
+        <ViewReceiptsModal fullName={fullName} personDocNum={docNumber} />
+      </Flex>
+      <Divider my={4} />
+    </>
+  )
+}

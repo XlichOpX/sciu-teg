@@ -4,8 +4,14 @@ import { GetReceiptWithPersonResponse } from 'types/receipt'
 import { calcPages } from 'utils/calcPages'
 import { usePagination } from './usePagination'
 
-export const useReceipts = ({ itemsPerPage }: { itemsPerPage: number }) => {
-  const [search, setSearchState] = useState('')
+export const useReceipts = ({
+  itemsPerPage,
+  initialSearch = ''
+}: {
+  itemsPerPage: number
+  initialSearch: string
+}) => {
+  const [search, setSearchState] = useState(initialSearch)
   const { page, offset, limit, setPage } = usePagination({ itemsPerPage })
   const { data, error } = useSWR<GetReceiptWithPersonResponse, Error>(
     `/api/receipt?offset=${offset}&limit=${limit}&keyword=${search}`
