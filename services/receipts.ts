@@ -1,6 +1,7 @@
+import { Receipt } from '@prisma/client'
 import { fetch } from 'lib/fetch'
 import { CreateReceiptInput } from 'types/receipt'
 
 export const createReceipt = async (data: CreateReceiptInput) => {
-  return await fetch('/api/receipts', { method: 'POST', body: data })
+  return (await fetch('/api/receipt', { method: 'POST', body: data })) as Receipt
 }
