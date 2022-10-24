@@ -4,7 +4,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { NextApiRequestQuery } from 'next/dist/server/api-utils'
-import { receiptWithPerson } from 'prisma/queries'
+import { receiptWithAll, receiptWithPerson } from 'prisma/queries'
 import { receiptCreateSchemaInput } from 'schema/receiptSchema'
 import { GetReceiptWithPersonResponse } from 'types/receipt'
 import { canUnserDo } from 'utils/checkPermissions'
@@ -128,14 +128,7 @@ async function handle(
             personId: validBody.data.person,
             charges
           },
-          select: {
-            person: true,
-            amount: true,
-            chargedProducts: true,
-            charges: true,
-            id: true,
-            createdAt: true
-          }
+          ...receiptWithAll
         }
 
         // Creamos el recibo
