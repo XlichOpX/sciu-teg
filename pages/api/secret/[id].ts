@@ -1,17 +1,22 @@
-import { Secret } from '@prisma/client'
-import prisma from '../../../lib/prisma'
+import { withIronSessionApiRoute } from 'iron-session/next/dist'
+import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { canUnserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
-export default async function secretHandler(req: NextApiRequest, res: NextApiResponse) {
+export default withIronSessionApiRoute(secretHandler, ironOptions)
+async function secretHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
   const idValidation = z.preprocess((value) => Number(value), z.number().positive())
 
   const {
     body,
     method,
-    query: { id }
+    query: { id },
+    session
   } = req
+  if (!canUnserDo(session, 'READ_PERSON')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -19,29 +24,53 @@ export default async function secretHandler(req: NextApiRequest, res: NextApiRes
   switch (method) {
     case 'GET':
       //obtenemos a UN secreto
-      const secret: Secret | null = await prisma.secret.findFirst({
-        where: { id: Number(id) }
-      })
-      if (!secret) res.status(404).end(`Secret not found`)
-      res.status(200).send(secret)
+      try {
+        const secret = await prisma.secret.findFirst({
+          where: { id: Number(id) }
+        })
+        if (!secret) res.status(404).end(`Secret not found`)
+        res.status(200).send(secret)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
       break
     case 'PUT':
+      if (!canUnserDo(session, 'EDIT_PERSON')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN secreto
-      const updateAddress: Secret = await prisma.secret.update({
-        data: {
-          ...body
-        },
-        where: {
-          id: Number(id)
+      try {
+        const secret = await prisma.secret.findFirst({
+          where: { id: Number(id) }
+        })
+        if (!secret) res.status(404).end(`Secret not found`)
+        const updateSecret = await prisma.secret.update({
+          data: {
+            ...body
+          },
+          where: {
+            id: Number(id)
+          }
+        })
+
+        res.status(201).send(updateSecret)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
         }
-      })
-      if (!updateAddress) res.status(404).end(`Secret not found`)
-      res.status(201).send(updateAddress || {})
+      }
       break
     case 'DELETE':
+      if (!canUnserDo(session, 'DELETE_PERSON')) return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN secreto
-      const delAddress: Secret = await prisma.secret.delete({ where: { id: Number(id) } })
-      res.status(202).send(delAddress)
+      try {
+        const delSecret = await prisma.secret.delete({ where: { id: Number(id) } })
+        res.status(202).send(delSecret)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
       break
     default:
       res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])

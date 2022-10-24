@@ -14,7 +14,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUnserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
+      if (!canUnserDo(session, 'READ_PERSON')) return res.status(403).send(`Can't read this.`)
       //obtenemos TODAS las personas
       try {
         const { keyword } = query

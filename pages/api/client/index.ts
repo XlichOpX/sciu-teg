@@ -1,29 +1,44 @@
-import { Client } from '@prisma/client'
+import { withIronSessionApiRoute } from 'iron-session/next'
+import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { clientWithPersonAndOccupation } from 'prisma/queries'
-import prisma from '../../../lib/prisma'
+import { canUnserDo } from 'utils/checkPermissions'
 
 // GET|POST /api/client
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  const { body, method } = req
+export default withIronSessionApiRoute(handle, ironOptions)
+async function handle(req: NextApiRequest, res: NextApiResponse) {
+  const { body, method, session } = req
 
   switch (method) {
     case 'GET':
       //obtenemos TODAS los clientes
-
-      const clients: Client[] = await prisma.client.findMany({
-        ...clientWithPersonAndOccupation
-      })
-
-      if (!clients) return res.status(404).end(`Clients not found`)
-      res.status(200).send(clients)
+      if (!canUnserDo(session, 'READ_CLIENT')) return res.status(403).send(`Can't read this.`)
+      try {
+        const clients = await prisma.client.findMany({
+          ...clientWithPersonAndOccupation
+        })
+        if (!clients) return res.status(404).end(`Clients not found`)
+        res.status(200).send(clients)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
       break
     case 'POST':
+      if (!canUnserDo(session, 'CREATE_CLIENT')) return res.status(403).send(`Can't create this.`)
       //creamos UN cliente
-      const result: Client = await prisma.client.create({
-        data: { ...body }
-      })
-      res.status(201).send(result)
+      try {
+        const result = await prisma.client.create({
+          data: { ...body }
+        })
+        res.status(201).send(result)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
       break
     default:
       res.setHeader('Allow', ['GET', 'POST'])

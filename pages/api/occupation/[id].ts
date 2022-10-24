@@ -1,17 +1,23 @@
 import { Occupation } from '@prisma/client'
-import prisma from '../../../lib/prisma'
+import { withIronSessionApiRoute } from 'iron-session/next'
+import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { canUnserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
-export default async function occupationHandler(req: NextApiRequest, res: NextApiResponse) {
+export default withIronSessionApiRoute(occupationHandler, ironOptions)
+async function occupationHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
   const idValidation = z.preprocess((value) => Number(value), z.number().positive())
 
   const {
     body,
     method,
-    query: { id }
+    query: { id },
+    session
   } = req
+  if (!canUnserDo(session, 'READ_OCCUPATION')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -19,32 +25,60 @@ export default async function occupationHandler(req: NextApiRequest, res: NextAp
   switch (method) {
     case 'GET':
       //obtenemos a UNA ocupación de cliente
-      const occupation: Occupation | null = await prisma.occupation.findFirst({
-        where: { id: Number(id) }
-      })
-      if (!occupation) res.status(404).end(`Occupation not found`)
-      res.status(200).send(occupation)
+      try {
+        const occupation = await prisma.occupation.findFirst({
+          where: { id: Number(id) }
+        })
+        if (!occupation) res.status(404).end(`Occupation not found`)
+        res.status(200).send(occupation)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
       break
     case 'PUT':
+      if (!canUnserDo(session, 'EDIT_OCCUPATION')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UNA ocupación de cliente
-      const updateOccupation: Occupation = await prisma.occupation.update({
-        data: {
-          ...body
-        },
-        where: {
-          id: Number(id)
+      try {
+        const occupation = await prisma.occupation.findFirst({
+          where: { id: Number(id) }
+        })
+        if (!occupation) res.status(404).end(`Occupation not found`)
+        const updateOccupation: Occupation = await prisma.occupation.update({
+          data: {
+            ...body
+          },
+          where: {
+            id: Number(id)
+          }
+        })
+        res.status(201).send(updateOccupation)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
         }
-      })
-      if (!updateOccupation) res.status(404).end(`Occupation not found`)
-      res.status(201).send(updateOccupation || {})
+      }
       break
     case 'DELETE':
+      if (!canUnserDo(session, 'DELETE_OCCUPATION'))
+        return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA ocupación de cliente
-      const delOccupation: Occupation = await prisma.occupation.delete({
-        where: { id: Number(id) }
-      })
-      res.status(202).send(delOccupation)
-      break
+      try {
+        const client = await prisma.client.findFirst({
+          where: { occupationId: Number(id) }
+        })
+        if (!client) res.status(404).end(`Occupation relation exists`)
+        const delOccupation: Occupation = await prisma.occupation.delete({
+          where: { id: Number(id) }
+        })
+        res.status(202).send(delOccupation)
+        break
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
     default:
       res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])
       res.status(405).end(`Method ${method} Not Allowed`)

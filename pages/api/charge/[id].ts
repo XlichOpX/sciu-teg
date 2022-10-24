@@ -1,18 +1,23 @@
-import { Charge } from '@prisma/client'
+import { withIronSessionApiRoute } from 'iron-session/next'
+import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { chargeWithPaymentMethodAndConversion } from 'prisma/queries'
+import { canUnserDo } from 'utils/checkPermissions'
 import z from 'zod'
-import prisma from '../../../lib/prisma'
 
-export default async function chargeHandler(req: NextApiRequest, res: NextApiResponse) {
+export default withIronSessionApiRoute(chargeHandler, ironOptions)
+async function chargeHandler(req: NextApiRequest, res: NextApiResponse) {
   // Validate typeof id
   const idValidation = z.preprocess((value) => Number(value), z.number().positive())
 
   const {
     body,
     method,
-    query: { id }
+    query: { id },
+    session
   } = req
+  if (!canUnserDo(session, 'READ_CHARGE')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -20,28 +25,50 @@ export default async function chargeHandler(req: NextApiRequest, res: NextApiRes
   switch (method) {
     case 'GET':
       //obtenemos a UN cargo
-      const charge = await prisma.charge.findFirst({
-        ...chargeWithPaymentMethodAndConversion,
-        where: { id: Number(id) }
-      })
-      if (!charge) res.status(404).end(`Charge not found`)
-      res.status(200).send(charge)
+      try {
+        const charge = await prisma.charge.findFirst({
+          ...chargeWithPaymentMethodAndConversion,
+          where: { id: Number(id) }
+        })
+        if (!charge) res.status(404).end(`Charge not found`)
+        res.status(200).send(charge)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
       break
     case 'PUT':
+      if (!canUnserDo(session, 'EDIT_CHARGE')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN cargo
-      const updateCharge: Charge = await prisma.charge.update({
-        data: { ...body },
-        where: {
-          id: Number(id)
+      try {
+        const charge = await prisma.charge.findFirst({
+          where: { id: Number(id) }
+        })
+        if (!charge) res.status(404).end(`Charge not found`)
+        const updateCharge = await prisma.charge.update({
+          data: { ...body },
+          where: {
+            id: Number(id)
+          }
+        })
+        res.status(201).send(updateCharge)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
         }
-      })
-      if (!updateCharge) res.status(404).end(`Charge not found`)
-      res.status(201).send(updateCharge || {})
+      }
       break
     case 'DELETE':
       //eliminamos a UN cargo
-      const delCharge: Charge = await prisma.charge.delete({ where: { id: Number(id) } })
-      res.status(202).send(delCharge)
+      try {
+        const delCharge = await prisma.charge.delete({ where: { id: Number(id) } })
+        res.status(202).send(delCharge)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
       break
     default:
       res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])

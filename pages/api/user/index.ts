@@ -2,10 +2,10 @@ import { User } from '@prisma/client'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { encrypt, secretCrypt } from 'lib/crypter'
 import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { userEssencials } from 'prisma/queries'
 import { canUnserDo } from 'utils/checkPermissions'
-import prisma from '../../../lib/prisma'
 
 // GET|POST /api/user
 export default withIronSessionApiRoute(handle, ironOptions)
@@ -13,23 +13,31 @@ export default withIronSessionApiRoute(handle, ironOptions)
 async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { body, method, session } = req
 
-  try {
-    // es una idea temporal...
-    if (!canUnserDo(session, 'ACCESS_USERS_MUTATION'))
-      return res.status(403).send(`Can't access this.`)
+  // es una idea temporal...
+  if (!canUnserDo(session, 'ACCESS_USERS_MUTATION'))
+    return res.status(403).send(`Can't access this.`)
 
-    switch (method) {
-      case 'GET':
-        //obtenemos TODOS los usuarios
+  switch (method) {
+    case 'GET':
+      if (!canUnserDo(session, 'READ_USER')) return res.status(403).send(`Can't read this.`)
+      //obtenemos TODOS los usuarios
+      try {
         const users = await prisma.user.findMany({
           ...userEssencials
         })
 
         if (!users) return res.status(404).end(`Users not found`)
         res.status(200).send(users)
-        break
-      case 'POST':
-        //creamos UN usuario
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
+      break
+    case 'POST':
+      if (!canUnserDo(session, 'CREATE_USER')) return res.status(403).send(`Can't create this.`)
+      //creamos UN usuario
+      try {
         // Validamos los campos
         const { password, secret } = body
 
@@ -47,13 +55,15 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           data: { ...body }
         })
         res.status(201).send(result)
-        break
-      default:
-        res.setHeader('Allow', ['GET', 'POST'])
-        res.status(405).end(`Method ${method} Not Allowed`)
-        break
-    }
-  } catch (error) {
-    res.status(500).json(error)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
+      break
+    default:
+      res.setHeader('Allow', ['GET', 'POST'])
+      res.status(405).end(`Method ${method} Not Allowed`)
+      break
   }
 }

@@ -1,19 +1,37 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { withIronSessionApiRoute } from 'iron-session/next'
+import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { canUnserDo } from 'utils/checkPermissions'
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  const { body, method } = req
+export default withIronSessionApiRoute(handle, ironOptions)
 
+async function handle(req: NextApiRequest, res: NextApiResponse) {
+  const { body, method, session } = req
+  if (!canUnserDo(session, 'READ_CURRENCY')) return res.status(403).send(`Can't read this.`)
   switch (method) {
     case 'GET':
-      const currencies = await prisma.currency.findMany()
-      res.status(200).json(currencies)
+      try {
+        const currencies = await prisma.currency.findMany()
+        res.status(200).json(currencies)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
       break
     case 'POST':
-      const result = await prisma.currency.create({
-        data: { ...body }
-      })
-      res.status(201).json(result)
+      if (!canUnserDo(session, 'CREATE_CURRENCY')) return res.status(403).send(`Can't create this.`)
+      try {
+        const result = await prisma.currency.create({
+          data: { ...body }
+        })
+        res.status(201).json(result)
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).send(error.message)
+        }
+      }
       break
     default:
       res.setHeader('Allow', ['GET', 'POST'])

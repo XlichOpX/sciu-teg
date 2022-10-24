@@ -5,9 +5,10 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { canUnserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
-export default withIronSessionApiRoute(permissionHandler, ironOptions)
-async function permissionHandler(req: NextApiRequest, res: NextApiResponse) {
-  // Validate typeof id
+export default withIronSessionApiRoute(currencyHandler, ironOptions)
+
+async function currencyHandler(req: NextApiRequest, res: NextApiResponse) {
+  // Validate id
   const idValidation = z.preprocess((value) => Number(value), z.number().positive())
 
   const {
@@ -16,19 +17,20 @@ async function permissionHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUnserDo(session, 'READ_PERMISSION')) return res.status(403).send(`Can't read this.`)
+  if (!canUnserDo(session, 'READ_CURRENCY')) return res.status(403).send(`Can't read this.`)
+
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
 
   switch (method) {
     case 'GET':
-      //obtenemos a UN Permiso
+      //obtenemos a UNA 'moneda'
       try {
-        const permission = await prisma.permission.findFirst({
+        const currency = await prisma.currency.findFirst({
           where: { id: Number(id) }
         })
-        if (!permission) res.status(404).end(`Permission not found`)
-        res.status(200).send(permission)
+        if (!currency) res.status(404).end(`Currency not found`)
+        res.status(201).send(currency)
       } catch (error) {
         if (error instanceof Error) {
           res.status(400).send(error.message)
@@ -36,20 +38,22 @@ async function permissionHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_PERMISSION')) return res.status(403).send(`Can't edit this.`)
-      //actualizamos a UN Permiso
+      if (!canUnserDo(session, 'EDIT_CURRENCY')) return res.status(403).send(`Can't edit this.`)
+      //actualizamos a UNA 'moneda'
       try {
-        const permission = await prisma.permission.findFirst({
+        const currency = await prisma.currency.findFirst({
           where: { id: Number(id) }
         })
-        if (!permission) res.status(404).end(`Permission not found`)
-        const updatePermission = await prisma.permission.update({
-          data: { ...body },
+        if (!currency) res.status(404).end(`Currency not found`)
+        const updateCurrency = await prisma.currency.update({
+          data: {
+            ...body
+          },
           where: {
             id: Number(id)
           }
         })
-        res.status(201).send(updatePermission)
+        res.status(201).send(updateCurrency)
       } catch (error) {
         if (error instanceof Error) {
           res.status(400).send(error.message)
@@ -57,17 +61,11 @@ async function permissionHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUnserDo(session, 'DELETE_PERMISSION'))
-        return res.status(403).send(`Can't delete this.`)
-      //eliminamos a UN Permiso
+      if (!canUnserDo(session, 'DELETE_CURRENCY')) return res.status(403).send(`Can't delete this.`)
+      //eliminamos a UNA 'moneda'
       try {
-        const role = await prisma.role.count({
-          where: { permissions: { some: { id: Number(id) } } }
-        })
-        if (role > 0) return res.status(404).end(`Permission relation exists`)
-
-        const delPermission = await prisma.permission.delete({ where: { id: Number(id) } })
-        res.status(202).send(delPermission)
+        const delCurrency = await prisma.currency.delete({ where: { id: Number(id) } })
+        res.status(202).send(delCurrency)
       } catch (error) {
         if (error instanceof Error) {
           res.status(400).send(error.message)
