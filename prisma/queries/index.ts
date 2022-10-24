@@ -101,13 +101,14 @@ export const studentWithPersonCareerAndStatus = Prisma.validator<Prisma.StudentA
   include: {
     person: {
       select: {
-        firstName: true,
-        firstLastName: true,
-        secondLastName: true,
-        docNumber: true,
-        middleName: true,
         address: { select: { shortAddress: true } },
-        regDate: true
+        docNumber: true,
+        firstLastName: true,
+        firstName: true,
+        id: true,
+        middleName: true,
+        regDate: true,
+        secondLastName: true
       }
     },
     career: { select: { career: true } },
