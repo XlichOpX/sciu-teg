@@ -124,11 +124,11 @@ const Receipts: NextPage = () => {
           <Tbody>
             {receipt.chargedProducts.map((cp) => (
               <Tr key={cp.id}>
-                <Td pl={0}>{cp.product.name}</Td>
+                <Td pl={0}>{cp.billing ? cp.billing.productName : cp.product.name}</Td>
                 <Td textAlign="center">{cp.price.toFixed(2)}</Td>
-                <Td textAlign="center">{cp.quantity}</Td>
+                <Td textAlign="center">{cp.quantity ?? 1}</Td>
                 <Td pr={0} textAlign="right">
-                  {(cp.price * cp.quantity).toFixed(2)}
+                  {(cp.price * (cp.quantity ?? 1)).toFixed(2)}
                 </Td>
               </Tr>
             ))}
