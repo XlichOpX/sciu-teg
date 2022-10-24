@@ -1,5 +1,5 @@
 import { Category } from '@prisma/client'
-import { withIronSessionApiRoute } from 'iron-session/next/dist'
+import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'

@@ -31,7 +31,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       //creamos UN cliente
       try {
         const result = await prisma.client.create({
-          data: { ...body }
+          data: { ...body },
+          ...clientWithPersonAndOccupation
         })
         res.status(201).send(result)
       } catch (error) {
