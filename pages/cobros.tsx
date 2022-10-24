@@ -2,6 +2,7 @@ import { Alert, Flex } from '@chakra-ui/react'
 import { HeadingWithSearch } from 'components/app'
 import {
   AddProductsModal,
+  BillignsFormData,
   BillingsForm,
   ChargeSelectionModal,
   StudentInfo
@@ -10,11 +11,17 @@ import { BaseLayout } from 'components/layouts'
 import { useBillings } from 'hooks'
 import Head from 'next/head'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { NextPageWithLayout } from './_app'
 
 const Charges: NextPageWithLayout = () => {
   const [docNumber, setDocNumber] = useState('')
   const { data, error } = useBillings(docNumber)
+
+  const billingsFormHook = useForm<BillignsFormData>({
+    defaultValues: { billings: [] }
+  })
+  const selectedBillingsIDs = billingsFormHook.watch('billings')
 
   return (
     <>
@@ -25,7 +32,10 @@ const Charges: NextPageWithLayout = () => {
       <HeadingWithSearch
         title="Cobros"
         placeholder="Cédula"
-        onSubmit={({ text }) => setDocNumber(text)}
+        onSubmit={({ text }) => {
+          billingsFormHook.reset()
+          setDocNumber(text)
+        }}
       />
 
       {error && (
@@ -40,11 +50,15 @@ const Charges: NextPageWithLayout = () => {
         <>
           <StudentInfo student={data.student} />
 
-          <BillingsForm billings={data.billings} />
+          <BillingsForm billings={data.billings} formHook={billingsFormHook} />
 
           <Flex justifyContent="space-between" mt={4} gap={4} wrap="wrap">
             <AddProductsModal width={{ base: 'full', sm: 'auto' }} />
-            <ChargeSelectionModal width={{ base: 'full', sm: 'auto' }} />
+            <ChargeSelectionModal
+              width={{ base: 'full', sm: 'auto' }}
+              selectedBillings={data.billings.filter((b) => selectedBillingsIDs.includes(b.id))}
+              disabled={selectedBillingsIDs.length === 0}
+            />
           </Flex>
         </>
       )}

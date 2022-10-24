@@ -27,8 +27,13 @@ import {
 } from '@chakra-ui/react'
 import { CancelButton, SaveButton } from 'components/app'
 import { BsPlusLg, BsWalletFill } from 'react-icons/bs'
+import { BillingComparatorArgs } from 'types/billing'
 
-export const ChargeSelectionModal = (props: ButtonProps) => {
+interface ChargeSelectionModalProps extends ButtonProps {
+  selectedBillings: BillingComparatorArgs[]
+}
+
+export const ChargeSelectionModal = ({ selectedBillings, ...props }: ChargeSelectionModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -58,17 +63,15 @@ export const ChargeSelectionModal = (props: ButtonProps) => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {Array(3)
-                    .fill(1)
-                    .map((_, i) => (
-                      <Tr key={i}>
-                        <Td pl={0}>Mensualidad #{i + 1}</Td>
-                        <Td textAlign="center">1</Td>
-                        <Td textAlign="right" pr={0}>
-                          20
-                        </Td>
-                      </Tr>
-                    ))}
+                  {selectedBillings.map((sb) => (
+                    <Tr key={sb.id}>
+                      <Td pl={0}>{sb.productName}</Td>
+                      <Td textAlign="center">1</Td>
+                      <Td textAlign="right" pr={0}>
+                        {sb.amount}
+                      </Td>
+                    </Tr>
+                  ))}
                 </Tbody>
                 <Tfoot>
                   <Tr fontWeight="bold">
@@ -76,7 +79,7 @@ export const ChargeSelectionModal = (props: ButtonProps) => {
                       Total
                     </Td>
                     <Td pr={0} textAlign="right">
-                      60
+                      {selectedBillings.reduce((ac, sb) => ac + sb.amount, 0)}
                     </Td>
                   </Tr>
                 </Tfoot>
