@@ -1,11 +1,7 @@
 import {
   Button,
   ButtonProps,
-  FormControl,
-  Grid,
-  GridItem,
-  Heading,
-  Input,
+  Divider,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -13,7 +9,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Select,
   Table,
   TableContainer,
   Tbody,
@@ -22,14 +17,21 @@ import {
   Th,
   Thead,
   Tr,
-  useDisclosure,
-  VisuallyHidden
+  useDisclosure
 } from '@chakra-ui/react'
 import { CancelButton, SaveButton } from 'components/app'
-import { BsPlusLg, BsWalletFill } from 'react-icons/bs'
+import { BsWalletFill } from 'react-icons/bs'
+import { BillingComparatorArgs } from 'types/billing'
+import { ChargesForm } from './ChargesForm'
 
-export const ChargeSelectionModal = (props: ButtonProps) => {
+interface ChargeSelectionModalProps extends ButtonProps {
+  selectedBillings: BillingComparatorArgs[]
+}
+
+export const ChargeSelectionModal = ({ selectedBillings, ...props }: ChargeSelectionModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const maxAmount = selectedBillings.reduce((ac, sb) => ac + sb.amount, 0)
 
   return (
     <>
@@ -37,7 +39,7 @@ export const ChargeSelectionModal = (props: ButtonProps) => {
         Cobrar selección
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -50,66 +52,53 @@ export const ChargeSelectionModal = (props: ButtonProps) => {
               <Table>
                 <Thead>
                   <Tr>
-                    <Th pl={0}>Producto</Th>
+                    <Th pl={0}>Concepto</Th>
                     <Th textAlign="center">Cantidad</Th>
-                    <Th pr={0} colSpan={2}>
+                    <Th pr={0} textAlign="right" colSpan={2}>
                       Precio
                     </Th>
                   </Tr>
                 </Thead>
+
                 <Tbody>
-                  {Array(3)
-                    .fill(1)
-                    .map((_, i) => (
-                      <Tr key={i}>
-                        <Td pl={0}>Mensualidad #{i + 1}</Td>
-                        <Td>1</Td>
-                        <Td textAlign="right" pr={0}>
-                          $20
-                        </Td>
-                      </Tr>
-                    ))}
+                  {selectedBillings.map((sb) => (
+                    <Tr key={sb.id}>
+                      <Td pl={0}>{sb.productName}</Td>
+                      <Td textAlign="center">1</Td>
+                      <Td textAlign="right" pr={0}>
+                        {sb.amount}
+                      </Td>
+                    </Tr>
+                  ))}
                 </Tbody>
+
                 <Tfoot>
                   <Tr fontWeight="bold">
                     <Td pl={0} colSpan={2}>
                       Total
                     </Td>
                     <Td pr={0} textAlign="right">
-                      $60
+                      {maxAmount}
                     </Td>
                   </Tr>
                 </Tfoot>
               </Table>
             </TableContainer>
 
-            <Heading as="h3" size="sm" my={4}>
-              Métodos de pago
-            </Heading>
+            <Divider mb={3} />
 
-            <form>
-              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                <FormControl as={GridItem}>
-                  <Select>
-                    <option>Efectivo</option>
-                  </Select>
-                </FormControl>
-
-                <FormControl as={GridItem}>
-                  <Input placeholder="Monto" />
-                </FormControl>
-              </Grid>
-            </form>
-
-            <Button mt={4} width="full" size="sm">
-              <VisuallyHidden>Agregar método de pago</VisuallyHidden>
-              <BsPlusLg />
-            </Button>
+            <ChargesForm
+              id="ChargesForm"
+              maxAmount={maxAmount}
+              onSubmit={(data) => console.log(data)}
+            />
           </ModalBody>
 
           <ModalFooter>
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton>Registrar cobro</SaveButton>
+            <SaveButton type="submit" form="ChargesForm">
+              Registrar cobro
+            </SaveButton>
           </ModalFooter>
         </ModalContent>
       </Modal>
