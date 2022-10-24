@@ -10,6 +10,7 @@ export const useConversions = ({ itemsPerPage = 20 } = {}) => {
   )
   return {
     conversions: data?.result,
+    latestConversion: data?.result[0],
     error,
     setPage,
     page,
