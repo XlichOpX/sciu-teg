@@ -1,10 +1,12 @@
 import { Alert, Flex } from '@chakra-ui/react'
 import { HeadingWithSearch } from 'components/app'
 import {
+  AddProductFormSubmitHandler,
   AddProductModal,
   BillignsFormData,
   BillingsForm,
   ChargeSelectionModal,
+  ProductReceivable,
   StudentInfo
 } from 'components/charges'
 import { BaseLayout } from 'components/layouts'
@@ -22,6 +24,26 @@ const Charges: NextPageWithLayout = () => {
     defaultValues: { billings: [] }
   })
   const selectedBillingsIDs = billingsFormHook.watch('billings')
+
+  const [products, setProducts] = useState<ProductReceivable[]>([])
+
+  const onProductAdd: AddProductFormSubmitHandler = (product) => {
+    const existentProductIndex = products.findIndex((p) => p.id === product.id)
+    const isExistentProduct = existentProductIndex >= 0
+    // Si el producto ya estaba, lo reemplazamos
+    if (isExistentProduct) {
+      setProducts([
+        ...products.slice(0, existentProductIndex),
+        product,
+        ...products.slice(existentProductIndex + 1)
+      ])
+    } else {
+      setProducts([...products, product])
+    }
+  }
+
+  const onProductRemove = (productId: number) =>
+    setProducts(products.filter((p) => p.id !== productId))
 
   return (
     <>
@@ -50,16 +72,15 @@ const Charges: NextPageWithLayout = () => {
         <>
           <StudentInfo student={data.student} />
 
-          {data.billings.length > 0 && (
-            <BillingsForm billings={data.billings} formHook={billingsFormHook} />
-          )}
-          {data.billings.length === 0 && <Alert>El estudiante no posee deudas por pagar.</Alert>}
+          <BillingsForm
+            onProductRemove={onProductRemove}
+            products={products}
+            billings={data.billings}
+            formHook={billingsFormHook}
+          />
 
           <Flex justifyContent="space-between" mt={4} gap={4} wrap="wrap">
-            <AddProductModal
-              width={{ base: 'full', sm: 'auto' }}
-              onSubmit={(data) => console.log(data)}
-            />
+            <AddProductModal width={{ base: 'full', sm: 'auto' }} onSubmit={onProductAdd} />
             <ChargeSelectionModal
               width={{ base: 'full', sm: 'auto' }}
               selectedBillings={data.billings.filter((b) => selectedBillingsIDs.includes(b.id))}

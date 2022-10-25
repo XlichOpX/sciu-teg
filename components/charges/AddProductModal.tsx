@@ -26,11 +26,16 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { receiptProductSchema } from 'schema/receiptSchema'
 import { z } from 'zod'
 
-const addProductFormSchema = receiptProductSchema
-type AddProductFormData = z.infer<typeof addProductFormSchema>
+const addProductFormSchema = receiptProductSchema.extend({
+  name: z.string(),
+  price: z.number()
+})
+
+export type AddProductFormData = z.infer<typeof addProductFormSchema>
+export type AddProductFormSubmitHandler = SubmitHandler<AddProductFormData>
 
 interface AddProductModalProps extends Omit<ButtonProps, 'onSubmit'> {
-  onSubmit: SubmitHandler<AddProductFormData>
+  onSubmit: AddProductFormSubmitHandler
 }
 
 export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) => {
@@ -50,12 +55,13 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
     [products, selectedCategoryId]
   )
 
+  // Colocamos el primer item de categories y filteredProducts como la opción seleccionada
+  // en sus respectivos selects cada vez que cambien sus arrays
   useEffect(() => {
     if (filteredProducts && filteredProducts.length > 0) {
       setValue('id', filteredProducts[0].id)
     }
   }, [filteredProducts, setValue])
-
   useEffect(() => {
     if (categories && categories.length > 0) {
       setSelectedCategoryId(categories[0].id)
@@ -65,6 +71,17 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
   const selectedProductId = watch('id')
   const selectedProduct = products?.find((p) => p.id === selectedProductId)
   const selectedProductPrice = selectedProduct?.price ?? 0
+
+  useEffect(() => {
+    register('name')
+    register('price')
+  }, [register])
+
+  useEffect(() => {
+    if (!selectedProduct) return
+    setValue('name', selectedProduct?.name)
+    setValue('price', selectedProduct?.price)
+  }, [setValue, selectedProduct])
 
   let maxProductQuantity = Infinity
   if (selectedProduct && selectedProduct.stock > 0) maxProductQuantity = selectedProduct.stock
@@ -85,7 +102,13 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
           <ModalCloseButton />
 
           <ModalBody>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form
+              onSubmit={handleSubmit((data) => {
+                onSubmit(data)
+                onClose()
+              })}
+              id="AddProductForm"
+            >
               <FormControl mb={4}>
                 <FormLabel>Categoría</FormLabel>
                 <Select
@@ -146,7 +169,9 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
 
           <ModalFooter>
             <CancelButton mr="auto" onClick={onClose} />
-            <CreateButton onClick={handleSubmit(onSubmit)}>Agregar producto</CreateButton>
+            <CreateButton type="submit" form="AddProductForm">
+              Agregar producto
+            </CreateButton>
           </ModalFooter>
         </ModalContent>
       </Modal>
