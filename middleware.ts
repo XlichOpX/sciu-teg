@@ -10,7 +10,7 @@ export const middleware = async (req: NextRequest) => {
   const { user } = session
 
   const isApiRoute = pathname.includes('/api')
-  const isAuth = pathname.startsWith('/auth/')
+  const isAuth = pathname.includes('/auth/')
   const isUnauthorized = pathname.includes('/unauthorized')
 
   if (!isAuth && !user && !isUnauthorized) {
