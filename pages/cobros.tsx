@@ -50,7 +50,10 @@ const Charges: NextPageWithLayout = () => {
         <>
           <StudentInfo student={data.student} />
 
-          <BillingsForm billings={data.billings} formHook={billingsFormHook} />
+          {data.billings.length > 0 && (
+            <BillingsForm billings={data.billings} formHook={billingsFormHook} />
+          )}
+          {data.billings.length === 0 && <Alert>El estudiante no posee deudas por pagar.</Alert>}
 
           <Flex justifyContent="space-between" mt={4} gap={4} wrap="wrap">
             <AddProductsModal width={{ base: 'full', sm: 'auto' }} />
