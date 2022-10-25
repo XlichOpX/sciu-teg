@@ -17,8 +17,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUnserDo(session, 'READ_SECRET') || !canUnserDo(session, 'READ_SECRET_RECOVERY_MODE'))
-        return res.status(403).send(`Can't read this.`)
+      console.log(session.user?.permissions, canUnserDo(session, 'READ_SECRET'))
+      if (!canUnserDo(session, 'READ_SECRET')) return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los secretos
       try {
         const where = { user: { username: stringSearch(username) } }

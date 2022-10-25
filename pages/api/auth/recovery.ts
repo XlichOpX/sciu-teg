@@ -20,7 +20,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         const anonymous = {
           id: 0,
           status: { id: 0, status: 'recovery' },
-          permissions: [{ permission: 'READ_SECRET_RECOVERY_MODE', description: 'RECOVERY_MODE' }],
+          permissions: [{ permission: 'READ_SECRET', description: 'RECOVERY_MODE' }],
           username: 'recovery_mode'
         } as CookieUser
 
@@ -61,6 +61,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           if (Object.prototype.hasOwnProperty.call(body, key) && key.includes('answer')) {
             const requestValue = body[key]
             const secretValue = secret[key as keyof Secret]
+            console.log(compare(requestValue, secretValue as string), secretValue)
             if (!(secretValue && compare(requestValue, secretValue as string)))
               return res.status(403).end(`Error, not match Answer.`)
           }
@@ -70,8 +71,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           id: 0,
           status: { id: 0, status: 'recovery' },
           permissions: [
-            { permission: 'EDIT_USER_RECOVERY_MODE', description: 'RECOVERY_MODE' },
-            { permission: 'ACCESS_USERS_MUTATION_RECOVERY_MODE', description: 'RECOVERY_MODE' }
+            { permission: 'EDIT_USER', description: 'RECOVERY_MODE' },
+            { permission: 'ACCESS_USERS_MUTATION', description: 'RECOVERY_MODE' }
           ],
           username: 'recovery_mode'
         } as CookieUser

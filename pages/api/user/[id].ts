@@ -19,10 +19,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (
-    !canUnserDo(session, 'ACCESS_USERS_MUTATION') ||
-    !canUnserDo(session, 'ACCESS_USERS_MUTATION_RECOVERY_MODE')
-  )
+  if (!canUnserDo(session, 'ACCESS_USERS_MUTATION'))
     return res.status(403).send(`Can't access this.`)
 
   const { success } = idValidation.safeParse(id)
@@ -46,8 +43,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_USER') || !canUnserDo(session, 'EDIT_USER_RECOVERY_MODE'))
-        return res.status(403).send(`Can't edit this.`)
+      if (!canUnserDo(session, 'EDIT_USER')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN usuario
       try {
         const user = await prisma.user.findFirst({
@@ -63,7 +59,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
 
         const [, cryptoPass] = encrypt(password)
         body.password = cryptoPass
-
+        if (passwordConfirm) body.passwordConfirm = undefined
         // Hasheamos las respuestas
         if (secret) {
           secret.create = secretCrypt(secret.create)
