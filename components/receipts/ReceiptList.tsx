@@ -31,17 +31,17 @@ export const ReceiptList = ({
       <Table size={size}>
         <Thead>
           <Tr>
-            <Th pl={0}>Fecha</Th>
+            <Th>Fecha</Th>
             <Th textAlign="center">Recibo N°</Th>
             {showIdCol && <Th textAlign="center">Cédula</Th>}
-            <Th pr={0}>Monto</Th>
+            <Th textAlign="center">Monto</Th>
           </Tr>
         </Thead>
 
         <Tbody>
           {receipts.map((r) => (
             <Tr key={r.id} pos="relative" _hover={{ backgroundColor: hoverColor }}>
-              <Td pl={0}>{dayjs(r.createdAt).format('YYYY/MM/DD')}</Td>
+              <Td>{dayjs(r.createdAt).format('YYYY/MM/DD')}</Td>
               <Td textAlign="center">
                 {r.id}
                 <NLink href={`/recibos/${r.id}`} passHref>
@@ -55,9 +55,7 @@ export const ReceiptList = ({
                   {r.person.docType.type}-{r.person.docNumber}
                 </Td>
               )}
-              <Td pr={0} textAlign="right">
-                {r.amount}
-              </Td>
+              <Td textAlign="center">{r.amount}</Td>
             </Tr>
           ))}
         </Tbody>

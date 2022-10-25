@@ -18,20 +18,18 @@ export const BillingsForm = ({
       <Table>
         <Thead>
           <Tr>
-            <Th pl={0}>Concepto</Th>
+            <Th>Concepto</Th>
             <Th textAlign="center">Monto</Th>
-            <Th textAlign="center" pr={0}>
-              Cobrar
-            </Th>
+            <Th textAlign="center">Cobrar</Th>
           </Tr>
         </Thead>
 
         <Tbody>
           {billings.map((b) => (
             <Tr key={b.id}>
-              <Td pl={0}>{b.productName}</Td>
+              <Td>{b.productName}</Td>
               <Td textAlign="center">{b.amount}</Td>
-              <Td textAlign="center" pr={0}>
+              <Td textAlign="center">
                 <Controller
                   name="billings"
                   control={control}
