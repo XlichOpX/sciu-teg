@@ -1,6 +1,7 @@
 import { Box, Button, Container, Link, useColorModeValue, useDisclosure } from '@chakra-ui/react'
 import NextLink from 'next/link'
-import { MdLogout, MdMenu, MdSettings } from 'react-icons/md'
+import { MdMenu, MdSettings } from 'react-icons/md'
+import { LogoutButton } from './LogoutButton'
 
 const links = [
   {
@@ -23,11 +24,6 @@ const links = [
     href: '/configuracion/general',
     title: 'Configuración',
     text: <MdSettings />
-  },
-  {
-    href: '/api/auth/logout',
-    title: 'Cerrar sesión',
-    text: <MdLogout />
   }
 ]
 
@@ -71,6 +67,9 @@ export const Navbar = () => {
               </NextLink>
             </li>
           ))}
+          <li>
+            <LogoutButton />
+          </li>
         </Box>
       </Container>
 
@@ -92,6 +91,9 @@ export const Navbar = () => {
             </NextLink>
           </li>
         ))}
+        <li>
+          <LogoutButton />
+        </li>
       </Box>
     </Box>
   )

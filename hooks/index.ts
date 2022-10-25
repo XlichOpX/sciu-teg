@@ -1,5 +1,6 @@
 // created from 'create-ts-index'
 
+export * from './useAuth'
 export * from './useBillings'
 export * from './useCategories'
 export * from './useConversions'
