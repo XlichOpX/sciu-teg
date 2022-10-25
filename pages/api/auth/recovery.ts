@@ -13,6 +13,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case 'GET':
       try {
+        console.log('entre aqui')
         //crearemos la sesión temporal para dar acceso al usuario 'anonimous'
         const { username } = query
         if (!username) return

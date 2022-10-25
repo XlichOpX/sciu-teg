@@ -1,17 +1,14 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input
-} from '@chakra-ui/react'
+import { Divider, Flex, Heading } from '@chakra-ui/react'
+import { NewPasswordForm, SearchUserForm, SecretsForm } from 'components/auth/password-recovery'
 import Head from 'next/head'
+import { useState } from 'react'
+import { GetUserSecretResponse } from 'services/auth'
 import { NextPageWithLayout } from '../_app'
 
 const UserRecovery: NextPageWithLayout = () => {
+  const [userRecovery, setUserRecovery] = useState<GetUserSecretResponse>()
+  const [canChangePassword, setCanChangePassword] = useState(false)
+
   return (
     <>
       <Head>
@@ -28,62 +25,29 @@ const UserRecovery: NextPageWithLayout = () => {
         direction="column"
         gap={6}
       >
-        <Heading as="h1" textAlign="center" w="full">
+        <Heading as="h1" textAlign="center" w="full" mb={4}>
           SCIU
           <Divider />
           Recuperar acceso
         </Heading>
 
-        <Box as="form" w="full">
-          <FormControl mb={4}>
-            <FormLabel>Usuario</FormLabel>
-            <Input />
-          </FormControl>
+        {!canChangePassword && <SearchUserForm afterSubmit={(data) => setUserRecovery(data)} />}
 
-          <Button colorScheme="blue" width="full">
-            Buscar usuario
-          </Button>
-        </Box>
+        {userRecovery && !canChangePassword && (
+          <SecretsForm
+            userId={userRecovery.user.id}
+            username={userRecovery.user.username}
+            questions={userRecovery.questions}
+            onConfirm={setCanChangePassword}
+          />
+        )}
 
-        <NewPasswordForm />
+        {userRecovery && canChangePassword && (
+          <NewPasswordForm username={userRecovery.user.username} userId={userRecovery.user.id} />
+        )}
       </Flex>
     </>
   )
 }
 
 export default UserRecovery
-
-function NewPasswordForm() {
-  return (
-    <Box as="form" w="full">
-      <FormControl mb={4}>
-        <FormLabel>Pregunta #1</FormLabel>
-        <Input placeholder="Respuesta" />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel>Pregunta #2</FormLabel>
-        <Input placeholder="Respuesta" />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel>Pregunta #3</FormLabel>
-        <Input placeholder="Respuesta" />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel>Nueva contraseña</FormLabel>
-        <Input type="password" />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel>Confirmar nueva contraseña</FormLabel>
-        <Input type="password" />
-      </FormControl>
-
-      <Button colorScheme="blue" width="full">
-        Cambiar contraseña
-      </Button>
-    </Box>
-  )
-}
