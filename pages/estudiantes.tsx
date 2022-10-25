@@ -83,9 +83,14 @@ const Charges: NextPageWithLayout = () => {
             <AddProductModal width={{ base: 'full', sm: 'auto' }} onSubmit={onProductAdd} />
             <ChargeSelectionModal
               width={{ base: 'full', sm: 'auto' }}
-              selectedBillings={data.billings.filter((b) => selectedBillingsIDs.includes(b.id))}
-              disabled={selectedBillingsIDs.length === 0}
+              billings={data.billings.filter((b) => selectedBillingsIDs.includes(b.id))}
+              products={products}
+              disabled={selectedBillingsIDs.length === 0 && products.length === 0}
               personId={data.student.person.id}
+              onRecord={() => {
+                billingsFormHook.reset()
+                setProducts([])
+              }}
             />
           </Flex>
         </>

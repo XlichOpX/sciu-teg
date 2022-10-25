@@ -25,32 +25,41 @@ import { SubmitHandler } from 'react-hook-form'
 import { BsWalletFill } from 'react-icons/bs'
 import { createReceipt } from 'services/receipts'
 import { BillingComparatorArgs } from 'types/billing'
+import { ProductReceivable } from './BillingsForm'
 import { ChargesForm, ChargesFormData } from './ChargesForm'
 
 interface ChargeSelectionModalProps extends ButtonProps {
-  selectedBillings: BillingComparatorArgs[]
+  billings: BillingComparatorArgs[]
   personId: number
+  products: ProductReceivable[]
+  onRecord: () => void
 }
 
 export const ChargeSelectionModal = ({
-  selectedBillings,
+  billings,
   personId,
+  products,
+  onRecord,
   ...props
 }: ChargeSelectionModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const toast = useToast()
 
-  const maxAmount = selectedBillings.reduce((ac, sb) => ac + sb.amount, 0)
+  const totalAmount =
+    billings.reduce((ac, sb) => ac + sb.amount, 0) +
+    products.reduce((ac, p) => ac + p.price * p.quantity, 0)
 
   const onRecordCharge: SubmitHandler<ChargesFormData> = async (data) => {
     try {
       const receipt = await createReceipt({
         ...data,
-        billings: selectedBillings.map((sb) => sb.id),
-        amount: maxAmount,
+        billings: billings.map((sb) => sb.id),
+        products: products.map((p) => ({ id: p.id, quantity: p.quantity })),
+        amount: totalAmount,
         person: personId
       })
+      onRecord()
       onClose()
       toast({ status: 'success', description: 'Cobro registrado' })
       window.open(window.location.origin + `/recibos/${receipt.id}`)
@@ -79,7 +88,6 @@ export const ChargeSelectionModal = ({
                 <Thead>
                   <Tr>
                     <Th pl={0}>Concepto</Th>
-                    <Th textAlign="center">Cantidad</Th>
                     <Th pr={0} textAlign="right" colSpan={2}>
                       Precio
                     </Th>
@@ -87,12 +95,22 @@ export const ChargeSelectionModal = ({
                 </Thead>
 
                 <Tbody>
-                  {selectedBillings.map((sb) => (
+                  {billings.map((sb) => (
                     <Tr key={sb.id}>
                       <Td pl={0}>{sb.productName}</Td>
-                      <Td textAlign="center">1</Td>
                       <Td textAlign="right" pr={0}>
                         {sb.amount}
+                      </Td>
+                    </Tr>
+                  ))}
+
+                  {products.map((p) => (
+                    <Tr key={p.id}>
+                      <Td pl={0}>
+                        {p.name} (x{p.quantity})
+                      </Td>
+                      <Td textAlign="right" pr={0}>
+                        {p.price * p.quantity}
                       </Td>
                     </Tr>
                   ))}
@@ -100,11 +118,9 @@ export const ChargeSelectionModal = ({
 
                 <Tfoot>
                   <Tr fontWeight="bold">
-                    <Td pl={0} colSpan={2}>
-                      Total
-                    </Td>
+                    <Td pl={0}>Total</Td>
                     <Td pr={0} textAlign="right">
-                      {maxAmount}
+                      {totalAmount}
                     </Td>
                   </Tr>
                 </Tfoot>
@@ -113,7 +129,7 @@ export const ChargeSelectionModal = ({
 
             <Divider mb={3} />
 
-            <ChargesForm id="ChargesForm" maxAmount={maxAmount} onSubmit={onRecordCharge} />
+            <ChargesForm id="ChargesForm" maxAmount={totalAmount} onSubmit={onRecordCharge} />
           </ModalBody>
 
           <ModalFooter>
