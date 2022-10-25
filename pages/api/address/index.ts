@@ -22,8 +22,6 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         const addresses = await prisma.address.findMany({
           where: { shortAddress: stringSearch(keyword) }
         })
-
-        if (!addresses) return res.status(404).end(`Addresses not found`)
         res.status(200).send(addresses)
       } catch (error) {
         if (error instanceof Error) {

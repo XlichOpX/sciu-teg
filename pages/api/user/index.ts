@@ -1,4 +1,3 @@
-import { User } from '@prisma/client'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { encrypt, secretCrypt } from 'lib/crypter'
 import { ironOptions } from 'lib/ironSession'
@@ -51,7 +50,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         }
 
         // Creamos al usuario
-        const result: User = await prisma.user.create({
+        const result = await prisma.user.create({
           data: { ...body }
         })
         res.status(201).send(result)

@@ -130,7 +130,12 @@ export const billing = Prisma.validator<Prisma.BillingArgs>()({
 })
 
 export const userEssencials = Prisma.validator<Prisma.UserArgs>()({
-  select: { id: true, status: true, username: true }
+  select: {
+    id: true,
+    status: true,
+    username: true,
+    roles: { select: { id: true, name: true, description: true } }
+  }
 })
 
 export const roleWithPermissions = Prisma.validator<Prisma.RoleArgs>()({
