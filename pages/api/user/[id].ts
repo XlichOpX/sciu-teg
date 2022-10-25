@@ -3,7 +3,7 @@ import { encrypt, secretCrypt } from 'lib/crypter'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { userWithAll } from 'prisma/queries'
+import { userEssencials, userWithAll } from 'prisma/queries'
 import { canUnserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
@@ -19,7 +19,10 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUnserDo(session, 'ACCESS_USERS_MUTATION'))
+  if (
+    !canUnserDo(session, 'ACCESS_USERS_MUTATION') ||
+    !canUnserDo(session, 'ACCESS_USERS_MUTATION_RECOVERY_MODE')
+  )
     return res.status(403).send(`Can't access this.`)
 
   const { success } = idValidation.safeParse(id)
@@ -43,7 +46,8 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_USER')) return res.status(403).send(`Can't edit this.`)
+      if (!canUnserDo(session, 'EDIT_USER') || !canUnserDo(session, 'EDIT_USER_RECOVERY_MODE'))
+        return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN usuario
       try {
         const user = await prisma.user.findFirst({
@@ -51,9 +55,12 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
         })
         if (!user) res.status(404).end(`User not found`)
 
-        const { password, secret } = body
+        const { password, secret, passwordConfirm } = body
 
         // Hasheamos la contraseña
+        if (passwordConfirm || password)
+          if (!(password === passwordConfirm)) return res.status(404).end(`Password not match`)
+
         const [, cryptoPass] = encrypt(password)
         body.password = cryptoPass
 
@@ -61,6 +68,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
         if (secret) {
           secret.create = secretCrypt(secret.create)
         }
+
         const updateUser = await prisma.user.update({
           data: {
             ...body
@@ -68,7 +76,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
           where: {
             id: Number(id)
           },
-          ...userWithAll
+          ...userEssencials
         })
         res.status(201).send(updateUser)
       } catch (error) {

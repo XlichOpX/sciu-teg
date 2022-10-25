@@ -3,18 +3,43 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { canUnserDo } from 'utils/checkPermissions'
+import { stringSearch } from 'utils/routePaginate'
 
 // GET|POST /api/secret
 export default withIronSessionApiRoute(handle, ironOptions)
 async function handle(req: NextApiRequest, res: NextApiResponse) {
-  const { body, method, session } = req
+  const {
+    body,
+    method,
+    session,
+    query: { username }
+  } = req
 
   switch (method) {
     case 'GET':
-      if (!canUnserDo(session, 'READ_SECRET')) return res.status(403).send(`Can't read this.`)
+      if (!canUnserDo(session, 'READ_SECRET') || !canUnserDo(session, 'READ_SECRET_RECOVERY_MODE'))
+        return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los secretos
       try {
-        const secrets = await prisma.secret.findMany()
+        const where = { user: { username: stringSearch(username) } }
+
+        const secrets = await prisma.secret.findMany({
+          select: {
+            id: true,
+            questionOne: true,
+            questionTwo: true,
+            questionThree: true,
+            user: { select: { id: true, username: true } }
+          },
+          where
+        })
+
+        if (username) {
+          if (!(secrets[0]?.user?.username === username))
+            return res.status(404).end(`Error, user not full match`)
+          res.status(200).json(secrets[0])
+        }
+
         res.status(200).send(secrets)
       } catch (error) {
         if (error instanceof Error) {
