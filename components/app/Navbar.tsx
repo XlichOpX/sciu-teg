@@ -4,8 +4,8 @@ import { MdLogout, MdMenu, MdSettings } from 'react-icons/md'
 
 const links = [
   {
-    href: '/cobros',
-    text: 'Cobros'
+    href: '/estudiantes',
+    text: 'Estudiantes'
   },
   {
     href: '/recibos',

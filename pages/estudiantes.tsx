@@ -26,11 +26,11 @@ const Charges: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>Cobros</title>
+        <title>Estudiantes</title>
       </Head>
 
       <HeadingWithSearch
-        title="Cobros"
+        title="Estudiantes"
         placeholder="Cédula"
         onSubmit={({ text }) => {
           billingsFormHook.reset()
