@@ -1,7 +1,7 @@
 import { Alert, Flex } from '@chakra-ui/react'
 import { HeadingWithSearch } from 'components/app'
 import {
-  AddProductsModal,
+  AddProductModal,
   BillignsFormData,
   BillingsForm,
   ChargeSelectionModal,
@@ -56,7 +56,10 @@ const Charges: NextPageWithLayout = () => {
           {data.billings.length === 0 && <Alert>El estudiante no posee deudas por pagar.</Alert>}
 
           <Flex justifyContent="space-between" mt={4} gap={4} wrap="wrap">
-            <AddProductsModal width={{ base: 'full', sm: 'auto' }} />
+            <AddProductModal
+              width={{ base: 'full', sm: 'auto' }}
+              onSubmit={(data) => console.log(data)}
+            />
             <ChargeSelectionModal
               width={{ base: 'full', sm: 'auto' }}
               selectedBillings={data.billings.filter((b) => selectedBillingsIDs.includes(b.id))}

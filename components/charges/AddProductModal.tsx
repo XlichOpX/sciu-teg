@@ -1,0 +1,155 @@
+import {
+  ButtonProps,
+  FormControl,
+  FormLabel,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Select,
+  SimpleGrid,
+  useDisclosure
+} from '@chakra-ui/react'
+import { CancelButton, CreateButton } from 'components/app'
+import { useCategories, useProducts } from 'hooks'
+import { useEffect, useMemo, useState } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { receiptProductSchema } from 'schema/receiptSchema'
+import { z } from 'zod'
+
+const addProductFormSchema = receiptProductSchema
+type AddProductFormData = z.infer<typeof addProductFormSchema>
+
+interface AddProductModalProps extends Omit<ButtonProps, 'onSubmit'> {
+  onSubmit: SubmitHandler<AddProductFormData>
+}
+
+export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { categories } = useCategories()
+  const { products } = useProducts({ itemsPerPage: 50 })
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
+
+  const { handleSubmit, register, control, watch, setValue } = useForm<AddProductFormData>({
+    defaultValues: {
+      quantity: 1
+    }
+  })
+
+  const filteredProducts = useMemo(
+    () => products?.filter((p) => p.categoryId === selectedCategoryId),
+    [products, selectedCategoryId]
+  )
+
+  useEffect(() => {
+    if (filteredProducts && filteredProducts.length > 0) {
+      setValue('id', filteredProducts[0].id)
+    }
+  }, [filteredProducts, setValue])
+
+  useEffect(() => {
+    if (categories && categories.length > 0) {
+      setSelectedCategoryId(categories[0].id)
+    }
+  }, [categories, setValue])
+
+  const selectedProductId = watch('id')
+  const selectedProduct = products?.find((p) => p.id === selectedProductId)
+  const selectedProductPrice = selectedProduct?.price ?? 0
+
+  let maxProductQuantity = Infinity
+  if (selectedProduct && selectedProduct.stock > 0) maxProductQuantity = selectedProduct.stock
+  const quantity = watch('quantity')
+
+  return (
+    <>
+      <CreateButton onClick={onOpen} {...props}>
+        Agregar producto
+      </CreateButton>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <h2>Agregar producto</h2>
+          </ModalHeader>
+          <ModalCloseButton />
+
+          <ModalBody>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <FormControl mb={4}>
+                <FormLabel>Categoría</FormLabel>
+                <Select
+                  value={selectedCategoryId}
+                  onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
+                >
+                  {categories?.length === 0 && <option disabled>No hay categorías</option>}
+                  {categories?.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl mb={4}>
+                <FormLabel>Producto</FormLabel>
+                <Select {...register('id', { valueAsNumber: true })}>
+                  {products?.length === 0 && <option disabled>No hay productos</option>}
+                  {filteredProducts?.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <SimpleGrid columns={2} gap={4} alignItems="center">
+                <FormControl>
+                  <FormLabel>Cantidad</FormLabel>
+                  <Controller
+                    name="quantity"
+                    control={control}
+                    render={({ field }) => (
+                      <NumberInput
+                        min={1}
+                        max={maxProductQuantity}
+                        {...field}
+                        onChange={(_, v) => field.onChange(v || 0)}
+                      >
+                        <NumberInputField />
+                        <NumberInputStepper>
+                          <NumberIncrementStepper />
+                          <NumberDecrementStepper />
+                        </NumberInputStepper>
+                      </NumberInput>
+                    )}
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Precio</FormLabel>
+                  <Input readOnly value={selectedProductPrice * quantity} />
+                </FormControl>
+              </SimpleGrid>
+            </form>
+          </ModalBody>
+
+          <ModalFooter>
+            <CancelButton mr="auto" onClick={onClose} />
+            <CreateButton onClick={handleSubmit(onSubmit)}>Agregar producto</CreateButton>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  )
+}

@@ -20,6 +20,12 @@ import { z } from 'zod'
     person: number
   }
  **/
+
+export const receiptProductSchema = z.object({
+  id: z.number().positive().int(),
+  quantity: z.number().positive().int()
+})
+
 export const receiptCreateSchemaInput = z.object({
   amount: z.number().positive(),
   billings: z.number().positive().int().array().nullish(),
@@ -33,12 +39,6 @@ export const receiptCreateSchemaInput = z.object({
       })
     })
     .array(),
-  products: z
-    .object({
-      id: z.number().positive().int(),
-      quantity: z.number().positive().int()
-    })
-    .array()
-    .nullish(),
+  products: receiptProductSchema.array().nullish(),
   person: z.number().positive().int()
 })
