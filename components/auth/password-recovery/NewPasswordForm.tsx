@@ -70,7 +70,7 @@ export const NewPasswordForm = ({ username, userId }: { username: string; userId
         <FormErrorMessage>{errors.passwordConfirm?.message}</FormErrorMessage>
       </FormControl>
 
-      <Button type="submit" colorScheme="blue" width="full" disabled={isSubmitting}>
+      <Button type="submit" colorScheme="blue" width="full" isLoading={isSubmitting}>
         Cambiar contraseña
       </Button>
     </Box>

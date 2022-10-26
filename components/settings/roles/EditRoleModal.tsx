@@ -81,7 +81,7 @@ export const EditRoleModal = ({ role }: { role: any }) => {
             />
 
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton type="submit" form="EditRoleModal" disabled={isSubmitting} />
+            <SaveButton type="submit" form="EditRoleModal" isLoading={isSubmitting} />
           </ModalFooter>
         </ModalContent>
       </Modal>

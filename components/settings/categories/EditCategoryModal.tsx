@@ -63,7 +63,7 @@ export const EditCategoryModal = ({
               mr="auto"
             />
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton type="submit" form={formId} disabled={formHook.formState.isSubmitting} />
+            <SaveButton type="submit" form={formId} isLoading={formHook.formState.isSubmitting} />
           </ModalFooter>
         </ModalContent>
       </Modal>

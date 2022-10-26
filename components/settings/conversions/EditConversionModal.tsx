@@ -83,7 +83,7 @@ export const EditConversionModal = ({
               disabled={isSubmitting}
             />
             <CancelButton mr={3} onClick={onClose} />
-            <SaveButton type="submit" form="EditConversionForm" disabled={isSubmitting} />
+            <SaveButton type="submit" form="EditConversionForm" isLoading={isSubmitting} />
           </ModalFooter>
         </ModalContent>
       </Modal>

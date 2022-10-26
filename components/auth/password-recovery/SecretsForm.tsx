@@ -77,7 +77,7 @@ export const SecretsForm = ({
         <FormErrorMessage>{errors.answerThree?.message}</FormErrorMessage>
       </FormControl>
 
-      <Button type="submit" colorScheme="blue" width="full" disabled={isSubmitting}>
+      <Button type="submit" colorScheme="blue" width="full" isLoading={isSubmitting}>
         Confirmar respuestas
       </Button>
     </Box>

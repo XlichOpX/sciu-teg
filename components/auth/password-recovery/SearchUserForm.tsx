@@ -55,7 +55,7 @@ export const SearchUserForm = ({ afterSubmit }: { afterSubmit: SearchUserFormAft
         <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
       </FormControl>
 
-      <Button colorScheme="blue" width="full" type="submit" disabled={isSubmitting}>
+      <Button colorScheme="blue" width="full" type="submit" isLoading={isSubmitting}>
         Buscar usuario
       </Button>
     </Box>

@@ -86,7 +86,7 @@ const GeneralSettings: NextPageWithLayout = () => {
           </FormControl>
         </SimpleGrid>
 
-        <SaveButton type="submit" disabled={isSubmitting} />
+        <SaveButton type="submit" isLoading={isSubmitting} />
       </VStack>
     </>
   )
