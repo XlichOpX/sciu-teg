@@ -38,3 +38,7 @@ export const userSchema = z.object({
   person: personSchema.or(z.number().positive().int()),
   roles: z.object({ label: z.string(), value: z.number().int().positive() }).array().min(1)
 })
+
+export const userUpdateSchema = z.object({
+  roles: z.number().int().positive().array().min(1)
+})

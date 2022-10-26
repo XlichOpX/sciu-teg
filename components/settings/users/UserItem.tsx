@@ -1,11 +1,11 @@
 import { Text } from '@chakra-ui/react'
-import { User } from '@prisma/client'
 import { SimpleBox } from 'components/app'
+import { UserEssencials } from 'types/user'
 import { EditUserModal } from './EditUserModal'
 
-export const UserItem = ({ user }: { user: User }) => (
+export const UserItem = ({ user }: { user: UserEssencials }) => (
   <SimpleBox as="li" display="flex" justifyContent="space-between">
     <Text fontWeight="bold">{user.username}</Text>
-    <EditUserModal />
+    <EditUserModal user={user} />
   </SimpleBox>
 )
