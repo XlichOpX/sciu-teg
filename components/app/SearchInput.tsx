@@ -1,4 +1,4 @@
-import { Input, InputGroup, InputRightElement } from '@chakra-ui/react'
+import { Button, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import debounce from 'just-debounce'
 import type { SubmitHandler } from 'react-hook-form'
@@ -22,7 +22,7 @@ export const SearchInput = ({
   const {
     handleSubmit,
     register,
-    formState: { errors }
+    formState: { errors, isSubmitting }
   } = useForm<SearchInput>({ resolver: zodResolver(schema) })
 
   return (
@@ -33,8 +33,21 @@ export const SearchInput = ({
           {...register('text', { onChange: debounce(handleSubmit(onChange), 275) })}
           isInvalid={!!errors.text}
         />
-        <InputRightElement pointerEvents="none" color="gray.500" fontSize="lg">
-          <MdSearch />
+        <InputRightElement color="gray.500" fontSize="lg">
+          <Button
+            isLoading={isSubmitting}
+            type="submit"
+            variant="unstyled"
+            display="flex"
+            justifyContent="center"
+            transition="all 0.2s ease-in-out"
+            alignItems="center"
+            _hover={{
+              fontSize: 22
+            }}
+          >
+            <MdSearch />
+          </Button>
         </InputRightElement>
       </InputGroup>
     </form>
