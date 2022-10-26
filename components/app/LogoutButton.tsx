@@ -6,6 +6,7 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
+  ButtonProps,
   useDisclosure
 } from '@chakra-ui/react'
 import { useAuth } from 'hooks'
@@ -13,7 +14,7 @@ import { ComponentRef, useRef, useState } from 'react'
 import { MdLogout } from 'react-icons/md'
 import { CancelButton } from './CancelButton'
 
-export const LogoutButton = () => {
+export const LogoutButton = (props: ButtonProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { logout } = useAuth()
   const cancelRef = useRef<ComponentRef<'button'>>(null)
@@ -22,7 +23,7 @@ export const LogoutButton = () => {
 
   return (
     <>
-      <Button title="Cerrar sesión" onClick={onOpen} variant="ghost">
+      <Button title="Cerrar sesión" onClick={onOpen} variant="ghost" {...props}>
         <MdLogout />
       </Button>
 

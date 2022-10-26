@@ -77,7 +77,7 @@ export const Navbar = () => {
       <Box
         as="ul"
         listStyleType="none"
-        bgColor="white"
+        bgColor={bg}
         display={['flex', null, 'none']}
         flexDirection="column"
         {...getDisclosureProps()}
@@ -92,7 +92,7 @@ export const Navbar = () => {
           </li>
         ))}
         <li>
-          <LogoutButton />
+          <LogoutButton w="full" />
         </li>
       </Box>
     </Box>
