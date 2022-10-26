@@ -74,3 +74,7 @@ export const updateUser = async (userId: number, data: UserUpdateInput) => {
     body: parseUpdateUserFormData(data)
   })) as UserEssencials
 }
+
+export const deleteUser = async (userId: number) => {
+  return await fetch(`/api/user/${userId}`, { method: 'DELETE' })
+}

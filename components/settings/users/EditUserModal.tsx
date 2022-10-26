@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -15,12 +14,11 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Select } from 'chakra-react-select'
-import { CancelButton, EditButton, SaveButton } from 'components/app'
+import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
 import { useMatchMutate, userKeysMatcher, useRoles } from 'hooks'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { BsTrash } from 'react-icons/bs'
 import { userUpdateSchema } from 'schema/userSchema'
-import { updateUser } from 'services/users'
+import { deleteUser, updateUser } from 'services/users'
 import { UserEssencials } from 'types/user'
 import { z } from 'zod'
 
@@ -49,6 +47,17 @@ export const EditUserModal = ({ user }: { user: UserEssencials }) => {
       onClose()
     } catch {
       toast({ status: 'error', description: 'Ocurrió un error al actualizar el usuario' })
+    }
+  }
+
+  const onDelete = async () => {
+    try {
+      await deleteUser(user.id)
+      await matchMutate(userKeysMatcher)
+      toast({ status: 'success', description: 'Usuario eliminado' })
+      onClose()
+    } catch {
+      toast({ status: 'error', description: 'Ocurrió un error al eliminar el usuario' })
     }
   }
 
@@ -87,9 +96,11 @@ export const EditUserModal = ({ user }: { user: UserEssencials }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button mr="auto" colorScheme="red" variant="outline" title="Eliminar usuario">
-              <BsTrash />
-            </Button>
+            <DeleteButton
+              confirmBody="¿Está seguro de eliminar este usuario?"
+              onDelete={onDelete}
+              mr="auto"
+            />
 
             <CancelButton mr={3} onClick={onClose} />
 
