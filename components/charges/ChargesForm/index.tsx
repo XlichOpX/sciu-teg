@@ -8,6 +8,7 @@ import {
   Stack
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { FullyCenteredSpinner } from 'components/app'
 import { useConversions, usePaymentMethods } from 'hooks'
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { receiptCreateSchemaInput } from 'schema/receiptSchema'
@@ -62,7 +63,7 @@ export const ChargesForm = ({
   const totalAmount = charges.reduce((ac, c) => ac + c.amount, 0)
   const amountDiff = totalAmount - maxAmount
 
-  if (!latestConversion || !paymentMethods) return null
+  if (!latestConversion || !paymentMethods) return <FullyCenteredSpinner />
 
   return (
     <>

@@ -133,7 +133,7 @@ export const ChargeSelectionModal = ({
           </ModalBody>
 
           <ModalFooter>
-            <CancelButton mr={3} onClick={onClose} />
+            <CancelButton mr="auto" onClick={onClose} />
             <SaveButton type="submit" form="ChargesForm">
               Registrar cobro
             </SaveButton>
