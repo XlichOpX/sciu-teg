@@ -1,5 +1,5 @@
 import { Alert, Flex } from '@chakra-ui/react'
-import { HeadingWithSearch } from 'components/app'
+import { FullyCenteredSpinner } from 'components/app'
 import {
   AddProductFormSubmitHandler,
   AddProductModal,
@@ -9,22 +9,25 @@ import {
   ProductReceivable,
   StudentInfo
 } from 'components/charges'
-import { BaseLayout } from 'components/layouts'
+import { StudentsLayout } from 'components/students'
 import { useBillings } from 'hooks'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { NextPageWithLayout } from 'pages/_app'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { NextPageWithLayout } from './_app'
 
-const Charges: NextPageWithLayout = () => {
-  const [docNumber, setDocNumber] = useState('')
-  const { data, error } = useBillings(docNumber)
+const StudentDetail: NextPageWithLayout = () => {
+  const router = useRouter()
+  const docNumber = router.query.docNum as string
+
+  const { data, error, isLoading } = useBillings(docNumber)
 
   const billingsFormHook = useForm<BillignsFormData>({
     defaultValues: { billings: [] }
   })
-  const selectedBillingsIDs = billingsFormHook.watch('billings')
 
+  const selectedBillingsIDs = billingsFormHook.watch('billings')
   const [products, setProducts] = useState<ProductReceivable[]>([])
 
   const onProductAdd: AddProductFormSubmitHandler = (product) => {
@@ -48,17 +51,8 @@ const Charges: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>Estudiantes</title>
+        <title>Estudiantes | {docNumber}</title>
       </Head>
-
-      <HeadingWithSearch
-        title="Estudiantes"
-        placeholder="Cédula"
-        onSubmit={({ text }) => {
-          billingsFormHook.reset()
-          setDocNumber(text)
-        }}
-      />
 
       {error && (
         <Alert mb={4} status="error">
@@ -66,7 +60,7 @@ const Charges: NextPageWithLayout = () => {
         </Alert>
       )}
 
-      {!data && <Alert>Busque un estudiante por su cédula...</Alert>}
+      {isLoading && <FullyCenteredSpinner />}
 
       {data && (
         <>
@@ -99,6 +93,6 @@ const Charges: NextPageWithLayout = () => {
   )
 }
 
-Charges.getLayout = (page) => <BaseLayout>{page}</BaseLayout>
+StudentDetail.getLayout = (page) => <StudentsLayout>{page}</StudentsLayout>
 
-export default Charges
+export default StudentDetail
