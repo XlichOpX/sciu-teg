@@ -53,33 +53,33 @@ const GeneralSettings: NextPageWithLayout = () => {
         onSubmit={handleSubmit(onSubmit, (error) => console.log(error))}
       >
         <SimpleGrid columns={[1, 2]} gap={4}>
-          <FormControl isInvalid={!!errors.institute}>
+          <FormControl isInvalid={!!errors.institute} isRequired>
             <FormLabel>Nombre</FormLabel>
             <Input {...register('institute')} />
             <FormErrorMessage>{errors.institute?.message}</FormErrorMessage>
           </FormControl>
 
-          <FormControl isInvalid={!!errors.rif}>
+          <FormControl isInvalid={!!errors.rif} isRequired>
             <FormLabel>RIF</FormLabel>
             <Input {...register('rif')} />
             <FormErrorMessage>{errors.rif?.message}</FormErrorMessage>
           </FormControl>
         </SimpleGrid>
 
-        <FormControl isInvalid={!!errors.address}>
+        <FormControl isInvalid={!!errors.address} isRequired>
           <FormLabel>Dirección</FormLabel>
           <Input {...register('address')} />
           <FormErrorMessage>{errors.address?.message}</FormErrorMessage>
         </FormControl>
 
         <SimpleGrid columns={[1, 2]} gap={4}>
-          <FormControl isInvalid={!!errors.population}>
+          <FormControl isInvalid={!!errors.population} isRequired>
             <FormLabel>Zona</FormLabel>
             <Input {...register('population')} />
             <FormErrorMessage>{errors.population?.message}</FormErrorMessage>
           </FormControl>
 
-          <FormControl isInvalid={!!errors.phone}>
+          <FormControl isInvalid={!!errors.phone} isRequired>
             <FormLabel>Teléfono</FormLabel>
             <Input {...register('phone')} />
             <FormErrorMessage>{errors.phone?.message}</FormErrorMessage>
