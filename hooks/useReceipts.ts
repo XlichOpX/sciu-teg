@@ -9,7 +9,7 @@ export const useReceipts = ({
   initialSearch = ''
 }: {
   itemsPerPage: number
-  initialSearch: string
+  initialSearch?: string
 }) => {
   const [search, setSearchState] = useState(initialSearch)
   const { page, offset, limit, setPage } = usePagination({ itemsPerPage })
