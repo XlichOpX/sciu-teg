@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useLayoutEffect } from 'react'
+import { useCallback, useLayoutEffect } from 'react'
 import { z } from 'zod'
 
 const pageValidator = z.preprocess(
@@ -10,11 +10,13 @@ const pageValidator = z.preprocess(
 export const usePagination = ({
   initialPage = 1,
   itemsPerPage = 16,
-  scrollToTop = true
+  scrollToTop = true,
+  savePage = true
 }: {
   initialPage?: number
   itemsPerPage?: number
   scrollToTop?: boolean
+  savePage?: boolean
 } = {}) => {
   const router = useRouter()
   const validationResult = pageValidator.safeParse(router.query.page)
@@ -24,14 +26,20 @@ export const usePagination = ({
     scrollToTop && window.scroll({ top: 0 })
   }, [page, scrollToTop])
 
+  const setPage = useCallback(
+    (page: number) => {
+      if (!savePage) return
+      const url = new URL(window.location.origin + router.asPath)
+      url.searchParams.set('page', page.toString())
+      router.push(url)
+    },
+    [savePage, router]
+  )
+
   return {
     offset: (page - 1) * itemsPerPage,
     limit: itemsPerPage,
     page,
-    setPage: (page: number) => {
-      const url = new URL(window.location.origin + router.asPath)
-      url.searchParams.set('page', page.toString())
-      router.push(url)
-    }
+    setPage
   }
 }

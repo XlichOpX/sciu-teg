@@ -22,7 +22,7 @@ import { useParameters, useReceipt } from 'hooks'
 import { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { BsPrinterFill, BsXLg } from 'react-icons/bs'
+import { BsPrinterFill } from 'react-icons/bs'
 
 const Receipts: NextPage = () => {
   const router = useRouter()
@@ -159,7 +159,7 @@ const Receipts: NextPage = () => {
 
       <Stack
         direction={['column-reverse', 'row']}
-        justify="space-between"
+        justify="center"
         align="stretch"
         sx={{
           '@media print': {
@@ -167,10 +167,6 @@ const Receipts: NextPage = () => {
           }
         }}
       >
-        <Button colorScheme="red" leftIcon={<BsXLg />}>
-          Anular
-        </Button>
-
         <Button colorScheme="blue" leftIcon={<BsPrinterFill />} onClick={print}>
           Imprimir
         </Button>
