@@ -1,5 +1,7 @@
 import { Select } from 'chakra-react-select'
 import { useProducts } from 'hooks'
+import debounce from 'just-debounce'
+import { useMemo, useState } from 'react'
 
 interface ProductSelectProps {
   categoryId?: number
@@ -8,8 +10,11 @@ interface ProductSelectProps {
 }
 
 export const ProductSelect = ({ categoryId, onChange, value }: ProductSelectProps) => {
-  const { products } = useProducts({ itemsPerPage: 100 })
+  const { products, setSearch, isLoading } = useProducts({ itemsPerPage: 10 })
   const filteredProducts = products?.filter((p) => p.categoryId === categoryId)
+
+  const [inputValue, setInputValue] = useState('')
+  const debouncedSetSearch = useMemo(() => debounce(setSearch, 300), [setSearch])
 
   return (
     <Select
@@ -20,6 +25,13 @@ export const ProductSelect = ({ categoryId, onChange, value }: ProductSelectProp
       value={filteredProducts?.find((p) => p.id === value)}
       placeholder="Buscar producto"
       noOptionsMessage={({ inputValue }) => `Sin resultados para "${inputValue}"`}
+      inputValue={inputValue}
+      onInputChange={(nv) => {
+        setInputValue(nv)
+        debouncedSetSearch(nv)
+      }}
+      isLoading={isLoading}
+      filterOption={() => true}
     />
   )
 }

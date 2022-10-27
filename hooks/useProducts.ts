@@ -1,5 +1,5 @@
 import { useToast } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
   createProduct as createProductSv,
   deleteProduct as deleteProductSv,
@@ -43,20 +43,26 @@ export const useProducts = ({ itemsPerPage }: { itemsPerPage: number }) => {
     }
   }
 
+  const setSearch = useCallback(
+    (search: string) => {
+      setSearchState(search)
+      setPage(1)
+    },
+    [setPage]
+  )
+
   return {
     products: data?.result,
     count: data?.count,
     page,
     setPage,
-    setSearch: (search: string) => {
-      setSearchState(search)
-      setPage(1)
-    },
+    setSearch,
     pages: data?.count && calcPages(data.count, itemsPerPage),
     error,
     isLoading: !data && !error,
     updateProduct,
     deleteProduct,
-    createProduct
+    createProduct,
+    search
   }
 }
