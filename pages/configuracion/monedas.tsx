@@ -6,12 +6,12 @@ import { useCurrencies } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
 const CurrencySettings: NextPageWithLayout = () => {
-  const { currencies, error, isLoading } = useCurrencies()
+  const { currencies, error, isLoading, setSearch } = useCurrencies()
 
   return (
     <>
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
-        <SearchInput placeholder="Buscar monedas" />
+        <SearchInput placeholder="Buscar monedas" onChange={({ text }) => setSearch(text)} />
         <CreateCurrencyModal />
       </Flex>
 
