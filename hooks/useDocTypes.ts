@@ -1,7 +1,17 @@
-import { DocType } from '@prisma/client'
+import { useState } from 'react'
 import useSWR from 'swr'
+import { DocType } from 'types/doctype'
 
 export const useDocTypes = () => {
+  const [search, setSearch] = useState('')
   const { data, error } = useSWR<DocType[], Error>('/api/docType')
-  return { docTypes: data, error }
+  return {
+    docTypes: data?.filter((dt) => dt.type.toLocaleLowerCase().includes(search)),
+    error,
+    isLoading: !data && !error,
+    search,
+    setSearch
+  }
 }
+
+export const doctypeKeysMatcher = '^/api/docType*'

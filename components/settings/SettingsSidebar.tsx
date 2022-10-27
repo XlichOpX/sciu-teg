@@ -30,6 +30,10 @@ const links = [
   {
     href: '/configuracion/monedas',
     text: 'Monedas'
+  },
+  {
+    href: '/configuracion/tipos-de-documento',
+    text: 'Tipos de documento'
   }
 ]
 
