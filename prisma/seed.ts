@@ -171,13 +171,6 @@ async function createReceipts() {
           const totalAmount = chargedProducts.reduce((ac, p) => ac + p.price * p.quantity, 0)
           const totalCharges = getRandomInt({ max: chargesPerReceipt })
 
-          const charges = Array.from({ length: totalCharges }).map(() => ({
-            amount: totalAmount / totalCharges,
-            paymentMethodId: getRandomValueFromArray(paymentMethodIds),
-            date: faker.date.recent(),
-            conversionId: getRandomValueFromArray(conversionIds)
-          }))
-
           return prisma.receipt.create({
             data: {
               personId: p.id,
@@ -188,7 +181,12 @@ async function createReceipts() {
               },
               charges: {
                 createMany: {
-                  data: charges
+                  data: Array.from({ length: totalCharges }).map(() => ({
+                    amount: totalAmount / totalCharges,
+                    paymentMethodId: getRandomValueFromArray(paymentMethodIds),
+                    createdAt: faker.date.recent(),
+                    conversionId: getRandomValueFromArray(conversionIds)
+                  }))
                 }
               }
             }
