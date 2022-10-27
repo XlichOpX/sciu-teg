@@ -4,7 +4,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { userEssencials } from 'prisma/queries'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 
 // GET|POST /api/user
 export default withIronSessionApiRoute(handle, ironOptions)
@@ -13,12 +13,12 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { body, method, session } = req
 
   // es una idea temporal...
-  if (!canUnserDo(session, 'ACCESS_USERS_MUTATION'))
+  if (!canUserDo(session, 'ACCESS_USERS_MUTATION'))
     return res.status(403).send(`Can't access this.`)
 
   switch (method) {
     case 'GET':
-      if (!canUnserDo(session, 'READ_USER')) return res.status(403).send(`Can't read this.`)
+      if (!canUserDo(session, 'READ_USER')) return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los usuarios
       try {
         const users = await prisma.user.findMany({
@@ -34,7 +34,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUnserDo(session, 'CREATE_USER')) return res.status(403).send(`Can't create this.`)
+      if (!canUserDo(session, 'CREATE_USER')) return res.status(403).send(`Can't create this.`)
       //creamos UN usuario
       try {
         // Validamos los campos

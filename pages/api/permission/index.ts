@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 
 // GET|POST /api/permission
 export default withIronSessionApiRoute(handle, ironOptions)
@@ -11,7 +11,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUnserDo(session, 'READ_PERMISSION')) return res.status(403).send(`Can't read this.`)
+      if (!canUserDo(session, 'READ_PERMISSION')) return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los permisos
       try {
         const permissions = await prisma.permission.findMany()
@@ -25,7 +25,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUnserDo(session, 'CREATE_PERMISSION'))
+      if (!canUserDo(session, 'CREATE_PERMISSION'))
         return res.status(403).send(`Can't create this.`)
       //creamos UN permiso
       try {

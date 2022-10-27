@@ -4,7 +4,7 @@ import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { productWithCategory } from 'prisma/queries'
 import { productSchema } from 'schema/productSchema'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import { routePaginate, stringSearch } from 'utils/routePaginate'
 
 // GET|POST /api/product
@@ -13,7 +13,7 @@ export default withIronSessionApiRoute(handle, ironOptions)
 async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { body, method, query, session } = req
 
-  if (!canUnserDo(session, 'READ_PRODUCT')) return res.status(403).send(`Can't read this.`)
+  if (!canUserDo(session, 'READ_PRODUCT')) return res.status(403).send(`Can't read this.`)
 
   switch (method) {
     case 'GET':
@@ -37,7 +37,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       break
     case 'POST':
       // creamos UN producto
-      if (!canUnserDo(session, 'EDIT_PRODUCT')) return res.status(403).send(`Can't edit this.`)
+      if (!canUserDo(session, 'EDIT_PRODUCT')) return res.status(403).send(`Can't edit this.`)
       try {
         const data = productSchema.parse(body)
         const result = await prisma.product.create({

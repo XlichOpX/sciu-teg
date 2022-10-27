@@ -1,6 +1,6 @@
 import { IronSession } from 'iron-session'
 
-export function canUnserDo({ user }: IronSession, expectedPermission: string) {
+export function canUserDo({ user }: IronSession, expectedPermission: string) {
   if (user) {
     return user.permissions.some(({ permission }) => permission === expectedPermission)
   } else return false

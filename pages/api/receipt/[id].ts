@@ -4,7 +4,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { receiptWithAll } from 'prisma/queries'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
 export default withIronSessionApiRoute(receiptHandler, ironOptions)
@@ -20,7 +20,7 @@ async function receiptHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id }
   } = req
 
-  if (!canUnserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
+  if (!canUserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -37,7 +37,7 @@ async function receiptHandler(req: NextApiRequest, res: NextApiResponse) {
       res.status(200).send(receipt)
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_RECEIPT')) return res.status(403).send(`Can't edit this.`)
+      if (!canUserDo(session, 'EDIT_RECEIPT')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN recibo
       const updateReceipt: Receipt = await prisma.receipt.update({
         data: { ...body },
@@ -49,7 +49,7 @@ async function receiptHandler(req: NextApiRequest, res: NextApiResponse) {
       res.status(201).send(updateReceipt || {})
       break
     case 'DELETE':
-      if (!canUnserDo(session, 'DELETE_RECEIPT')) return res.status(403).send(`Can't delete this.`)
+      if (!canUserDo(session, 'DELETE_RECEIPT')) return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN recibo
       const existRelation = await prisma.charge.count({ where: { receiptId: Number(id) } })
 

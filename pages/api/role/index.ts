@@ -4,7 +4,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { roleWithPermissions } from 'prisma/queries'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import { stringSearch } from 'utils/routePaginate'
 
 // GET|POST /api/role
@@ -19,7 +19,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUnserDo(session, 'READ_ROLE')) return res.status(403).send(`Can't read this.`)
+      if (!canUserDo(session, 'READ_ROLE')) return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los roles
       try {
         const roles = await prisma.role.findMany({
@@ -34,7 +34,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUnserDo(session, 'CREATE_ROLE')) return res.status(403).send(`Can't create this.`)
+      if (!canUserDo(session, 'CREATE_ROLE')) return res.status(403).send(`Can't create this.`)
       //creamos UN rol
       try {
         const result: Role = await prisma.role.create({

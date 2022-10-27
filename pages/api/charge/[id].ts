@@ -3,7 +3,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { chargeWithPaymentMethodAndConversion } from 'prisma/queries'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
 export default withIronSessionApiRoute(chargeHandler, ironOptions)
@@ -17,7 +17,7 @@ async function chargeHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUnserDo(session, 'READ_CHARGE')) return res.status(403).send(`Can't read this.`)
+  if (!canUserDo(session, 'READ_CHARGE')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -39,7 +39,7 @@ async function chargeHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_CHARGE')) return res.status(403).send(`Can't edit this.`)
+      if (!canUserDo(session, 'EDIT_CHARGE')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN cargo
       try {
         const charge = await prisma.charge.findFirst({

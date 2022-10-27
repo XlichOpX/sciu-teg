@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import { stringSearch } from 'utils/routePaginate'
 
 // GET|POST /api/secret
@@ -17,8 +17,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      console.log(session.user?.permissions, canUnserDo(session, 'READ_SECRET'))
-      if (!canUnserDo(session, 'READ_SECRET')) return res.status(403).send(`Can't read this.`)
+      console.log(session.user?.permissions, canUserDo(session, 'READ_SECRET'))
+      if (!canUserDo(session, 'READ_SECRET')) return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los secretos
       try {
         const where = { user: { username: stringSearch(username) } }
@@ -48,7 +48,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUnserDo(session, 'CREATE_SECRET')) return res.status(403).send(`Can't create this.`)
+      if (!canUserDo(session, 'CREATE_SECRET')) return res.status(403).send(`Can't create this.`)
       //creamos UN secreto
       try {
         const result = await prisma.secret.create({

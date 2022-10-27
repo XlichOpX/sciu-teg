@@ -7,7 +7,7 @@ import { NextApiRequestQuery } from 'next/dist/server/api-utils'
 import { receiptWithAll, receiptWithPerson } from 'prisma/queries'
 import { receiptCreateSchemaInput } from 'schema/receiptSchema'
 import { GetReceiptWithPersonResponse } from 'types/receipt'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import { intSearch, routePaginate, stringSearch } from 'utils/routePaginate'
 // GET|POST /api/receipt
 export default withIronSessionApiRoute(handle, ironOptions)
@@ -20,7 +20,7 @@ async function handle(
 
   switch (method) {
     case 'GET':
-      if (!canUnserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
+      if (!canUserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
       try {
         const response = await getReceipts(query, prisma)
         res.json(response)
@@ -30,7 +30,7 @@ async function handle(
       break
 
     case 'POST':
-      if (!canUnserDo(session, 'CREATE_RECEIPT')) return res.status(403).send(`Can't create this.`)
+      if (!canUserDo(session, 'CREATE_RECEIPT')) return res.status(403).send(`Can't create this.`)
       //creamos UN recibo
       try {
         //validate

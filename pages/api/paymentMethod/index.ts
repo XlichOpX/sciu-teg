@@ -3,7 +3,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { paymentMethodWithConversion } from 'prisma/queries'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 
 // GET|POST /api/paymentMethod
 export default withIronSessionApiRoute(handle, ironOptions)
@@ -12,8 +12,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUnserDo(session, 'READ_PAYMENTMETHOD'))
-        return res.status(403).send(`Can't read this.`)
+      if (!canUserDo(session, 'READ_PAYMENTMETHOD')) return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los métodos de pago
       try {
         const paymentMethod = await prisma.paymentMethod.findMany({
@@ -29,7 +28,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUnserDo(session, 'CREATE_PAYMENTMETHOD'))
+      if (!canUserDo(session, 'CREATE_PAYMENTMETHOD'))
         return res.status(403).send(`Can't create this.`)
       //creamos UN método de pago
       try {

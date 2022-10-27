@@ -4,7 +4,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { userEssencials, userWithAll } from 'prisma/queries'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
 export default withIronSessionApiRoute(userHandler, ironOptions)
@@ -19,7 +19,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUnserDo(session, 'ACCESS_USERS_MUTATION'))
+  if (!canUserDo(session, 'ACCESS_USERS_MUTATION'))
     return res.status(403).send(`Can't access this.`)
 
   const { success } = idValidation.safeParse(id)
@@ -27,7 +27,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUnserDo(session, 'READ_USER')) return res.status(403).send(`Can't read this.`)
+      if (!canUserDo(session, 'READ_USER')) return res.status(403).send(`Can't read this.`)
       //obtenemos a UN usuario
       try {
         const user = await prisma.user.findFirst({
@@ -43,7 +43,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_USER')) return res.status(403).send(`Can't edit this.`)
+      if (!canUserDo(session, 'EDIT_USER')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN usuario
       try {
         const user = await prisma.user.findFirst({
@@ -82,7 +82,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUnserDo(session, 'DELETE_USER')) return res.status(403).send(`Can't delete this.`)
+      if (!canUserDo(session, 'DELETE_USER')) return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN usuario
       try {
         const delUser = await prisma.user.delete({ where: { id: Number(id) } })

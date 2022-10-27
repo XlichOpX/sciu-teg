@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import { stringSearch } from 'utils/routePaginate'
 
 // GET|POST /api/address
@@ -16,7 +16,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   } = req
   switch (method) {
     case 'GET':
-      if (!canUnserDo(session, 'READ_ADDRESS')) return res.status(403).send(`Can't read this.`)
+      if (!canUserDo(session, 'READ_ADDRESS')) return res.status(403).send(`Can't read this.`)
       //obtenemos TODAS las direcciones
       try {
         const addresses = await prisma.address.findMany({
@@ -30,7 +30,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUnserDo(session, 'CREATE_ADDRESS')) return res.status(403).send(`Can't create this.`)
+      if (!canUserDo(session, 'CREATE_ADDRESS')) return res.status(403).send(`Can't create this.`)
       //creamos UNA dirección
       try {
         const result = await prisma.address.create({

@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
 export default withIronSessionApiRoute(paymentMethodHandler, ironOptions)
@@ -16,7 +16,7 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUnserDo(session, 'READ_PAYMENTMETHOD')) return res.status(403).send(`Can't read this.`)
+  if (!canUserDo(session, 'READ_PAYMENTMETHOD')) return res.status(403).send(`Can't read this.`)
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
 
@@ -37,8 +37,7 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_PAYMENTMETHOD'))
-        return res.status(403).send(`Can't edit this.`)
+      if (!canUserDo(session, 'EDIT_PAYMENTMETHOD')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN método de pago
       try {
         const paymentMethod = await prisma.paymentMethod.findFirst({
@@ -61,7 +60,7 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUnserDo(session, 'DELETE_PAYMENTMETHOD'))
+      if (!canUserDo(session, 'DELETE_PAYMENTMETHOD'))
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN método de pago
       try {

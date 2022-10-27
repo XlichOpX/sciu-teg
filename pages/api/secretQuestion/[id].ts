@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
 export default withIronSessionApiRoute(secretQuestionHandler, ironOptions)
@@ -17,7 +17,7 @@ async function secretQuestionHandler(req: NextApiRequest, res: NextApiResponse) 
     query: { id },
     session
   } = req
-  if (!canUnserDo(session, 'READ_SECRETQUESTION')) return res.status(403).send(`Can't read this.`)
+  if (!canUserDo(session, 'READ_SECRETQUESTION')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -38,7 +38,7 @@ async function secretQuestionHandler(req: NextApiRequest, res: NextApiResponse) 
       }
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_SECRETQUESTION'))
+      if (!canUserDo(session, 'EDIT_SECRETQUESTION'))
         return res.status(403).send(`Can't edit this.`)
       //actualizamos a UNA pregunta secreta
       try {
@@ -63,7 +63,7 @@ async function secretQuestionHandler(req: NextApiRequest, res: NextApiResponse) 
       }
       break
     case 'DELETE':
-      if (!canUnserDo(session, 'DELETE_SECRETQUESTION'))
+      if (!canUserDo(session, 'DELETE_SECRETQUESTION'))
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA pregunta secreta
       try {

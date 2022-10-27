@@ -4,7 +4,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { personWithAllData } from 'prisma/queries'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
 export default withIronSessionApiRoute(personHandler, ironOptions)
@@ -19,7 +19,7 @@ async function personHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUnserDo(session, 'READ_PERSON')) return res.status(403).send(`Can't read this.`)
+  if (!canUserDo(session, 'READ_PERSON')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -41,7 +41,7 @@ async function personHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_PERSON')) return res.status(403).send(`Can't edit this.`)
+      if (!canUserDo(session, 'EDIT_PERSON')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UNA persona
       try {
         const person = await prisma.person.findFirst({
@@ -64,7 +64,7 @@ async function personHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUnserDo(session, 'DELETE_PERSON')) return res.status(403).send(`Can't delete this.`)
+      if (!canUserDo(session, 'DELETE_PERSON')) return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA persona
       try {
         const delPerson: Person = await prisma.person.delete({ where: { id: Number(id) } })

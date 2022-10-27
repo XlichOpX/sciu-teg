@@ -3,7 +3,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { clientWithPersonAndOccupation } from 'prisma/queries'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 
 // GET|POST /api/client
 export default withIronSessionApiRoute(handle, ironOptions)
@@ -13,7 +13,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case 'GET':
       //obtenemos TODAS los clientes
-      if (!canUnserDo(session, 'READ_CLIENT')) return res.status(403).send(`Can't read this.`)
+      if (!canUserDo(session, 'READ_CLIENT')) return res.status(403).send(`Can't read this.`)
       try {
         const clients = await prisma.client.findMany({
           ...clientWithPersonAndOccupation
@@ -27,7 +27,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUnserDo(session, 'CREATE_CLIENT')) return res.status(403).send(`Can't create this.`)
+      if (!canUserDo(session, 'CREATE_CLIENT')) return res.status(403).send(`Can't create this.`)
       //creamos UN cliente
       try {
         const result = await prisma.client.create({

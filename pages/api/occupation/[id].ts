@@ -3,7 +3,7 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
 export default withIronSessionApiRoute(occupationHandler, ironOptions)
@@ -17,7 +17,7 @@ async function occupationHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUnserDo(session, 'READ_OCCUPATION')) return res.status(403).send(`Can't read this.`)
+  if (!canUserDo(session, 'READ_OCCUPATION')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -38,7 +38,7 @@ async function occupationHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_OCCUPATION')) return res.status(403).send(`Can't edit this.`)
+      if (!canUserDo(session, 'EDIT_OCCUPATION')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UNA ocupación de cliente
       try {
         const occupation = await prisma.occupation.findFirst({
@@ -61,7 +61,7 @@ async function occupationHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUnserDo(session, 'DELETE_OCCUPATION'))
+      if (!canUserDo(session, 'DELETE_OCCUPATION'))
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA ocupación de cliente
       try {

@@ -5,7 +5,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { billing, studentWithPersonCareerAndStatus } from 'prisma/queries'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import { stringSearch } from 'utils/routePaginate'
 import { z } from 'zod'
 // Validate typeof id
@@ -22,7 +22,7 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
     query: { id: docNum },
     session
   } = req
-  if (!canUnserDo(session, 'CREATE_BILLING')) return res.status(403).send(`Can't read this.`)
+  if (!canUserDo(session, 'CREATE_BILLING')) return res.status(403).send(`Can't read this.`)
 
   // Validamos que el método utilizado sea GET.
   if (method !== 'GET') {

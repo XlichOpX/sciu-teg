@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
 export default withIronSessionApiRoute(categoryHandler, ironOptions)
@@ -16,7 +16,7 @@ async function categoryHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUnserDo(session, 'READ_CATEGORY')) return res.status(403).send(`Can't read this.`)
+  if (!canUserDo(session, 'READ_CATEGORY')) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -36,7 +36,7 @@ async function categoryHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUnserDo(session, 'EDIT_CATEGORY')) return res.status(403).send(`Can't edit this.`)
+      if (!canUserDo(session, 'EDIT_CATEGORY')) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UNA categoría
       try {
         const category = await prisma.category.findFirst({
@@ -59,7 +59,7 @@ async function categoryHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUnserDo(session, 'DELETE_CATEGORY')) return res.status(403).send(`Can't delete this.`)
+      if (!canUserDo(session, 'DELETE_CATEGORY')) return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA categoría
       try {
         const product = await prisma.product.count({ where: { categoryId: Number(id) } })

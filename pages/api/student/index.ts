@@ -4,7 +4,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { studentWithPersonCareerAndStatus } from 'prisma/queries'
-import { canUnserDo } from 'utils/checkPermissions'
+import { canUserDo } from 'utils/checkPermissions'
 import { routePaginate, stringSearch } from 'utils/routePaginate'
 
 // GET|POST /api/student
@@ -14,7 +14,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUnserDo(session, 'READ_STUDENT')) return res.status(403).send(`Can't read this.`)
+      if (!canUserDo(session, 'READ_STUDENT')) return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los estudiantes
       try {
         const { keyword } = query
@@ -46,7 +46,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUnserDo(session, 'CREATE_STUDENT')) return res.status(403).send(`Can't create this.`)
+      if (!canUserDo(session, 'CREATE_STUDENT')) return res.status(403).send(`Can't create this.`)
       //creamos UN estudiante
       try {
         const result = await prisma.student.create({
