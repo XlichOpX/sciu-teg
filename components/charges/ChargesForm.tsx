@@ -3,6 +3,7 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   Heading,
   Input,
   Select,
@@ -37,33 +38,34 @@ export const ChargesForm = ({
     handleSubmit,
     register,
     control,
-    formState: { errors }
+    watch,
+    formState: { errors },
+    trigger
   } = useForm<ChargesFormData>({
     defaultValues: {
       charges: [
         {
           amount: maxAmount,
-          paymentMethod: {
-            id: 1
-          }
+          paymentMethod: { id: 1 }
         }
       ]
     },
     resolver: zodResolver(
       chargesFormSchema.refine(
         (arg) => {
-          const totalAmount = arg.charges.reduce((ac, c) => ac + c.amount, 0)
+          const totalAmount = arg.charges.reduce((ac, c) => ac + Number(c.amount), 0)
           return !(totalAmount !== maxAmount)
         },
         { message: 'La suma de los montos debe ser igual al total', path: ['charges'] }
       )
-    )
+    ),
+    mode: 'onChange'
   })
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'charges'
-  })
+  const { fields, append, remove } = useFieldArray({ control, name: 'charges' })
+  const charges = watch('charges')
+  const totalAmount = charges.reduce((ac, c) => ac + c.amount, 0)
+  const amountDiff = totalAmount - maxAmount
 
   if (!latestConversion) return null
 
@@ -94,7 +96,7 @@ export const ChargesForm = ({
             size="sm"
             onClick={() =>
               append({
-                amount: 0,
+                amount: 1,
                 paymentMethod: {
                   conversion: latestConversion.id,
                   id: 1
@@ -108,7 +110,7 @@ export const ChargesForm = ({
         </div>
       </Flex>
 
-      <form id={id} onSubmit={handleSubmit(onSubmit)}>
+      <form id={id} onSubmit={handleSubmit(onSubmit)} noValidate>
         <FormControl as={Stack} gap={1} isInvalid={!!errors.charges}>
           {fields.map((f, i) => (
             <Fragment key={f.id}>
@@ -126,7 +128,11 @@ export const ChargesForm = ({
                 <FormControl isInvalid={!!(errors.charges && errors.charges[i]?.amount)}>
                   <Input
                     type="number"
-                    {...register(`charges.${i}.amount`, { valueAsNumber: true })}
+                    min={0.0001}
+                    {...register(`charges.${i}.amount`, {
+                      valueAsNumber: true,
+                      onChange: () => trigger('charges')
+                    })}
                     placeholder="Monto"
                   />
                   <FormErrorMessage>
@@ -143,6 +149,9 @@ export const ChargesForm = ({
             </Fragment>
           ))}
           <FormErrorMessage justifyContent="center">{errors.charges?.message}</FormErrorMessage>
+          {amountDiff && (
+            <FormHelperText textAlign="center">Diferencia: {amountDiff}</FormHelperText>
+          )}
         </FormControl>
       </form>
     </>

@@ -31,7 +31,7 @@ export const receiptCreateSchemaInput = z.object({
   billings: z.number().positive().int().array().nullish(),
   charges: z
     .object({
-      amount: z.number().positive(),
+      amount: z.number({ invalid_type_error: 'Monto requerido' }).positive(),
       paymentMethod: z.object({
         id: z.number().positive(),
         metaPayment: z.record(z.string()).nullish(),
