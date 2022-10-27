@@ -6,12 +6,20 @@ import { useCategories } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
 const CategorySettings: NextPageWithLayout = () => {
-  const { categories, createCategory, updateCategory, deleteCategory, isLoading, error } =
-    useCategories()
+  const {
+    categories,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+    isLoading,
+    error,
+    setSearch
+  } = useCategories()
+
   return (
     <>
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
-        <SearchInput placeholder="Buscar categorías" />
+        <SearchInput placeholder="Buscar categorías" onChange={({ text }) => setSearch(text)} />
         <CreateCategoryModal onSubmit={createCategory} />
       </Flex>
       <Divider my={4} />

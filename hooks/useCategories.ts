@@ -1,5 +1,6 @@
 import { useToast } from '@chakra-ui/react'
 import { Category } from '@prisma/client'
+import { useState } from 'react'
 import {
   createCategory as createCategorySv,
   deleteCategory as deleteCategorySv,
@@ -9,6 +10,7 @@ import useSWR from 'swr'
 import { CategoryInput } from 'types/category'
 
 export const useCategories = () => {
+  const [search, setSearch] = useState('')
   const { data, error, mutate } = useSWR<Category[], Error>('/api/category')
   const toast = useToast()
 
@@ -37,11 +39,13 @@ export const useCategories = () => {
   }
 
   return {
-    categories: data,
+    categories: data?.filter((c) => c.name.toLocaleLowerCase().includes(search)),
     error,
     isLoading: !data && !error,
     createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    search,
+    setSearch
   }
 }
