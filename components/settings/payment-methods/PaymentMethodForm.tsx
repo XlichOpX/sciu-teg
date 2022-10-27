@@ -31,20 +31,21 @@ export const PaymentMethodForm = ({
         resetOnSubmit && reset()
       })}
       id={id}
+      noValidate
     >
-      <FormControl isInvalid={!!errors.name}>
+      <FormControl isInvalid={!!errors.name} isRequired>
         <FormLabel>Nombre</FormLabel>
         <Input {...register('name')} />
         <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={!!errors.description}>
+      <FormControl isInvalid={!!errors.description} isRequired>
         <FormLabel>Description</FormLabel>
         <Input {...register('description')} />
         <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={!!errors.currencyId}>
+      <FormControl isInvalid={!!errors.currencyId} isRequired>
         <FormLabel>Moneda</FormLabel>
         <Select {...register('currencyId', { valueAsNumber: true })}>
           {currencies?.map((c) => (
