@@ -53,7 +53,7 @@ export const CreateConversionModal = () => {
           </ModalBody>
 
           <ModalFooter>
-            <CancelButton mr={3} onClick={onClose} />
+            <CancelButton mr="auto" onClick={onClose} />
             <SaveButton type="submit" form="CreateConversionForm" />
           </ModalFooter>
         </ModalContent>

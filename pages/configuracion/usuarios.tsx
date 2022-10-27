@@ -17,6 +17,11 @@ const UsersSettings: NextPageWithLayout = () => {
 
       <Divider my={4} />
 
+      {error && (
+        <Alert status="error" mb={3}>
+          {error.message}
+        </Alert>
+      )}
       {isLoading && <FullyCenteredSpinner />}
 
       <UserList>
@@ -24,8 +29,6 @@ const UsersSettings: NextPageWithLayout = () => {
           <UserList.Item key={u.id} user={u} />
         ))}
       </UserList>
-
-      {error && <Alert status="error">{error.message}</Alert>}
     </>
   )
 }

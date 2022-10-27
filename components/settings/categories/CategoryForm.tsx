@@ -25,16 +25,20 @@ export const CategoryForm = ({ id, onSubmit, formHook, resetOnSubmit = false }: 
         resetOnSubmit && reset()
       })}
       id={id}
+      noValidate
     >
-      <FormControl isInvalid={!!errors.name}>
+      <FormControl isInvalid={!!errors.name} isRequired>
         <FormLabel>Nombre</FormLabel>
-        <Input {...register('name')} />
+        <Input {...register('name')} placeholder="Aranceles - Egresados" />
         <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={!!errors.description}>
+      <FormControl isInvalid={!!errors.description} isRequired>
         <FormLabel>Description</FormLabel>
-        <Input {...register('description')} />
+        <Input
+          {...register('description')}
+          placeholder="Aranceles destinados a los estudiantes egresados"
+        />
         <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
       </FormControl>
     </VStack>

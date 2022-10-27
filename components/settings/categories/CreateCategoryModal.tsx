@@ -45,7 +45,7 @@ export const CreateCategoryModal = ({ onSubmit }: { onSubmit: SubmitHandler<Cate
           </ModalBody>
 
           <ModalFooter>
-            <CancelButton mr={3} onClick={onClose} />
+            <CancelButton mr="auto" onClick={onClose} />
             <SaveButton
               type="submit"
               form="CreateCategoryForm"

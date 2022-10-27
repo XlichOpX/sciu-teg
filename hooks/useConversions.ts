@@ -14,7 +14,8 @@ export const useConversions = ({ itemsPerPage = 20 } = {}) => {
     error,
     setPage,
     page,
-    pages: data?.count && calcPages(data.count, itemsPerPage)
+    pages: data?.count && calcPages(data.count, itemsPerPage),
+    isLoading: !data && !error
   }
 }
 

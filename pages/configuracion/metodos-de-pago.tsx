@@ -1,5 +1,5 @@
 import { Alert, Divider, Flex } from '@chakra-ui/react'
-import { SearchInput } from 'components/app'
+import { FullyCenteredSpinner, SearchInput } from 'components/app'
 import { SettingsLayout } from 'components/settings'
 import { CreatePaymentMethodModal, PaymentMethodsList } from 'components/settings/payment-methods'
 import { usePaymentMethods } from 'hooks'
@@ -12,7 +12,8 @@ const PaymentMethodsSettings: NextPageWithLayout = () => {
     createPaymentMethod,
     updatePaymentMethod,
     deletePaymentMethod,
-    error
+    error,
+    isLoading
   } = usePaymentMethods()
 
   return (
@@ -28,7 +29,12 @@ const PaymentMethodsSettings: NextPageWithLayout = () => {
       </Flex>
       <Divider my={4} />
 
-      {error && <Alert status="error">{error.message}</Alert>}
+      {error && (
+        <Alert status="error" mb={3}>
+          {error.message}
+        </Alert>
+      )}
+      {isLoading && <FullyCenteredSpinner />}
 
       <PaymentMethodsList>
         {paymentMethods?.map((pm) => (

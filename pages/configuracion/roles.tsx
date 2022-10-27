@@ -17,7 +17,11 @@ const RoleSettings: NextPageWithLayout = () => {
 
       <Divider my={4} />
 
-      {error && <Alert status="error">{error.message}</Alert>}
+      {error && (
+        <Alert status="error" mb={4}>
+          {error.message}
+        </Alert>
+      )}
       {isLoading && <FullyCenteredSpinner />}
 
       <RoleList>
