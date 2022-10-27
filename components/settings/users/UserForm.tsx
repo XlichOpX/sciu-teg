@@ -46,56 +46,56 @@ export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
       onSubmit={handleSubmit(onSubmit, (errors) => console.log(errors))}
       id={id}
     >
-      <FormControl isInvalid={!!errors.username}>
+      <FormControl isInvalid={!!errors.username} isRequired>
         <FormLabel>Nombre de usuario</FormLabel>
         <Input {...register('username')} />
         <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={!!errors.password}>
+      <FormControl isInvalid={!!errors.password} isRequired>
         <FormLabel>Contraseña</FormLabel>
         <Input type="password" autoComplete="new-password" {...register('password')} />
         <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={!!errors.passwordConfirm}>
+      <FormControl isInvalid={!!errors.passwordConfirm} isRequired>
         <FormLabel>Confirmar contraseña</FormLabel>
         <Input type="password" autoComplete="new-password" {...register('passwordConfirm')} />
         <FormErrorMessage>{errors.passwordConfirm?.message}</FormErrorMessage>
       </FormControl>
 
       <SimpleGrid columns={[1, 2]} gap={4}>
-        <FormControl isInvalid={!!errors.secret?.questionOne}>
+        <FormControl isInvalid={!!errors.secret?.questionOne} isRequired>
           <FormLabel>Pregunta #1</FormLabel>
           <Input {...register('secret.questionOne')} />
           <FormErrorMessage>{errors.secret?.questionOne?.message}</FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={!!errors.secret?.answerOne}>
+        <FormControl isInvalid={!!errors.secret?.answerOne} isRequired>
           <FormLabel>Respuesta</FormLabel>
           <Input {...register('secret.answerOne')} />
           <FormErrorMessage>{errors.secret?.answerOne?.message}</FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={!!errors.secret?.questionTwo}>
+        <FormControl isInvalid={!!errors.secret?.questionTwo} isRequired>
           <FormLabel>Pregunta #2</FormLabel>
           <Input {...register('secret.questionTwo')} />
           <FormErrorMessage>{errors.secret?.questionTwo?.message}</FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={!!errors.secret?.answerTwo}>
+        <FormControl isInvalid={!!errors.secret?.answerTwo} isRequired>
           <FormLabel>Respuesta</FormLabel>
           <Input {...register('secret.answerTwo')} />
           <FormErrorMessage>{errors.secret?.answerTwo?.message}</FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={!!errors.secret?.questionThree}>
+        <FormControl isInvalid={!!errors.secret?.questionThree} isRequired>
           <FormLabel>Pregunta #3</FormLabel>
           <Input {...register('secret.questionThree')} />
           <FormErrorMessage>{errors.secret?.questionThree?.message}</FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={!!errors.secret?.answerThree}>
+        <FormControl isInvalid={!!errors.secret?.answerThree} isRequired>
           <FormLabel>Respuesta</FormLabel>
           <Input {...register('secret.answerThree')} />
           <FormErrorMessage>{errors.secret?.answerThree?.message}</FormErrorMessage>
@@ -108,7 +108,7 @@ export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
         control={control}
         name="roles"
         render={({ field }) => (
-          <FormControl isInvalid={!!errors.roles}>
+          <FormControl isInvalid={!!errors.roles} isRequired>
             <FormLabel>Roles</FormLabel>
             <RSelect
               placeholder="Seleccionar roles..."
