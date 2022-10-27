@@ -30,7 +30,12 @@ const PAYMENT_METHODS = ['Tarjeta', 'Transferencia', 'Efectivo', 'Pago móvil']
 
 const CATEGORIES = [
   genCategory('Tramitación de títulos', ['Fondo Negro Título', 'Petición de Grado']),
-  genCategory('Matrícula', ['Derecho de Inscripción', 'Reingreso', 'Mensualidad']),
+  genCategory('Matrícula', [
+    'Derecho de Inscripción',
+    'Reingreso',
+    'Mensualidad',
+    'Recargo por Retardo'
+  ]),
   genCategory('Derecho a Grado', [
     'Solicitud de Acto de Grado por Secretaria',
     'Paquete constancias graduandos',
