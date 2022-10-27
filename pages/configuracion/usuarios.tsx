@@ -1,12 +1,12 @@
 import { Alert, Divider, Flex } from '@chakra-ui/react'
-import { SearchInput } from 'components/app'
+import { FullyCenteredSpinner, SearchInput } from 'components/app'
 import { SettingsLayout } from 'components/settings'
 import { CreateUserModal, UserList } from 'components/settings/users'
 import { useUsers } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
 const UsersSettings: NextPageWithLayout = () => {
-  const { users, error, setSearch } = useUsers()
+  const { users, error, setSearch, isLoading } = useUsers()
 
   return (
     <>
@@ -16,6 +16,8 @@ const UsersSettings: NextPageWithLayout = () => {
       </Flex>
 
       <Divider my={4} />
+
+      {isLoading && <FullyCenteredSpinner />}
 
       <UserList>
         {users?.map((u) => (
