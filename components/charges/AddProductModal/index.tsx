@@ -20,11 +20,12 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import { CancelButton, CreateButton } from 'components/app'
-import { useCategories, useProducts } from 'hooks'
+import { useProducts } from 'hooks'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { receiptProductSchema } from 'schema/receiptSchema'
 import { z } from 'zod'
+import { CategorySelect } from './CategorySelect'
 
 const addProductFormSchema = receiptProductSchema.extend({
   name: z.string(),
@@ -40,7 +41,6 @@ interface AddProductModalProps extends Omit<ButtonProps, 'onSubmit'> {
 
 export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { categories } = useCategories()
   const { products } = useProducts({ itemsPerPage: 50 })
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
 
@@ -62,11 +62,6 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
       setValue('id', filteredProducts[0].id)
     }
   }, [filteredProducts, setValue])
-  useEffect(() => {
-    if (categories && categories.length > 0) {
-      setSelectedCategoryId(categories[0].id)
-    }
-  }, [categories, setValue])
 
   const selectedProductId = watch('id')
   const selectedProduct = products?.find((p) => p.id === selectedProductId)
@@ -111,17 +106,7 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
             >
               <FormControl mb={4}>
                 <FormLabel>Categoría</FormLabel>
-                <Select
-                  value={selectedCategoryId}
-                  onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
-                >
-                  {categories?.length === 0 && <option disabled>No hay categorías</option>}
-                  {categories?.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </Select>
+                <CategorySelect onChange={setSelectedCategoryId} value={selectedCategoryId} />
               </FormControl>
 
               <FormControl mb={4}>
