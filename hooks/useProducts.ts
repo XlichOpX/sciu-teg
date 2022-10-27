@@ -10,11 +10,17 @@ import { GetProductsResponse, ProductInput } from 'types/product'
 import { calcPages } from 'utils/calcPages'
 import { usePagination } from './usePagination'
 
-export const useProducts = ({ itemsPerPage }: { itemsPerPage: number }) => {
+export const useProducts = ({
+  itemsPerPage,
+  savePage = true
+}: {
+  itemsPerPage: number
+  savePage?: boolean
+}) => {
   const [search, setSearchState] = useState('')
   const toast = useToast()
 
-  const { page, offset, limit, setPage } = usePagination({ itemsPerPage })
+  const { page, offset, limit, setPage } = usePagination({ itemsPerPage, savePage })
   const { data, error, mutate } = useSWR<GetProductsResponse, Error>(
     `/api/product?offset=${offset}&limit=${limit}${search ? `&keyword=${search}` : ''}`
   )

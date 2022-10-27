@@ -10,11 +10,13 @@ const pageValidator = z.preprocess(
 export const usePagination = ({
   initialPage = 1,
   itemsPerPage = 16,
-  scrollToTop = true
+  scrollToTop = true,
+  savePage = true
 }: {
   initialPage?: number
   itemsPerPage?: number
   scrollToTop?: boolean
+  savePage?: boolean
 } = {}) => {
   const router = useRouter()
   const validationResult = pageValidator.safeParse(router.query.page)
@@ -26,11 +28,12 @@ export const usePagination = ({
 
   const setPage = useCallback(
     (page: number) => {
+      if (!savePage) return
       const url = new URL(window.location.origin + router.asPath)
       url.searchParams.set('page', page.toString())
       router.push(url)
     },
-    [router]
+    [savePage, router]
   )
 
   return {

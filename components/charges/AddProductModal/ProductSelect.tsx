@@ -10,7 +10,7 @@ interface ProductSelectProps {
 }
 
 export const ProductSelect = ({ categoryId, onChange, value }: ProductSelectProps) => {
-  const { products, setSearch, isLoading } = useProducts({ itemsPerPage: 10 })
+  const { products, setSearch, isLoading } = useProducts({ itemsPerPage: 15, savePage: false })
   const filteredProducts = products?.filter((p) => p.categoryId === categoryId)
 
   const [inputValue, setInputValue] = useState('')
