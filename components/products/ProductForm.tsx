@@ -37,14 +37,14 @@ export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Pro
   const [hasStock, setHasStock] = useState((getValues('stock') ?? -1) >= 0)
 
   return (
-    <VStack as="form" onSubmit={handleSubmit(onSubmit)} {...props}>
-      <FormControl isInvalid={!!errors.name}>
+    <VStack gap={3} as="form" onSubmit={handleSubmit(onSubmit)} {...props} noValidate>
+      <FormControl isInvalid={!!errors.name} isRequired>
         <FormLabel>Nombre</FormLabel>
         <Input {...register('name')} />
         <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={!!errors.categoryId}>
+      <FormControl isInvalid={!!errors.categoryId} isRequired>
         <FormLabel>Categoría</FormLabel>
         <Select {...register('categoryId', { valueAsNumber: true })}>
           {categories &&
@@ -57,7 +57,21 @@ export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Pro
         <FormErrorMessage>{errors.categoryId?.message}</FormErrorMessage>
       </FormControl>
 
-      <FormControl my={4}>
+      <SimpleGrid columns={2} gap={4}>
+        <FormControl isInvalid={!!errors.price} isRequired>
+          <FormLabel>Precio</FormLabel>
+          <Input type="number" {...register('price', { valueAsNumber: true })} />
+          <FormErrorMessage>{errors.price?.message}</FormErrorMessage>
+        </FormControl>
+
+        <FormControl isInvalid={!!errors.stock} hidden={!hasStock} isRequired>
+          <FormLabel>Inventario</FormLabel>
+          <Input type="number" {...register('stock', { valueAsNumber: true })} />
+          <FormErrorMessage>{errors.stock?.message}</FormErrorMessage>
+        </FormControl>
+      </SimpleGrid>
+
+      <FormControl my={4} isRequired>
         <Checkbox
           defaultChecked={hasStock}
           checked={hasStock}
@@ -73,20 +87,6 @@ export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Pro
           ¿Maneja inventario?
         </Checkbox>
       </FormControl>
-
-      <SimpleGrid columns={2} gap={4}>
-        <FormControl isInvalid={!!errors.price}>
-          <FormLabel>Precio</FormLabel>
-          <Input type="number" {...register('price', { valueAsNumber: true })} />
-          <FormErrorMessage>{errors.price?.message}</FormErrorMessage>
-        </FormControl>
-
-        <FormControl isInvalid={!!errors.stock} hidden={!hasStock}>
-          <FormLabel>Inventario</FormLabel>
-          <Input type="number" {...register('stock', { valueAsNumber: true })} />
-          <FormErrorMessage>{errors.stock?.message}</FormErrorMessage>
-        </FormControl>
-      </SimpleGrid>
     </VStack>
   )
 }
