@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { Prisma, PrismaClient } from '@prisma/client'
 import { encrypt } from '../lib/crypter'
+import { permissionsMoca } from './permissions'
 
 faker.setLocale('es')
 
@@ -72,6 +73,7 @@ async function main() {
 
   await createDummyUser(docTypeIds)
   await createParameters()
+  await createPermissions()
   await createRoles()
 
   await createSemester()
@@ -86,6 +88,12 @@ main()
     await prisma.$disconnect()
     process.exit(1)
   })
+
+async function createPermissions() {
+  await prisma.permission.createMany({
+    data: permissionsMoca
+  })
+}
 
 async function createSemester() {
   await prisma.semester.create({
