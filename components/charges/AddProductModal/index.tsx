@@ -15,7 +15,6 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  Select,
   SimpleGrid,
   useDisclosure
 } from '@chakra-ui/react'
@@ -26,6 +25,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { receiptProductSchema } from 'schema/receiptSchema'
 import { z } from 'zod'
 import { CategorySelect } from './CategorySelect'
+import { ProductSelect } from './ProductSelect'
 
 const addProductFormSchema = receiptProductSchema.extend({
   name: z.string(),
@@ -111,14 +111,17 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
 
               <FormControl mb={4}>
                 <FormLabel>Producto</FormLabel>
-                <Select {...register('id', { valueAsNumber: true })}>
-                  {products?.length === 0 && <option disabled>No hay productos</option>}
-                  {filteredProducts?.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </Select>
+                <Controller
+                  name="id"
+                  control={control}
+                  render={({ field }) => (
+                    <ProductSelect
+                      categoryId={selectedCategoryId}
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
               </FormControl>
 
               <SimpleGrid columns={2} gap={4} alignItems="center">
