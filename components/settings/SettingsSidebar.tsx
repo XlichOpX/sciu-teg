@@ -26,6 +26,10 @@ const links = [
   {
     href: '/configuracion/categorias',
     text: 'Categorías'
+  },
+  {
+    href: '/configuracion/monedas',
+    text: 'Monedas'
   }
 ]
 
