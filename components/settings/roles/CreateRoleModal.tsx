@@ -48,7 +48,7 @@ export const CreateRoleModal = () => {
           </ModalBody>
 
           <ModalFooter>
-            <CancelButton mr={3} onClick={onClose} />
+            <CancelButton mr="auto" onClick={onClose} />
             <SaveButton type="submit" form="CreateRoleForm" />
           </ModalFooter>
         </ModalContent>

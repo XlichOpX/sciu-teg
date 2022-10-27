@@ -32,20 +32,20 @@ export const RoleForm = ({
   return (
     <VStack id={id} as="form" align="stretch" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
       <SimpleGrid columns={[1, 2]} gap={4}>
-        <FormControl isInvalid={!!errors.name}>
+        <FormControl isInvalid={!!errors.name} isRequired>
           <FormLabel>Nombre del rol</FormLabel>
           <Input {...register('name')} />
           <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={!!errors.level}>
+        <FormControl isInvalid={!!errors.level} isRequired>
           <FormLabel>Nivel</FormLabel>
           <Input type="number" {...register('level', { valueAsNumber: true })} />
           <FormErrorMessage>{errors.level?.message}</FormErrorMessage>
         </FormControl>
       </SimpleGrid>
 
-      <FormControl isInvalid={!!errors.description}>
+      <FormControl isInvalid={!!errors.description} isRequired>
         <FormLabel>Descripción</FormLabel>
         <Input {...register('description')} />
         <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
@@ -55,7 +55,7 @@ export const RoleForm = ({
         control={control}
         name="permissions"
         render={({ field, fieldState: { error } }) => (
-          <FormControl isInvalid={!!error}>
+          <FormControl isInvalid={!!error} isRequired>
             <FormLabel>Permisos</FormLabel>
             <Select
               {...field}

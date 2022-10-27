@@ -10,7 +10,8 @@ export const useRoles = () => {
     roles: data?.filter((r) => r.name.toLowerCase().includes(search)),
     error,
     setSearch,
-    selectOptions
+    selectOptions,
+    isLoading: !data && !error
   }
 }
 
