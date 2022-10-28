@@ -1,4 +1,4 @@
-import { FormControl, FormErrorMessage, FormHelperText, Stack } from '@chakra-ui/react'
+import { FormControl, FormHelperText, Stack } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FullyCenteredSpinner } from 'components/app'
 import { InputArrayHeader } from 'components/app/InputArrayHeader'
@@ -38,7 +38,7 @@ export const ChargesForm = ({
           const totalAmount = arg.charges.reduce((ac, c) => ac + Number(c.amount), 0)
           return !(totalAmount !== maxAmount)
         },
-        { message: 'La suma de los montos debe ser igual al total', path: ['charges'] }
+        { message: 'La suma de los montos debe ser igual al total', path: ['charges.amount'] }
       )
     ),
     mode: 'onChange'
@@ -80,9 +80,10 @@ export const ChargesForm = ({
           {fields.map((f, i) => (
             <PaymentMethodInputs key={f.id} chargeIndex={i} formHook={formHook} />
           ))}
-          <FormErrorMessage justifyContent="center">{errors.charges?.message}</FormErrorMessage>
           {amountDiff && (
-            <FormHelperText textAlign="center">Diferencia: {amountDiff}</FormHelperText>
+            <FormHelperText textAlign="center" color="red.300">
+              Diferencia: {amountDiff}
+            </FormHelperText>
           )}
         </FormControl>
       </form>

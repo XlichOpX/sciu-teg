@@ -1,4 +1,4 @@
-import { FormControl, FormErrorMessage, Input, Select, SimpleGrid } from '@chakra-ui/react'
+import { Divider, FormControl, FormErrorMessage, Input, Select, SimpleGrid } from '@chakra-ui/react'
 import { useConversions, usePaymentMethods } from 'hooks'
 import { Fragment, useEffect } from 'react'
 import { UseFormReturn } from 'react-hook-form'
@@ -38,60 +38,71 @@ export const PaymentMethodInputs = ({
   if (!paymentMethods || !latestConversion) return null
 
   return (
-    <SimpleGrid columns={[1, 2]} gap={4}>
-      <FormControl>
-        <Select {...register(`charges.${chargeIndex}.paymentMethod.id`, { valueAsNumber: true })}>
-          {paymentMethods?.map((pm) => (
-            <option key={pm.id} value={pm.id}>
-              {pm.currency.symbol} - {pm.name}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
+    <>
+      <SimpleGrid columns={[1, 2]} gap={4}>
+        <FormControl>
+          <Select {...register(`charges.${chargeIndex}.paymentMethod.id`, { valueAsNumber: true })}>
+            {paymentMethods?.map((pm) => (
+              <option key={pm.id} value={pm.id}>
+                {pm.currency.symbol} - {pm.name}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
 
-      <FormControl isInvalid={!!(errors.charges && errors.charges[chargeIndex]?.amount)}>
-        <Input
-          type="number"
-          {...register(`charges.${chargeIndex}.amount`, {
-            valueAsNumber: true
-          })}
-          placeholder="Monto"
-        />
-        <FormErrorMessage>
-          {errors.charges && errors.charges[chargeIndex]?.amount?.message}
-        </FormErrorMessage>
-      </FormControl>
+        <FormControl isInvalid={!!(errors.charges && errors.charges[chargeIndex]?.amount)}>
+          <Input
+            type="number"
+            {...register(`charges.${chargeIndex}.amount`, {
+              valueAsNumber: true
+            })}
+            placeholder="Monto"
+          />
+          <FormErrorMessage>
+            {errors.charges && errors.charges[chargeIndex]?.amount?.message}
+          </FormErrorMessage>
+        </FormControl>
 
-      {currentMethod?.metaPayment?.map((mp, i) => (
-        <Fragment key={i}>
-          <FormControl>
-            <Input
-              defaultValue=""
-              type={mp.fieldType === 'date' ? 'date' : 'text'}
-              {...register(`charges.${chargeIndex}.paymentMethod.metaPayment.${i}.value`)}
-              placeholder={mp.name}
+        {currentMethod?.metaPayment?.map((mp, i) => (
+          <Fragment key={i}>
+            <FormControl
+              isRequired
+              isInvalid={
+                !!errors.charges?.[chargeIndex]?.paymentMethod?.metaPayment?.[i]?.value?.message
+              }
+            >
+              <Input
+                defaultValue=""
+                type={mp.fieldType === 'date' ? 'date' : 'text'}
+                {...register(`charges.${chargeIndex}.paymentMethod.metaPayment.${i}.value`)}
+                placeholder={mp.name}
+              />
+              <FormErrorMessage>
+                {errors.charges?.[chargeIndex]?.paymentMethod?.metaPayment?.[i]?.value?.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <input
+              hidden
+              defaultValue={mp.name}
+              {...register(`charges.${chargeIndex}.paymentMethod.metaPayment.${i}.name`)}
             />
-          </FormControl>
 
-          <input
-            hidden
-            defaultValue={mp.name}
-            {...register(`charges.${chargeIndex}.paymentMethod.metaPayment.${i}.name`)}
-          />
+            <input
+              hidden
+              defaultValue={mp.fieldType}
+              {...register(`charges.${chargeIndex}.paymentMethod.metaPayment.${i}.fieldType`)}
+            />
+          </Fragment>
+        ))}
 
-          <input
-            hidden
-            defaultValue={mp.fieldType}
-            {...register(`charges.${chargeIndex}.paymentMethod.metaPayment.${i}.fieldType`)}
-          />
-        </Fragment>
-      ))}
-
-      <input
-        hidden
-        defaultValue={latestConversion.id}
-        {...register(`charges.${chargeIndex}.paymentMethod.conversion`, { valueAsNumber: true })}
-      />
-    </SimpleGrid>
+        <input
+          hidden
+          defaultValue={latestConversion.id}
+          {...register(`charges.${chargeIndex}.paymentMethod.conversion`, { valueAsNumber: true })}
+        />
+      </SimpleGrid>
+      <Divider my={2} />
+    </>
   )
 }
