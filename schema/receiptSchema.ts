@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { metaPaymentDataSchema } from './paymentMethodSchema'
 
 // Schema from validate create Receipt.
 /**
@@ -34,7 +35,7 @@ export const receiptCreateSchemaInput = z.object({
       amount: z.number({ invalid_type_error: 'Monto requerido' }).positive(),
       paymentMethod: z.object({
         id: z.number().positive(),
-        metaPayment: z.record(z.string()).nullish(),
+        metaPayment: metaPaymentDataSchema.array().nullish(),
         conversion: z.number().positive()
       })
     })

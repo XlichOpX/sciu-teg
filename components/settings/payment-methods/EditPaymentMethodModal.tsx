@@ -15,7 +15,11 @@ import { paymentMethodKeysMatcher, useMatchMutate } from 'hooks'
 import { useForm } from 'react-hook-form'
 import { paymentMethodInputSchema } from 'schema/paymentMethodSchema'
 import { deletePaymentMethod, updatePaymentMethod } from 'services/paymentMethods'
-import { MetaPayment, PaymentMethodInput, PaymentMethodWithConversion } from 'types/paymentMethod'
+import {
+  MetaPaymentDef,
+  PaymentMethodInput,
+  PaymentMethodWithConversion
+} from 'types/paymentMethod'
 import { PaymentMethodForm, PaymentMethodFormSubmitHandler } from './PaymentMethodForm'
 
 export const EditPaymentMethodModal = ({
@@ -25,7 +29,7 @@ export const EditPaymentMethodModal = ({
 }) => {
   const formHook = useForm<PaymentMethodInput>({
     resolver: zodResolver(paymentMethodInputSchema),
-    defaultValues: { ...paymentMethod, metaPayment: paymentMethod.metaPayment as MetaPayment }
+    defaultValues: { ...paymentMethod, metaPayment: paymentMethod.metaPayment as MetaPaymentDef }
   })
 
   const { onOpen, isOpen, onClose } = useDisclosure()
