@@ -34,6 +34,10 @@ const links = [
   {
     href: '/configuracion/tipos-de-documento',
     text: 'Tipos de documento'
+  },
+  {
+    href: '/configuracion/carreras',
+    text: 'Carreras'
   }
 ]
 
