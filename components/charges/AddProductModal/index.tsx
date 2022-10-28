@@ -1,6 +1,7 @@
 import {
   ButtonProps,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   Modal,
@@ -45,7 +46,14 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
   const { products } = useProducts({ itemsPerPage: 50 })
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
 
-  const { handleSubmit, register, control, watch, setValue } = useForm<AddProductFormData>({
+  const {
+    handleSubmit,
+    register,
+    control,
+    watch,
+    setValue,
+    formState: { errors }
+  } = useForm<AddProductFormData>({
     defaultValues: {
       quantity: 1
     },
@@ -92,13 +100,14 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
                 onClose()
               })}
               id="AddProductForm"
+              noValidate
             >
-              <FormControl mb={4}>
+              <FormControl mb={4} isRequired>
                 <FormLabel>Categoría</FormLabel>
                 <CategorySelect onChange={setSelectedCategoryId} value={selectedCategoryId} />
               </FormControl>
 
-              <FormControl mb={4}>
+              <FormControl mb={4} isInvalid={!!errors.id} isRequired>
                 <FormLabel>Producto</FormLabel>
                 <Controller
                   name="id"
@@ -111,10 +120,11 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
                     />
                   )}
                 />
+                <FormErrorMessage>{errors.id?.message}</FormErrorMessage>
               </FormControl>
 
               <SimpleGrid columns={2} gap={4} alignItems="center">
-                <FormControl>
+                <FormControl isInvalid={!!errors.quantity} isRequired>
                   <FormLabel>Cantidad</FormLabel>
                   <Controller
                     name="quantity"
@@ -134,6 +144,7 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
                       </NumberInput>
                     )}
                   />
+                  <FormErrorMessage>{errors.quantity?.message}</FormErrorMessage>
                 </FormControl>
 
                 <FormControl>
