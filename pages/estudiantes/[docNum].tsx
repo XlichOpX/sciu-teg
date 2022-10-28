@@ -21,7 +21,7 @@ const StudentDetail: NextPageWithLayout = () => {
   const router = useRouter()
   const docNumber = router.query.docNum as string
 
-  const { data, error, isLoading } = useBillings(docNumber)
+  const { data, error, isLoading, mutate } = useBillings(docNumber)
 
   const billingsFormHook = useForm<BillignsFormData>({
     defaultValues: { billings: [] }
@@ -81,9 +81,10 @@ const StudentDetail: NextPageWithLayout = () => {
               products={products}
               disabled={selectedBillingsIDs.length === 0 && products.length === 0}
               personId={data.student.person.id}
-              onRecord={() => {
+              onRecord={async () => {
                 billingsFormHook.reset()
                 setProducts([])
+                await mutate()
               }}
             />
           </Flex>
