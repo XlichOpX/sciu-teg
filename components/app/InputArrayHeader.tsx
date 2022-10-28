@@ -1,19 +1,21 @@
 import { Button, Flex, Heading, VisuallyHidden } from '@chakra-ui/react'
 import { BsPlusLg, BsXLg } from 'react-icons/bs'
 
-export const ChargesFormHeader = ({
+export const InputArrayHeader = ({
   onAdd,
   onRemove,
-  fieldsLength
+  fieldsLength,
+  title
 }: {
   onAdd: () => void
   onRemove: () => void
   fieldsLength: number
+  title: string
 }) => {
   return (
     <Flex justifyContent="space-between">
       <Heading as="h3" size="sm" my={4}>
-        Métodos de pago
+        {title}
       </Heading>
 
       <div>

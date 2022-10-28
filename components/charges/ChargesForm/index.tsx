@@ -9,11 +9,11 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FullyCenteredSpinner } from 'components/app'
+import { InputArrayHeader } from 'components/app/InputArrayHeader'
 import { useConversions, usePaymentMethods } from 'hooks'
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { receiptCreateSchemaInput } from 'schema/receiptSchema'
 import { z } from 'zod'
-import { ChargesFormHeader } from './ChargesFormHeader'
 
 export const chargesFormSchema = receiptCreateSchemaInput.pick({ charges: true })
 export type ChargesFormData = z.infer<typeof chargesFormSchema>
@@ -67,7 +67,8 @@ export const ChargesForm = ({
 
   return (
     <>
-      <ChargesFormHeader
+      <InputArrayHeader
+        title="Métodos de pago"
         onAdd={() =>
           append({
             amount: 1,
