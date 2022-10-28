@@ -6,7 +6,7 @@ import { usePaymentMethods } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
 const PaymentMethodsSettings: NextPageWithLayout = () => {
-  const { paymentMethods, setSearch, createPaymentMethod, error, isLoading } = usePaymentMethods()
+  const { paymentMethods, setSearch, error, isLoading } = usePaymentMethods()
 
   return (
     <>
@@ -17,7 +17,7 @@ const PaymentMethodsSettings: NextPageWithLayout = () => {
             setSearch(text)
           }}
         />
-        <CreatePaymentMethodModal onSubmit={createPaymentMethod} />
+        <CreatePaymentMethodModal />
       </Flex>
       <Divider my={4} />
 

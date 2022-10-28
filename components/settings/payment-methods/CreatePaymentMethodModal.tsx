@@ -6,23 +6,34 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { paymentMethodKeysMatcher, useMatchMutate } from 'hooks'
+import { useForm } from 'react-hook-form'
 import { paymentMethodInputSchema } from 'schema/paymentMethodSchema'
+import { createPaymentMethod } from 'services/paymentMethods'
 import { PaymentMethodInput } from 'types/paymentMethod'
-import { PaymentMethodForm } from './PaymentMethodForm'
+import { PaymentMethodForm, PaymentMethodFormSubmitHandler } from './PaymentMethodForm'
 
-export const CreatePaymentMethodModal = ({
-  onSubmit
-}: {
-  onSubmit: SubmitHandler<PaymentMethodInput>
-}) => {
+export const CreatePaymentMethodModal = () => {
   const { onOpen, isOpen, onClose } = useDisclosure()
-
+  const toast = useToast()
+  const matchMutate = useMatchMutate()
   const formHook = useForm<PaymentMethodInput>({ resolver: zodResolver(paymentMethodInputSchema) })
+
+  const onSubmit: PaymentMethodFormSubmitHandler = async (data: PaymentMethodInput) => {
+    try {
+      await createPaymentMethod(data)
+      await matchMutate(paymentMethodKeysMatcher)
+      toast({ status: 'success', description: 'Método de pago creado' })
+      onClose()
+    } catch (error) {
+      toast({ status: 'error', description: 'Ocurrió un error al crear el método de pago' })
+    }
+  }
 
   return (
     <>
@@ -40,10 +51,7 @@ export const CreatePaymentMethodModal = ({
             <PaymentMethodForm
               id="CreatePaymentMethodForm"
               formHook={formHook}
-              onSubmit={async (data) => {
-                await onSubmit(data)
-                onClose()
-              }}
+              onSubmit={onSubmit}
             />
           </ModalBody>
 
