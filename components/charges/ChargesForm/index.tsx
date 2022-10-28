@@ -1,12 +1,4 @@
-import {
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  Input,
-  Select,
-  SimpleGrid,
-  Stack
-} from '@chakra-ui/react'
+import { FormControl, FormErrorMessage, FormHelperText, Stack } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FullyCenteredSpinner } from 'components/app'
 import { InputArrayHeader } from 'components/app/InputArrayHeader'
@@ -14,6 +6,7 @@ import { useConversions, usePaymentMethods } from 'hooks'
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { receiptCreateSchemaInput } from 'schema/receiptSchema'
 import { z } from 'zod'
+import { PaymentMethodInputs } from './PaymentMethodInputs'
 
 export const chargesFormSchema = receiptCreateSchemaInput.pick({ charges: true })
 export type ChargesFormData = z.infer<typeof chargesFormSchema>
@@ -30,14 +23,7 @@ export const ChargesForm = ({
   const { paymentMethods } = usePaymentMethods()
   const { latestConversion } = useConversions()
 
-  const {
-    handleSubmit,
-    register,
-    control,
-    watch,
-    formState: { errors },
-    trigger
-  } = useForm<ChargesFormData>({
+  const formHook = useForm<ChargesFormData>({
     defaultValues: {
       charges: [
         {
@@ -57,6 +43,13 @@ export const ChargesForm = ({
     ),
     mode: 'onChange'
   })
+
+  const {
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors }
+  } = formHook
 
   const { fields, append, remove } = useFieldArray({ control, name: 'charges' })
   const charges = watch('charges')
@@ -85,37 +78,7 @@ export const ChargesForm = ({
       <form id={id} onSubmit={handleSubmit(onSubmit)} noValidate>
         <FormControl as={Stack} gap={1} isInvalid={!!errors.charges}>
           {fields.map((f, i) => (
-            <SimpleGrid columns={[1, 2]} gap={4} key={f.id}>
-              <FormControl>
-                <Select {...register(`charges.${i}.paymentMethod.id`, { valueAsNumber: true })}>
-                  {paymentMethods?.map((pm) => (
-                    <option key={pm.id} value={pm.id}>
-                      {pm.currency.symbol} - {pm.name}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl isInvalid={!!(errors.charges && errors.charges[i]?.amount)}>
-                <Input
-                  type="number"
-                  {...register(`charges.${i}.amount`, {
-                    valueAsNumber: true,
-                    onChange: () => trigger('charges')
-                  })}
-                  placeholder="Monto"
-                />
-                <FormErrorMessage>
-                  {errors.charges && errors.charges[i]?.amount?.message}
-                </FormErrorMessage>
-              </FormControl>
-
-              <input
-                hidden
-                defaultValue={latestConversion.id}
-                {...register(`charges.${i}.paymentMethod.conversion`, { valueAsNumber: true })}
-              />
-            </SimpleGrid>
+            <PaymentMethodInputs key={f.id} chargeIndex={i} formHook={formHook} />
           ))}
           <FormErrorMessage justifyContent="center">{errors.charges?.message}</FormErrorMessage>
           {amountDiff && (
