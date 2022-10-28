@@ -11,7 +11,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { paymentMethodSchema } from 'schema/paymentMethodSchema'
+import { paymentMethodInputSchema } from 'schema/paymentMethodSchema'
 import { PaymentMethodInput } from 'types/paymentMethod'
 import { PaymentMethodForm } from './PaymentMethodForm'
 
@@ -22,7 +22,7 @@ export const CreatePaymentMethodModal = ({
 }) => {
   const { onOpen, isOpen, onClose } = useDisclosure()
 
-  const formHook = useForm<PaymentMethodInput>({ resolver: zodResolver(paymentMethodSchema) })
+  const formHook = useForm<PaymentMethodInput>({ resolver: zodResolver(paymentMethodInputSchema) })
 
   return (
     <>

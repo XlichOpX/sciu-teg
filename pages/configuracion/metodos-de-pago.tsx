@@ -6,15 +6,7 @@ import { usePaymentMethods } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
 const PaymentMethodsSettings: NextPageWithLayout = () => {
-  const {
-    paymentMethods,
-    setSearch,
-    createPaymentMethod,
-    updatePaymentMethod,
-    deletePaymentMethod,
-    error,
-    isLoading
-  } = usePaymentMethods()
+  const { paymentMethods, setSearch, createPaymentMethod, error, isLoading } = usePaymentMethods()
 
   return (
     <>
@@ -38,12 +30,7 @@ const PaymentMethodsSettings: NextPageWithLayout = () => {
 
       <PaymentMethodsList>
         {paymentMethods?.map((pm) => (
-          <PaymentMethodsList.Item
-            key={pm.id}
-            paymentMethod={pm}
-            onUpdate={async (data) => await updatePaymentMethod(pm.id, data)}
-            onDelete={() => deletePaymentMethod(pm.id)}
-          />
+          <PaymentMethodsList.Item key={pm.id} paymentMethod={pm} />
         ))}
       </PaymentMethodsList>
     </>

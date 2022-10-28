@@ -5,32 +5,32 @@ export const InputArrayHeader = ({
   onAdd,
   onRemove,
   fieldsLength,
-  title
+  title,
+  minItems = 1
 }: {
   onAdd: () => void
   onRemove: () => void
   fieldsLength: number
   title: string
+  minItems?: number
 }) => {
   return (
-    <Flex justifyContent="space-between">
-      <Heading as="h3" size="sm" my={4}>
+    <Flex alignItems="center" my={3}>
+      <Heading as="h3" size="sm" mr="auto">
         {title}
       </Heading>
 
-      <div>
-        {fieldsLength > 1 && (
-          <Button variant="outline" colorScheme="red" size="sm" onClick={onRemove} mr={3}>
-            <VisuallyHidden>Eliminar</VisuallyHidden>
-            <BsXLg />
-          </Button>
-        )}
-
-        <Button variant="outline" colorScheme="blue" size="sm" onClick={onAdd}>
-          <VisuallyHidden>Agregar</VisuallyHidden>
-          <BsPlusLg />
+      {fieldsLength > minItems && (
+        <Button variant="outline" colorScheme="red" size="sm" onClick={onRemove} mr={3}>
+          <VisuallyHidden>Eliminar</VisuallyHidden>
+          <BsXLg />
         </Button>
-      </div>
+      )}
+
+      <Button variant="outline" colorScheme="blue" size="sm" onClick={onAdd}>
+        <VisuallyHidden>Agregar</VisuallyHidden>
+        <BsPlusLg />
+      </Button>
     </Flex>
   )
 }

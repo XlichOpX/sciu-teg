@@ -6,31 +6,53 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PaymentMethod } from '@prisma/client'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
+import { paymentMethodKeysMatcher, useMatchMutate } from 'hooks'
 import { useForm } from 'react-hook-form'
-import { paymentMethodSchema } from 'schema/paymentMethodSchema'
-import { PaymentMethodInput } from 'types/paymentMethod'
-import { PaymentMethodForm } from './PaymentMethodForm'
+import { paymentMethodInputSchema } from 'schema/paymentMethodSchema'
+import { deletePaymentMethod, updatePaymentMethod } from 'services/paymentMethods'
+import { MetaPayment, PaymentMethodInput, PaymentMethodWithConversion } from 'types/paymentMethod'
+import { PaymentMethodForm, PaymentMethodFormSubmitHandler } from './PaymentMethodForm'
 
 export const EditPaymentMethodModal = ({
-  paymentMethod,
-  onSubmit,
-  onDelete
+  paymentMethod
 }: {
-  paymentMethod: PaymentMethod
-  onSubmit: (data: PaymentMethodInput) => Promise<void>
-  onDelete: () => Promise<void>
+  paymentMethod: PaymentMethodWithConversion
 }) => {
   const formHook = useForm<PaymentMethodInput>({
-    resolver: zodResolver(paymentMethodSchema),
-    defaultValues: paymentMethod
+    resolver: zodResolver(paymentMethodInputSchema),
+    defaultValues: { ...paymentMethod, metaPayment: paymentMethod.metaPayment as MetaPayment }
   })
 
   const { onOpen, isOpen, onClose } = useDisclosure()
+  const toast = useToast()
+  const matchMutate = useMatchMutate()
+
+  const onUpdate: PaymentMethodFormSubmitHandler = async (data: PaymentMethodInput) => {
+    try {
+      await updatePaymentMethod(paymentMethod.id, data)
+      await matchMutate(paymentMethodKeysMatcher)
+      toast({ status: 'success', description: 'Método de pago actualizado' })
+      onClose()
+    } catch {
+      toast({ status: 'error', description: 'Ocurrió un error al actualizar el método de pago' })
+    }
+  }
+
+  const onDelete = async () => {
+    try {
+      await deletePaymentMethod(paymentMethod.id)
+      await matchMutate(paymentMethodKeysMatcher)
+      toast({ status: 'success', description: 'Método de pago eliminado' })
+      onClose()
+    } catch {
+      toast({ status: 'error', description: 'No se pudo eliminar el método de pago' })
+    }
+  }
 
   return (
     <>
@@ -48,10 +70,7 @@ export const EditPaymentMethodModal = ({
             <PaymentMethodForm
               id="EditPaymentMethodForm"
               formHook={formHook}
-              onSubmit={async (data) => {
-                await onSubmit(data)
-                onClose()
-              }}
+              onSubmit={onUpdate}
               resetOnSubmit={false}
             />
           </ModalBody>

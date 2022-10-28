@@ -1,10 +1,6 @@
 import { useToast } from '@chakra-ui/react'
 import { useState } from 'react'
-import {
-  createPaymentMethod as createPaymentMethodSv,
-  deletePaymentMethod as deletePaymentMethodSv,
-  updatePaymentMethod as updatePaymentMethodSv
-} from 'services/paymentMethods'
+import { createPaymentMethod as createPaymentMethodSv } from 'services/paymentMethods'
 import useSWR from 'swr'
 import { PaymentMethodInput, PaymentMethodWithConversion } from 'types/paymentMethod'
 
@@ -14,24 +10,12 @@ export const usePaymentMethods = () => {
   const toast = useToast()
 
   const createPaymentMethod = async (data: PaymentMethodInput) => {
-    await createPaymentMethodSv(data)
-    await mutate()
-    toast({ status: 'success', description: 'Método de pago creado' })
-  }
-
-  const updatePaymentMethod = async (id: number, data: PaymentMethodInput) => {
-    await updatePaymentMethodSv(id, data)
-    await mutate()
-    toast({ status: 'success', description: 'Método de pago actualizado' })
-  }
-
-  const deletePaymentMethod = async (id: number) => {
     try {
-      await deletePaymentMethodSv(id)
+      await createPaymentMethodSv(data)
       await mutate()
-      toast({ status: 'success', description: 'Método de pago eliminado' })
-    } catch {
-      toast({ status: 'error', description: 'No se pudo eliminar el método de pago' })
+      toast({ status: 'success', description: 'Método de pago creado' })
+    } catch (error) {
+      toast({ status: 'error', description: 'Ocurrió un error al crear el método de pago' })
     }
   }
 
@@ -40,8 +24,8 @@ export const usePaymentMethods = () => {
     error,
     isLoading: !data && !error,
     setSearch,
-    updatePaymentMethod,
-    deletePaymentMethod,
     createPaymentMethod
   }
 }
+
+export const paymentMethodKeysMatcher = '^/api/paymentMethod*'
