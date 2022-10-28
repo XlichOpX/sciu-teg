@@ -1,43 +1,55 @@
 import { Button, Divider, Flex } from '@chakra-ui/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { BsCreditCardFill, BsGearFill, BsPersonFill } from 'react-icons/bs'
+import { FaCoins, FaExchangeAlt, FaGraduationCap, FaIdCardAlt, FaRedhat } from 'react-icons/fa'
+import { MdCategory } from 'react-icons/md'
 
 const links = [
   {
     href: '/configuracion/general',
-    text: 'General'
+    text: 'General',
+    icon: <BsGearFill />
   },
   {
     href: '/configuracion/usuarios',
-    text: 'Usuarios'
+    text: 'Usuarios',
+    icon: <BsPersonFill />
   },
   {
     href: '/configuracion/roles',
-    text: 'Roles'
+    text: 'Roles',
+    icon: <FaRedhat />
   },
   {
     href: '/configuracion/metodos-de-pago',
-    text: 'Métodos de pago'
+    text: 'Métodos de pago',
+    icon: <BsCreditCardFill />
   },
   {
     href: '/configuracion/tasas-de-cambio',
-    text: 'Tasas de cambio'
+    text: 'Tasas de cambio',
+    icon: <FaExchangeAlt />
   },
   {
     href: '/configuracion/categorias',
-    text: 'Categorías'
+    text: 'Categorías',
+    icon: <MdCategory />
   },
   {
     href: '/configuracion/monedas',
-    text: 'Monedas'
+    text: 'Monedas',
+    icon: <FaCoins />
   },
   {
     href: '/configuracion/tipos-de-documento',
-    text: 'Tipos de documento'
+    text: 'Tipos de documento',
+    icon: <FaIdCardAlt />
   },
   {
     href: '/configuracion/carreras',
-    text: 'Carreras'
+    text: 'Carreras',
+    icon: <FaGraduationCap />
   }
 ]
 
@@ -60,9 +72,10 @@ export const SettingsSidebar = () => {
                 w="full"
                 variant={asPath === li.href ? 'solid' : 'ghost'}
                 justifyContent="flex-start"
+                gap={4}
                 pointerEvents={asPath === li.href ? 'none' : undefined}
               >
-                {li.text}
+                {li.icon} {li.text}
               </Button>
             </Link>
           </li>
