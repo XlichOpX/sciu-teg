@@ -11,7 +11,7 @@ export type PaymentMethodInput = z.infer<typeof paymentMethodInputSchema>
 export type PaymentMethodWithConversion = Omit<
   Prisma.PaymentMethodGetPayload<typeof paymentMethodWithConversion>,
   'metaPayment'
-> & { metaPayment: MetaPaymentDef[] }
+> & { metaPayment: MetaPaymentDef[] | undefined | null }
 
 export type MetaPaymentDef = z.infer<typeof metaPaymentDefSchema>
 export type MetaPaymentData = z.infer<typeof metaPaymentDataSchema>

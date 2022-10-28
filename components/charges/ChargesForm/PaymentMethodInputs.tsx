@@ -1,5 +1,6 @@
 import { FormControl, FormErrorMessage, Input, Select, SimpleGrid } from '@chakra-ui/react'
 import { useConversions, usePaymentMethods } from 'hooks'
+import { Fragment, useEffect } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { ChargesFormData } from '.'
 
@@ -13,11 +14,26 @@ export const PaymentMethodInputs = ({
   const {
     register,
     formState: { errors },
-    trigger
+    watch,
+    setValue
   } = formHook
 
   const { paymentMethods } = usePaymentMethods()
   const { latestConversion } = useConversions()
+
+  const currentMethodId = watch(`charges.${chargeIndex}.paymentMethod.id`)
+  const currentMethod = paymentMethods?.find((pm) => pm.id === currentMethodId)
+
+  useEffect(() => {
+    setValue(
+      `charges.${chargeIndex}.paymentMethod.metaPayment`,
+      currentMethod?.metaPayment?.map(({ name, fieldType }) => ({
+        value: '',
+        name,
+        fieldType
+      }))
+    )
+  }, [currentMethod, setValue, chargeIndex])
 
   if (!paymentMethods || !latestConversion) return null
 
@@ -37,8 +53,7 @@ export const PaymentMethodInputs = ({
         <Input
           type="number"
           {...register(`charges.${chargeIndex}.amount`, {
-            valueAsNumber: true,
-            onChange: () => trigger('charges')
+            valueAsNumber: true
           })}
           placeholder="Monto"
         />
@@ -46,6 +61,31 @@ export const PaymentMethodInputs = ({
           {errors.charges && errors.charges[chargeIndex]?.amount?.message}
         </FormErrorMessage>
       </FormControl>
+
+      {currentMethod?.metaPayment?.map((mp, i) => (
+        <Fragment key={i}>
+          <FormControl>
+            <Input
+              defaultValue=""
+              type={mp.fieldType === 'date' ? 'date' : 'text'}
+              {...register(`charges.${chargeIndex}.paymentMethod.metaPayment.${i}.value`)}
+              placeholder={mp.name}
+            />
+          </FormControl>
+
+          <input
+            hidden
+            defaultValue={mp.name}
+            {...register(`charges.${chargeIndex}.paymentMethod.metaPayment.${i}.name`)}
+          />
+
+          <input
+            hidden
+            defaultValue={mp.fieldType}
+            {...register(`charges.${chargeIndex}.paymentMethod.metaPayment.${i}.fieldType`)}
+          />
+        </Fragment>
+      ))}
 
       <input
         hidden

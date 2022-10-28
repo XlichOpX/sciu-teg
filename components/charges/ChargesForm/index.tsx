@@ -71,7 +71,7 @@ export const ChargesForm = ({
             }
           })
         }
-        onRemove={remove}
+        onRemove={() => remove(fields.length - 1)}
         fieldsLength={fields.length}
       />
 
