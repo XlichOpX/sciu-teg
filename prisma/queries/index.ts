@@ -73,7 +73,8 @@ export const receiptWithAll = Prisma.validator<Prisma.ReceiptArgs>()({
             name: true,
             id: true
           }
-        }
+        },
+        metaPayment: true
       }
     },
     createdAt: true,

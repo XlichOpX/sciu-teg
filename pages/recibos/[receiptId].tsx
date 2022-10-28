@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Container,
   Divider,
@@ -23,6 +24,7 @@ import { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { BsPrinterFill } from 'react-icons/bs'
+import { MetaPaymentData } from 'types/paymentMethod'
 
 const Receipts: NextPage = () => {
   const router = useRouter()
@@ -145,8 +147,21 @@ const Receipts: NextPage = () => {
             </Tr>
             {receipt.charges.map((c) => (
               <Tr key={c.id}>
-                <Td colSpan={3} fontWeight="bold" pl={6}>
-                  {c.paymentMethod.name} - {c.paymentMethod.currency.symbol}
+                <Td colSpan={3} pl={6}>
+                  <Text fontWeight="bold">
+                    {c.paymentMethod.name} - {c.paymentMethod.currency.symbol}
+                  </Text>
+                  <Box as="ul" listStyleType="none" pl={4}>
+                    {Array.isArray(c.metaPayment) &&
+                      (c.metaPayment as MetaPaymentData[]).map((mp, i) => (
+                        <li key={i}>
+                          {mp.name}:{' '}
+                          {mp.fieldType === 'date'
+                            ? dayjs(mp.value).format('MM/DD/YYYY')
+                            : mp.value}
+                        </li>
+                      ))}
+                  </Box>
                 </Td>
                 <Td fontWeight="bold" pr={0} textAlign="right">
                   {c.amount.toFixed(2)}
