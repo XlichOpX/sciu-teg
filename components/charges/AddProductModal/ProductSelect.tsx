@@ -1,7 +1,7 @@
 import { Select } from 'chakra-react-select'
 import { useProducts } from 'hooks'
 import debounce from 'just-debounce'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 interface ProductSelectProps {
   categoryId?: number
@@ -11,7 +11,16 @@ interface ProductSelectProps {
 
 export const ProductSelect = ({ categoryId, onChange, value }: ProductSelectProps) => {
   const { products, setSearch, isLoading } = useProducts({ itemsPerPage: 15, savePage: false })
-  const filteredProducts = products?.filter((p) => p.categoryId === categoryId)
+
+  const filteredProducts = useMemo(
+    () => products?.filter((p) => p.categoryId === categoryId),
+    [categoryId, products]
+  )
+
+  useEffect(() => {
+    if (!filteredProducts || !filteredProducts[0]) return
+    onChange(filteredProducts[0].id)
+  }, [onChange, filteredProducts])
 
   const [inputValue, setInputValue] = useState('')
   const debouncedSetSearch = useMemo(() => debounce(setSearch, 300), [setSearch])

@@ -9,10 +9,11 @@ export const CategorySelect = ({
   onChange: (value?: number) => void
   value?: number
 }) => {
-  const { categories } = useCategories()
+  const { categories, isLoading } = useCategories()
 
   useEffect(() => {
-    onChange(categories?.[0]?.id)
+    if (!categories || !categories[0]) return
+    onChange(categories[0].id)
   }, [categories, onChange])
 
   return (
@@ -24,6 +25,7 @@ export const CategorySelect = ({
       value={categories?.find((c) => c.id === value)}
       placeholder="Buscar categoría"
       noOptionsMessage={({ inputValue }) => `Sin resultados para "${inputValue}"`}
+      isLoading={isLoading}
     />
   )
 }

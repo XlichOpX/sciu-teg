@@ -1,6 +1,6 @@
 import { useToast } from '@chakra-ui/react'
 import { Category } from '@prisma/client'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   createCategory as createCategorySv,
   deleteCategory as deleteCategorySv,
@@ -38,8 +38,13 @@ export const useCategories = () => {
     }
   }
 
+  const categories = useMemo(
+    () => data?.filter((c) => c.name.toLocaleLowerCase().includes(search)),
+    [data, search]
+  )
+
   return {
-    categories: data?.filter((c) => c.name.toLocaleLowerCase().includes(search)),
+    categories,
     error,
     isLoading: !data && !error,
     createCategory,

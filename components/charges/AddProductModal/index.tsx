@@ -18,9 +18,10 @@ import {
   SimpleGrid,
   useDisclosure
 } from '@chakra-ui/react'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, CreateButton } from 'components/app'
 import { useProducts } from 'hooks'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { receiptProductSchema } from 'schema/receiptSchema'
 import { z } from 'zod'
@@ -47,21 +48,9 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
   const { handleSubmit, register, control, watch, setValue } = useForm<AddProductFormData>({
     defaultValues: {
       quantity: 1
-    }
+    },
+    resolver: zodResolver(addProductFormSchema)
   })
-
-  const filteredProducts = useMemo(
-    () => products?.filter((p) => p.categoryId === selectedCategoryId),
-    [products, selectedCategoryId]
-  )
-
-  // Colocamos el primer item de categories y filteredProducts como la opción seleccionada
-  // en sus respectivos selects cada vez que cambien sus arrays
-  useEffect(() => {
-    if (filteredProducts && filteredProducts.length > 0) {
-      setValue('id', filteredProducts[0].id)
-    }
-  }, [filteredProducts, setValue])
 
   const selectedProductId = watch('id')
   const selectedProduct = products?.find((p) => p.id === selectedProductId)
