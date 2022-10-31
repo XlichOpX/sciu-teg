@@ -11,11 +11,11 @@ import {
   Link,
   useToast
 } from '@chakra-ui/react'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Head from 'next/head'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { NextPageWithLayout } from '../_app'
 
@@ -30,7 +30,7 @@ const Login: NextPageWithLayout = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors, isSubmitting }
   } = useForm<Inputs>({ resolver: zodResolver(schema) })
 
   const router = useRouter()
@@ -90,7 +90,7 @@ const Login: NextPageWithLayout = () => {
             <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
           </FormControl>
 
-          <Button colorScheme="blue" width="full" type="submit">
+          <Button colorScheme="blue" width="full" type="submit" isLoading={isSubmitting}>
             Iniciar sesión
           </Button>
         </Box>
