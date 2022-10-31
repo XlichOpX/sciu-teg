@@ -4,6 +4,8 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  InputGroup,
+  InputLeftElement,
   Select,
   SimpleGrid,
   VStack
@@ -60,7 +62,12 @@ export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Pro
       <SimpleGrid columns={2} gap={4}>
         <FormControl isInvalid={!!errors.price} isRequired>
           <FormLabel>Precio</FormLabel>
-          <Input type="number" {...register('price', { valueAsNumber: true })} />
+          <InputGroup>
+            <InputLeftElement pointerEvents="none" color="gray.300">
+              $
+            </InputLeftElement>
+            <Input type="number" {...register('price', { valueAsNumber: true })} />
+          </InputGroup>
           <FormErrorMessage>{errors.price?.message}</FormErrorMessage>
         </FormControl>
 
