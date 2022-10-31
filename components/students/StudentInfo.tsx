@@ -1,6 +1,6 @@
 import { Divider, Flex } from '@chakra-ui/react'
 import { StudentWithPersonCareerAndStatus } from 'types/student'
-import { ViewReceiptsModal } from './ViewReceiptsModal'
+import { ViewReceiptsModal } from '../charges/ViewReceiptsModal'
 
 export const StudentInfo = ({
   student: {
