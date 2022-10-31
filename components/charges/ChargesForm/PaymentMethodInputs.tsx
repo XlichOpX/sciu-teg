@@ -1,4 +1,13 @@
-import { Divider, FormControl, FormErrorMessage, Input, Select, SimpleGrid } from '@chakra-ui/react'
+import {
+  Divider,
+  FormControl,
+  FormErrorMessage,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Select,
+  SimpleGrid
+} from '@chakra-ui/react'
 import { useConversions, usePaymentMethods } from 'hooks'
 import { Fragment, useEffect } from 'react'
 import { UseFormReturn } from 'react-hook-form'
@@ -51,13 +60,18 @@ export const PaymentMethodInputs = ({
         </FormControl>
 
         <FormControl isInvalid={!!(errors.charges && errors.charges[chargeIndex]?.amount)}>
-          <Input
-            type="number"
-            {...register(`charges.${chargeIndex}.amount`, {
-              valueAsNumber: true
-            })}
-            placeholder="Monto"
-          />
+          <InputGroup>
+            <InputLeftElement pointerEvents="none" color="gray.300">
+              $
+            </InputLeftElement>
+            <Input
+              type="number"
+              {...register(`charges.${chargeIndex}.amount`, {
+                valueAsNumber: true
+              })}
+              placeholder="Monto"
+            />
+          </InputGroup>
           <FormErrorMessage>
             {errors.charges && errors.charges[chargeIndex]?.amount?.message}
           </FormErrorMessage>

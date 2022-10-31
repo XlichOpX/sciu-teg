@@ -48,7 +48,7 @@ export const BillingsForm = ({
           {billings.map((b) => (
             <Tr key={b.id}>
               <Td>{b.productName}</Td>
-              <Td textAlign="center">{b.amount}</Td>
+              <Td textAlign="center">$ {b.amount}</Td>
               <Td textAlign="center">
                 <Controller
                   name="billings"
@@ -76,7 +76,7 @@ export const BillingsForm = ({
               <Td>
                 {p.name} (x{p.quantity})
               </Td>
-              <Td textAlign="center">{p.price * p.quantity}</Td>
+              <Td textAlign="center">$ {p.price * p.quantity}</Td>
               <Td textAlign="center">
                 <Button
                   variant="ghost"

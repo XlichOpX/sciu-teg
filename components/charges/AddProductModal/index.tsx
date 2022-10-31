@@ -4,6 +4,8 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  InputGroup,
+  InputLeftElement,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -149,7 +151,12 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
 
                 <FormControl>
                   <FormLabel>Precio</FormLabel>
-                  <Input readOnly value={selectedProductPrice * quantity} />
+                  <InputGroup>
+                    <InputLeftElement pointerEvents="none" color="gray.300">
+                      $
+                    </InputLeftElement>
+                    <Input readOnly value={selectedProductPrice * quantity} />
+                  </InputGroup>
                 </FormControl>
               </SimpleGrid>
             </form>

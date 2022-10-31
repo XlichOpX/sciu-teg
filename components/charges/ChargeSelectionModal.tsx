@@ -99,7 +99,7 @@ export const ChargeSelectionModal = ({
                     <Tr key={sb.id}>
                       <Td pl={0}>{sb.productName}</Td>
                       <Td textAlign="right" pr={0}>
-                        {sb.amount}
+                        $ {sb.amount}
                       </Td>
                     </Tr>
                   ))}
@@ -110,7 +110,7 @@ export const ChargeSelectionModal = ({
                         {p.name} (x{p.quantity})
                       </Td>
                       <Td textAlign="right" pr={0}>
-                        {p.price * p.quantity}
+                        $ {p.price * p.quantity}
                       </Td>
                     </Tr>
                   ))}
@@ -120,7 +120,7 @@ export const ChargeSelectionModal = ({
                   <Tr fontWeight="bold">
                     <Td pl={0}>Total</Td>
                     <Td pr={0} textAlign="right">
-                      {totalAmount}
+                      $ {totalAmount}
                     </Td>
                   </Tr>
                 </Tfoot>
