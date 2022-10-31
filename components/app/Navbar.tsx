@@ -35,10 +35,18 @@ const links = [
 
 export const Navbar = () => {
   const { getButtonProps, getDisclosureProps, isOpen, onClose } = useDisclosure()
-  const bg = useColorModeValue('white', 'gray.800')
+  const bg = useColorModeValue('white', 'transparent')
 
   return (
-    <Box as="nav" shadow="base" pos="sticky" top={0} bgColor={bg} zIndex={20}>
+    <Box
+      as="nav"
+      pos="sticky"
+      top={0}
+      bgColor={bg}
+      zIndex={20}
+      backdropFilter="auto"
+      backdropBlur="12px"
+    >
       <Container
         maxW="container.xl"
         display="flex"
@@ -83,7 +91,6 @@ export const Navbar = () => {
       <Box
         as="ul"
         listStyleType="none"
-        bgColor={bg}
         display={['flex', null, 'none']}
         flexDirection="column"
         {...getDisclosureProps()}
