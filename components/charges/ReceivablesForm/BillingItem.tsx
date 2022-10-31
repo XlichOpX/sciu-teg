@@ -1,14 +1,14 @@
 import { Checkbox, Td, Tr } from '@chakra-ui/react'
 import { Control, Controller } from 'react-hook-form'
 import { BillingComparatorArgs } from 'types/billing'
-import { BillingsFormData } from '.'
+import { ReceivablesFormData } from '.'
 
 export const BillingItem = ({
   billing,
   control
 }: {
   billing: BillingComparatorArgs
-  control: Control<BillingsFormData>
+  control: Control<ReceivablesFormData>
 }) => (
   <Tr key={billing.id}>
     <Td>{billing.productName}</Td>

@@ -4,10 +4,10 @@ import { BillingComparatorArgs } from 'types/billing'
 import { BillingItem } from './BillingItem'
 import { ProductItem } from './ProductReceivableItem'
 
-export type BillingsFormData = { billings: number[] }
+export type ReceivablesFormData = { billings: number[] }
 export type ProductReceivable = { id: number; quantity: number; price: number; name: string }
 
-export const BillingsForm = ({
+export const ReceivablesForm = ({
   products,
   billings,
   formHook,
@@ -15,7 +15,7 @@ export const BillingsForm = ({
 }: {
   products: ProductReceivable[]
   billings?: BillingComparatorArgs[]
-  formHook: UseFormReturn<BillingsFormData>
+  formHook: UseFormReturn<ReceivablesFormData>
   onProductRemove: (productId: number) => void
 }) => {
   const { control } = formHook

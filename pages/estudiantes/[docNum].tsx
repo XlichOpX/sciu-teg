@@ -3,10 +3,10 @@ import { FullyCenteredSpinner } from 'components/app'
 import {
   AddProductFormSubmitHandler,
   AddProductModal,
-  BillingsForm,
-  BillingsFormData,
   ChargeSelectionModal,
   ProductReceivable,
+  ReceivablesForm,
+  ReceivablesFormData,
   StudentInfo
 } from 'components/charges'
 import { StudentsLayout } from 'components/students'
@@ -23,7 +23,7 @@ const StudentDetail: NextPageWithLayout = () => {
 
   const { data, error, isLoading, mutate } = useBillings(docNumber)
 
-  const billingsFormHook = useForm<BillingsFormData>({
+  const billingsFormHook = useForm<ReceivablesFormData>({
     defaultValues: { billings: [] }
   })
 
@@ -64,7 +64,7 @@ const StudentDetail: NextPageWithLayout = () => {
         <>
           <StudentInfo student={data.student} />
 
-          <BillingsForm
+          <ReceivablesForm
             onProductRemove={onProductRemove}
             products={products}
             billings={data.billings}
