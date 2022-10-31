@@ -1,20 +1,18 @@
 import { Alert, Flex } from '@chakra-ui/react'
 import { FullyCenteredSpinner } from 'components/app'
 import {
-  AddProductFormSubmitHandler,
   AddProductModal,
   ChargeSelectionModal,
-  ProductReceivable,
   ReceivablesForm,
   ReceivablesFormData,
   StudentInfo
 } from 'components/charges'
 import { StudentsLayout } from 'components/students'
 import { useBillings } from 'hooks'
+import { useReceivables } from 'hooks/charges'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { NextPageWithLayout } from 'pages/_app'
-import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 const StudentDetail: NextPageWithLayout = () => {
@@ -28,25 +26,7 @@ const StudentDetail: NextPageWithLayout = () => {
   })
 
   const selectedBillingsIDs = billingsFormHook.watch('billings')
-  const [products, setProducts] = useState<ProductReceivable[]>([])
-
-  const onProductAdd: AddProductFormSubmitHandler = (product) => {
-    const existentProductIndex = products.findIndex((p) => p.id === product.id)
-    const isExistentProduct = existentProductIndex >= 0
-    // Si el producto ya estaba, lo reemplazamos
-    if (isExistentProduct) {
-      setProducts([
-        ...products.slice(0, existentProductIndex),
-        product,
-        ...products.slice(existentProductIndex + 1)
-      ])
-    } else {
-      setProducts([...products, product])
-    }
-  }
-
-  const onProductRemove = (productId: number) =>
-    setProducts(products.filter((p) => p.id !== productId))
+  const { products, addProduct, removeProduct, resetProducts } = useReceivables()
 
   return (
     <>
@@ -65,14 +45,14 @@ const StudentDetail: NextPageWithLayout = () => {
           <StudentInfo student={data.student} />
 
           <ReceivablesForm
-            onProductRemove={onProductRemove}
+            onProductRemove={removeProduct}
             products={products}
             billings={data.billings}
             formHook={billingsFormHook}
           />
 
           <Flex justifyContent="space-between" mt={4} gap={4} wrap="wrap">
-            <AddProductModal width={{ base: 'full', sm: 'auto' }} onSubmit={onProductAdd} />
+            <AddProductModal width={{ base: 'full', sm: 'auto' }} onSubmit={addProduct} />
             <ChargeSelectionModal
               width={{ base: 'full', sm: 'auto' }}
               billings={data.billings.filter((b) => selectedBillingsIDs.includes(b.id))}
@@ -81,7 +61,7 @@ const StudentDetail: NextPageWithLayout = () => {
               personId={data.student.person.id}
               onRecord={async () => {
                 billingsFormHook.reset()
-                setProducts([])
+                resetProducts()
                 await mutate()
               }}
             />
