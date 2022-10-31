@@ -1,6 +1,7 @@
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import XLSX from 'xlsx'
 
 // Disable `bodyParser` to consume as stream
 // export const config = {
@@ -14,37 +15,15 @@ export default withIronSessionApiRoute(handle, ironOptions)
 async function handle(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     console.log(req.body)
-    // try {
-    //   // Promisified `form.parse`
-    //   // const jsonData = await new Promise(function (resolve, reject) {
-    //   //   const form = formidable({ uploadDir: './', keepExtensions: true })
-    //   //   form.parse(req, async (err, fields, files) => {
-    //   //     console.log('fields:', fields)
-    //   //     console.log('files:', files)
-    //   //     if (err) {
-    //   //       reject(err)
-    //   //       return
-    //   //     }
-
-    //   //     try {
-    //   //       if (!Array.isArray(files.file)) {
-    //   //         const workbook = XLSX.readFile(files.file.filepath)
-    //   //         const sheet = workbook.Sheets[workbook.SheetNames[0]]
-    //   //         const jsonSheet = XLSX.utils.sheet_to_json(sheet)
-    //   //         resolve(jsonSheet)
-    //   //       } else throw new Error('not send more that one file')
-    //   //     } catch (err) {
-    //   //       reject(err)
-    //   //     }
-    //   //   })
-    //   // })
-
-    //   return res.status(200).json({})
-    // } catch (err) {
-    //   console.error('Error while parsing the form', err)
-    //   return res.status(500).json({ error: err })
-    // }
-    res.send({ type: typeof req.body, response: req.body })
+    try {
+      const workBook = XLSX.read(req.body, { type: 'base64' })
+      const sheetName = workBook.SheetNames[0]
+      const workSheet = workBook.Sheets[sheetName]
+      const data = XLSX.utils.sheet_to_json(workSheet)
+      res.send({ response: data })
+    } catch (error) {
+      console.error(error)
+    }
   } else {
     res.setHeader('Allow', ['POST'])
     res.status(405).end(`Method ${req.method} Not Allowed`)
