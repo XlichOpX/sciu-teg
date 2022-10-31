@@ -50,9 +50,7 @@ const StudentDetail: NextPageWithLayout = () => {
 
   return (
     <>
-      <Head>
-        <title>Estudiantes | {docNumber}</title>
-      </Head>
+      <Head>{docNumber && <title>{`Estudiantes | ${docNumber}`}</title>}</Head>
 
       {error && (
         <Alert mb={4} status="error">
