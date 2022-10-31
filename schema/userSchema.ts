@@ -40,5 +40,6 @@ export const userSchema = z.object({
 })
 
 export const userUpdateSchema = z.object({
-  roles: z.number().int().positive().array().min(1)
+  roles: z.number().int().positive().array().min(1),
+  statusId: userSchema.shape.statusId
 })
