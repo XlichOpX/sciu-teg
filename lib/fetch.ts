@@ -1,3 +1,5 @@
+import { HttpError } from './http-error'
+
 type FetchParams = Parameters<typeof window.fetch>
 type Input = FetchParams[0]
 interface CustomInit extends Omit<RequestInit, 'body'> {
@@ -14,6 +16,6 @@ export const fetch = async (input: Input, { headers, body, ...init }: CustomInit
   const res = await window.fetch(input, options)
   if (res.ok) return res.json()
 
-  const error = await res.text()
-  throw new Error(error)
+  const errorMsg = await res.text()
+  throw new HttpError(errorMsg, res.status)
 }

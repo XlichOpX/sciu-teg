@@ -14,6 +14,11 @@ const CommunityDetail: NextPageWithLayout = () => {
   const docNumber = router.query.docNum as string
   const { person, error, isLoading } = usePerson(docNumber)
 
+  const errorMsg =
+    error?.statusCode === 404
+      ? `No se encuentra ninguna persona registrada en la base de datos con el documento de identidad: ${docNumber}.`
+      : error?.message
+
   const { products, isEmpty, addProduct, removeProduct, resetProducts } = useReceivables()
 
   return (
@@ -22,7 +27,7 @@ const CommunityDetail: NextPageWithLayout = () => {
 
       {error && (
         <Alert mb={4} status="error">
-          {error.message}
+          {errorMsg}
         </Alert>
       )}
 
