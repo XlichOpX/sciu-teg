@@ -25,8 +25,8 @@ import { SubmitHandler } from 'react-hook-form'
 import { BsWalletFill } from 'react-icons/bs'
 import { createReceipt } from 'services/receipts'
 import { BillingComparatorArgs } from 'types/billing'
-import { ProductReceivable } from './BillingsForm'
 import { ChargesForm, ChargesFormData } from './ChargesForm'
+import { ProductReceivable } from './ReceivablesForm'
 
 interface ChargeSelectionModalProps extends ButtonProps {
   billings: BillingComparatorArgs[]
