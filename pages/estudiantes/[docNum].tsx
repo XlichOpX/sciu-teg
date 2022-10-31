@@ -3,8 +3,8 @@ import { FullyCenteredSpinner } from 'components/app'
 import {
   AddProductFormSubmitHandler,
   AddProductModal,
-  BillignsFormData,
   BillingsForm,
+  BillingsFormData,
   ChargeSelectionModal,
   ProductReceivable,
   StudentInfo
@@ -23,7 +23,7 @@ const StudentDetail: NextPageWithLayout = () => {
 
   const { data, error, isLoading, mutate } = useBillings(docNumber)
 
-  const billingsFormHook = useForm<BillignsFormData>({
+  const billingsFormHook = useForm<BillingsFormData>({
     defaultValues: { billings: [] }
   })
 

@@ -14,7 +14,7 @@ import { Controller, UseFormReturn } from 'react-hook-form'
 import { BsXLg } from 'react-icons/bs'
 import { BillingComparatorArgs } from 'types/billing'
 
-export type BillignsFormData = { billings: number[] }
+export type BillingsFormData = { billings: number[] }
 export type ProductReceivable = { id: number; quantity: number; price: number; name: string }
 
 export const BillingsForm = ({
@@ -25,7 +25,7 @@ export const BillingsForm = ({
 }: {
   products: ProductReceivable[]
   billings: BillingComparatorArgs[]
-  formHook: UseFormReturn<BillignsFormData>
+  formHook: UseFormReturn<BillingsFormData>
   onProductRemove: (productId: number) => void
 }) => {
   const { control } = formHook
