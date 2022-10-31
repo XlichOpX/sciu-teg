@@ -29,7 +29,7 @@ import { ChargesForm, ChargesFormData } from './ChargesForm'
 import { ProductReceivable } from './ReceivablesForm'
 
 interface ChargeSelectionModalProps extends ButtonProps {
-  billings: BillingComparatorArgs[]
+  billings?: BillingComparatorArgs[]
   personId: number
   products: ProductReceivable[]
   onRecord: () => void
@@ -43,18 +43,17 @@ export const ChargeSelectionModal = ({
   ...props
 }: ChargeSelectionModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-
   const toast = useToast()
 
-  const totalAmount =
-    billings.reduce((ac, sb) => ac + sb.amount, 0) +
-    products.reduce((ac, p) => ac + p.price * p.quantity, 0)
+  let totalAmount = 0
+  totalAmount += billings?.reduce((ac, sb) => ac + sb.amount, 0) ?? 0
+  totalAmount += products.reduce((ac, p) => ac + p.price * p.quantity, 0)
 
   const onRecordCharge: SubmitHandler<ChargesFormData> = async (data) => {
     try {
       const receipt = await createReceipt({
         ...data,
-        billings: billings.map((sb) => sb.id),
+        billings: billings?.map((sb) => sb.id) ?? [],
         products: products.map((p) => ({ id: p.id, quantity: p.quantity })),
         amount: totalAmount,
         person: personId
@@ -95,7 +94,7 @@ export const ChargeSelectionModal = ({
                 </Thead>
 
                 <Tbody>
-                  {billings.map((sb) => (
+                  {billings?.map((sb) => (
                     <Tr key={sb.id}>
                       <Td pl={0}>{sb.productName}</Td>
                       <Td textAlign="right" pr={0}>

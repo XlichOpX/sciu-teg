@@ -1,5 +1,5 @@
 import { Alert, Table, TableContainer, Tbody, Th, Thead, Tr } from '@chakra-ui/react'
-import { UseFormReturn } from 'react-hook-form'
+import { Control } from 'react-hook-form'
 import { BillingComparatorArgs } from 'types/billing'
 import { BillingItem } from './BillingItem'
 import { ProductItem } from './ProductReceivableItem'
@@ -10,16 +10,14 @@ export type ProductReceivable = { id: number; quantity: number; price: number; n
 export const ReceivablesForm = ({
   products,
   billings,
-  formHook,
+  control,
   onProductRemove
 }: {
   products: ProductReceivable[]
   billings?: BillingComparatorArgs[]
-  formHook: UseFormReturn<ReceivablesFormData>
+  control?: Control<ReceivablesFormData>
   onProductRemove: (productId: number) => void
 }) => {
-  const { control } = formHook
-
   if (billings?.length === 0 && products.length === 0)
     return <Alert>El estudiante no posee deudas por pagar.</Alert>
 
@@ -35,9 +33,8 @@ export const ReceivablesForm = ({
         </Thead>
 
         <Tbody>
-          {billings?.map((b) => (
-            <BillingItem key={b.id} billing={b} control={control} />
-          ))}
+          {control &&
+            billings?.map((b) => <BillingItem key={b.id} billing={b} control={control} />)}
 
           {products.map((p) => (
             <ProductItem key={p.id} product={p} onProductRemove={onProductRemove} />

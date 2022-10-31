@@ -48,7 +48,7 @@ const StudentDetail: NextPageWithLayout = () => {
             onProductRemove={removeProduct}
             products={products}
             billings={data.billings}
-            formHook={billingsFormHook}
+            control={billingsFormHook.control}
           />
 
           <Flex justifyContent="space-between" mt={4} gap={4} wrap="wrap">

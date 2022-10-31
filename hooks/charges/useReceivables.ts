@@ -33,6 +33,7 @@ export const useReceivables = () => {
     products,
     addProduct,
     removeProduct,
-    resetProducts
+    resetProducts,
+    isEmpty: products.length === 0
   }
 }
