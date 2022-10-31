@@ -6,7 +6,7 @@ export const useAuth = () => {
   /** Does a fetch to '/api/auth/logout' and then redirects to '/' */
   const logout = async () => {
     await fetch('/api/auth/logout')
-    router.push('/')
+    router.push('/auth/login')
   }
 
   return { logout }
