@@ -1,7 +1,7 @@
 import { Box, Button, Container, Link, useColorModeValue, useDisclosure } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { FaGraduationCap, FaReceipt } from 'react-icons/fa'
-import { IoMdAnalytics } from 'react-icons/io'
+import { IoIosPeople, IoMdAnalytics } from 'react-icons/io'
 import { MdInventory, MdMenu, MdSettings } from 'react-icons/md'
 import { LogoutButton } from './LogoutButton'
 
@@ -10,6 +10,11 @@ const links = [
     href: '/estudiantes',
     text: 'Estudiantes',
     icon: <FaGraduationCap />
+  },
+  {
+    href: '/comunidad',
+    text: 'Comunidad',
+    icon: <IoIosPeople />
   },
   {
     href: '/recibos',
