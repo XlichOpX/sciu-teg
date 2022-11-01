@@ -1,4 +1,4 @@
-import { Box, Button, Container, Link, useColorModeValue, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, Container, Link, useDisclosure } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { FaGraduationCap, FaReceipt } from 'react-icons/fa'
 import { IoIosPeople, IoMdAnalytics } from 'react-icons/io'
@@ -40,17 +40,17 @@ const links = [
 
 export const Navbar = () => {
   const { getButtonProps, getDisclosureProps, isOpen, onClose } = useDisclosure()
-  const bg = useColorModeValue('white', 'transparent')
 
   return (
     <Box
       as="nav"
       pos="sticky"
       top={0}
-      bgColor={bg}
+      bgColor="transparent"
       zIndex={20}
       backdropFilter="auto"
       backdropBlur="12px"
+      shadow="md"
     >
       <Container
         maxW="container.xl"
