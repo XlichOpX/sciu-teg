@@ -3,6 +3,7 @@ import NextLink from 'next/link'
 import { FaGraduationCap, FaReceipt } from 'react-icons/fa'
 import { IoIosPeople, IoMdAnalytics } from 'react-icons/io'
 import { MdInventory, MdMenu, MdSettings } from 'react-icons/md'
+import { Logo } from './Logo'
 import { LogoutButton } from './LogoutButton'
 
 const links = [
@@ -61,7 +62,7 @@ export const Navbar = () => {
       >
         <NextLink href="/" passHref>
           <Link fontSize="2xl" fontWeight="bold">
-            SCIU
+            <Logo />
           </Link>
         </NextLink>
 
