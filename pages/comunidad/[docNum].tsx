@@ -1,8 +1,7 @@
 import { Alert, Flex } from '@chakra-ui/react'
 import { FullyCenteredSpinner } from 'components/app'
 import { AddProductModal, ChargeSelectionModal, ReceivablesForm } from 'components/charges'
-import { CommunityLayout } from 'components/community'
-import { PersonInfo } from 'components/community/PersonInfo'
+import { CommunityLayout, CreateClientModal, PersonInfo } from 'components/community'
 import { usePerson } from 'hooks'
 import { useReceivables } from 'hooks/charges'
 import Head from 'next/head'
@@ -14,10 +13,11 @@ const CommunityDetail: NextPageWithLayout = () => {
   const docNumber = router.query.docNum as string
   const { person, error, isLoading } = usePerson(docNumber)
 
-  const errorMsg =
-    error?.statusCode === 404
-      ? `No se encuentra ninguna persona registrada en la base de datos con el documento de identidad: ${docNumber}.`
-      : error?.message
+  const personNotFound = error?.statusCode === 404
+
+  const errorMsg = personNotFound
+    ? `No se encontró ninguna persona con el documento de identidad: ${docNumber}.`
+    : error?.message
 
   const { products, isEmpty, addProduct, removeProduct, resetProducts } = useReceivables()
 
@@ -30,6 +30,8 @@ const CommunityDetail: NextPageWithLayout = () => {
           {errorMsg}
         </Alert>
       )}
+
+      {personNotFound && <CreateClientModal />}
 
       {isLoading && <FullyCenteredSpinner />}
 
