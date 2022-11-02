@@ -17,13 +17,19 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CancelButton, CreateButton, SaveButton } from 'components/app'
+import {
+  CancelButton,
+  CreateButton,
+  PersonForm,
+  PersonFormData,
+  personFormSchema,
+  SaveButton
+} from 'components/app'
 import { useMatchMutate, userKeysMatcher } from 'hooks'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { BsArrowRight } from 'react-icons/bs'
 import { createUser } from 'services/users'
-import { PersonForm, PersonFormData, personFormSchema } from './PersonForm'
 import { PersonSelectForm, PersonSelectFormData, personSelectFormSchema } from './PersonSelectForm'
 import { UserForm, UserFormData, userFormSchema, UserFormSubmitHandler } from './UserForm'
 
@@ -94,14 +100,15 @@ export const CreateUserModal = () => {
                   </Checkbox>
 
                   {isNewPerson && (
-                    <PersonForm
-                      id="PersonForm"
-                      formHook={personFormHook}
-                      onSubmit={(data) => {
-                        setFormStep(1)
-                        setPerson(data)
-                      }}
-                    />
+                    <FormProvider {...personFormHook}>
+                      <PersonForm
+                        id="PersonForm"
+                        onSubmit={personFormHook.handleSubmit((data) => {
+                          setFormStep(1)
+                          setPerson(data)
+                        })}
+                      />
+                    </FormProvider>
                   )}
 
                   {!isNewPerson && (
