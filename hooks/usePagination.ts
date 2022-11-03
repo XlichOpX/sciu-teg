@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useCallback, useLayoutEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { z } from 'zod'
 
 const pageValidator = z.preprocess(
@@ -24,7 +24,7 @@ export const usePagination = ({
     validationResult.success ? validationResult.data : initialPage
   )
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     scrollToTop && window.scroll({ top: 0 })
   }, [page, scrollToTop])
 
