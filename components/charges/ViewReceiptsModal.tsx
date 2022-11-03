@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Modal,
   ModalBody,
@@ -37,13 +38,14 @@ export const ViewReceiptsModal = ({
         <ModalContent>
           <ModalHeader>Recibos de {fullName}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            {receipts && (
+          <ModalBody pb={4}>
+            {receipts && receipts.length > 0 && (
               <>
                 <ReceiptList receipts={receipts} showIdCol={false} />
                 <Pagination page={page} pages={pages} setPage={setPage} />
               </>
             )}
+            {receipts?.length === 0 && <Alert>No hay recibos...</Alert>}
           </ModalBody>
         </ModalContent>
       </Modal>
