@@ -13,9 +13,14 @@ export const fetch = async (input: Input, { headers, body, ...init }: CustomInit
     ...init
   }
 
-  const res = await window.fetch(input, options)
-  if (res.ok) return res.json()
-
-  const errorMsg = await res.text()
-  throw new HttpError(errorMsg, res.status)
+  try {
+    const res = await window.fetch(input, options)
+    if (res.ok) return res.json()
+    const errorMsg = await res.text()
+    throw new HttpError(errorMsg, res.status)
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error('Ocurrió un error al conectar con el servidor.')
+    }
+  }
 }
