@@ -12,6 +12,7 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Logo } from 'components/app'
 import Head from 'next/head'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -72,7 +73,7 @@ const Login: NextPageWithLayout = () => {
         gap={6}
       >
         <Heading as="h1" textAlign="center" w="full">
-          SCIU
+          <Logo mx="auto" my={3} />
           <Divider />
           Iniciar sesión
         </Heading>

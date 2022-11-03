@@ -1,12 +1,13 @@
+import { chakra } from '@chakra-ui/react'
 import { ComponentPropsWithoutRef } from 'react'
 
-export const Logo = (props: ComponentPropsWithoutRef<'svg'>) => {
+export const Logo = (props: ComponentPropsWithoutRef<typeof chakra.svg>) => {
   return (
-    <svg
+    <chakra.svg
       id="Layer_2"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 306.77 58.06"
-      height={40}
+      height="40px"
       aria-labelledby="LogoTitle"
       {...props}
     >
@@ -68,6 +69,6 @@ export const Logo = (props: ComponentPropsWithoutRef<'svg'>) => {
           />
         </g>
       </g>
-    </svg>
+    </chakra.svg>
   )
 }

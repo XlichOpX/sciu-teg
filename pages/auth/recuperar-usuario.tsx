@@ -1,4 +1,5 @@
 import { Divider, Flex, Heading, Link } from '@chakra-ui/react'
+import { Logo } from 'components/app'
 import { NewPasswordForm, SearchUserForm, SecretsForm } from 'components/auth/password-recovery'
 import { useAuth } from 'hooks'
 import Head from 'next/head'
@@ -36,8 +37,7 @@ const UserRecovery: NextPageWithLayout = () => {
         <Divider />
 
         <Heading as="h1" textAlign="center" w="full" mb={4}>
-          SCIU
-          <br />
+          <Logo mx="auto" mb={3} />
           Recuperar acceso
         </Heading>
         <Divider />

@@ -66,7 +66,7 @@ const Receipts: NextPage = () => {
         }}
       >
         <Heading as="span">
-          <Logo height={50} />
+          <Logo height="50px" />
         </Heading>
         <Text
           textAlign={['center', 'right']}
