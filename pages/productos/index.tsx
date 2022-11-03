@@ -16,8 +16,7 @@ const Products: NextPageWithLayout = () => {
     error,
     isLoading,
     deleteProduct,
-    updateProduct,
-    createProduct
+    updateProduct
   } = useProducts({
     itemsPerPage: 20
   })
@@ -30,7 +29,7 @@ const Products: NextPageWithLayout = () => {
 
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
         <SearchInput placeholder="Buscar productos" onChange={({ text }) => setSearch(text)} />
-        <CreateProductModal onSubmit={createProduct} />
+        <CreateProductModal />
       </Flex>
       <Divider my={4} />
 

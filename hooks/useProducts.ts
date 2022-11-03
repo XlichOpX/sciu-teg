@@ -1,7 +1,7 @@
 import { useToast } from '@chakra-ui/react'
+import { HttpError } from 'lib/http-error'
 import { useCallback, useState } from 'react'
 import {
-  createProduct as createProductSv,
   deleteProduct as deleteProductSv,
   updateProduct as updateProductSv
 } from 'services/products'
@@ -25,16 +25,16 @@ export const useProducts = ({
     `/api/product?offset=${offset}&limit=${limit}${search ? `&keyword=${search}` : ''}`
   )
 
-  const createProduct = async (data: ProductInput) => {
-    await createProductSv(data)
-    await mutate()
-    toast({ status: 'success', description: 'Producto creado' })
-  }
-
   const updateProduct = async (id: number, data: ProductInput) => {
-    await updateProductSv(id, data)
-    await mutate()
-    toast({ status: 'success', description: 'Producto actualizado' })
+    try {
+      await updateProductSv(id, data)
+      await mutate()
+      toast({ status: 'success', description: 'Producto actualizado' })
+    } catch (error) {
+      if (error instanceof HttpError) {
+        toast({ status: 'error', description: error.message })
+      }
+    }
   }
 
   const deleteProduct = async (id: number) => {
@@ -68,7 +68,8 @@ export const useProducts = ({
     isLoading: !data && !error,
     updateProduct,
     deleteProduct,
-    createProduct,
     search
   }
 }
+
+export const productKeysMatcher = '/api/product*'

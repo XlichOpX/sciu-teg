@@ -6,22 +6,43 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { productKeysMatcher, useMatchMutate } from 'hooks'
+import { HttpError } from 'lib/http-error'
+import { useForm } from 'react-hook-form'
 import { productSchema } from 'schema/productSchema'
+import { createProduct } from 'services/products'
 import type { ProductInput } from 'types/product'
-import { ProductForm } from './ProductForm'
+import { ProductForm, ProductFormSubmitHandler } from './ProductForm'
 
-export const CreateProductModal = ({ onSubmit }: { onSubmit: SubmitHandler<ProductInput> }) => {
+export const CreateProductModal = () => {
+  const matchMutate = useMatchMutate()
+  const toast = useToast()
+
   const formHook = useForm<ProductInput>({
     resolver: zodResolver(productSchema),
     defaultValues: { stock: -1 }
   })
 
   const { isOpen, onClose, onOpen } = useDisclosure({ onClose: () => formHook.reset() })
+
+  const handleSubmit: ProductFormSubmitHandler = async (data) => {
+    try {
+      await createProduct(data)
+      await matchMutate(productKeysMatcher)
+      toast({ status: 'success', description: 'Producto creado' })
+      onClose()
+    } catch (error) {
+      if (error instanceof HttpError) {
+        toast({ status: 'error', description: error.message })
+      }
+    }
+  }
+
   return (
     <>
       <CreateButton onClick={onOpen}>Crear producto</CreateButton>
@@ -35,14 +56,7 @@ export const CreateProductModal = ({ onSubmit }: { onSubmit: SubmitHandler<Produ
           <ModalCloseButton />
 
           <ModalBody>
-            <ProductForm
-              formHook={formHook}
-              id="CreateProductForm"
-              onSubmit={async (data) => {
-                await onSubmit(data)
-                onClose()
-              }}
-            />
+            <ProductForm formHook={formHook} id="CreateProductForm" onSubmit={handleSubmit} />
           </ModalBody>
 
           <ModalFooter>
