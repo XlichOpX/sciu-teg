@@ -9,7 +9,7 @@ import {
   ModalOverlay,
   useDisclosure
 } from '@chakra-ui/react'
-import { Pagination } from 'components/app'
+import { FullyCenteredSpinner, Pagination } from 'components/app'
 import { ReceiptList } from 'components/receipts'
 import { useReceipts } from 'hooks'
 import { BsFileText } from 'react-icons/bs'
@@ -22,9 +22,10 @@ export const ViewReceiptsModal = ({
   personDocNum: string
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { receipts, page, pages, setPage } = useReceipts({
+  const { receipts, page, pages, setPage, isLoading } = useReceipts({
     itemsPerPage: 15,
-    initialSearch: personDocNum
+    initialSearch: personDocNum,
+    savePage: false
   })
 
   return (
@@ -46,6 +47,7 @@ export const ViewReceiptsModal = ({
               </>
             )}
             {receipts?.length === 0 && <Alert>No hay recibos...</Alert>}
+            {isLoading && <FullyCenteredSpinner />}
           </ModalBody>
         </ModalContent>
       </Modal>

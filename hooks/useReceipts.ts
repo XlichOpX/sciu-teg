@@ -6,13 +6,15 @@ import { usePagination } from './usePagination'
 
 export const useReceipts = ({
   itemsPerPage,
-  initialSearch = ''
+  initialSearch = '',
+  savePage = true
 }: {
   itemsPerPage: number
   initialSearch?: string
+  savePage?: boolean
 }) => {
   const [search, setSearchState] = useState(initialSearch)
-  const { page, offset, limit, setPage } = usePagination({ itemsPerPage })
+  const { page, offset, limit, setPage } = usePagination({ itemsPerPage, savePage })
   const { data, error } = useSWR<GetReceiptWithPersonResponse, Error>(
     `/api/receipt?offset=${offset}&limit=${limit}&keyword=${search}`
   )
