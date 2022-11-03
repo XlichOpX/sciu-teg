@@ -21,6 +21,7 @@
     "framer-motion": "6.5.1",
     "iron-session": "6.2.1",
     "just-debounce": "1.1.0",
+    "lodash": "^4.17.21",
     "next": "12.2.5",
     "react": "18.2.0",
     "react-data-grid": "7.0.0-beta.19",
