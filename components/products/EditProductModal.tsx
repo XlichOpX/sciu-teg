@@ -15,17 +15,11 @@ import { productKeysMatcher, useMatchMutate } from 'hooks'
 import { HttpError } from 'lib/http-error'
 import { useForm } from 'react-hook-form'
 import { productSchema } from 'schema/productSchema'
-import { updateProduct } from 'services/products'
+import { deleteProduct, updateProduct } from 'services/products'
 import type { ProductInput, ProductWithCategory } from 'types/product'
 import { ProductForm, ProductFormSubmitHandler } from './ProductForm'
 
-export const EditProductModal = ({
-  onDelete,
-  product
-}: {
-  onDelete: () => void
-  product: ProductWithCategory
-}) => {
+export const EditProductModal = ({ product }: { product: ProductWithCategory }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const toast = useToast()
   const matchMutate = useMatchMutate()
@@ -43,6 +37,18 @@ export const EditProductModal = ({
       onClose()
     } catch (error) {
       if (error instanceof HttpError) {
+        toast({ status: 'error', description: error.message })
+      }
+    }
+  }
+
+  const handleDelete = async () => {
+    try {
+      await deleteProduct(product.id)
+      await matchMutate(productKeysMatcher)
+      toast({ status: 'success', description: 'Producto eliminado' })
+    } catch (error) {
+      if (error instanceof Error) {
         toast({ status: 'error', description: error.message })
       }
     }
@@ -70,7 +76,7 @@ export const EditProductModal = ({
           <ModalFooter>
             <DeleteButton
               confirmBody="¿Está seguro de eliminar este producto?"
-              onDelete={onDelete}
+              onDelete={handleDelete}
               mr="auto"
             />
             <CancelButton mr={3} onClick={onClose} />

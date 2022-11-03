@@ -5,20 +5,14 @@ import { MdOutlineCategory } from 'react-icons/md'
 import { ProductWithCategory } from 'types/product'
 import { EditProductModal } from './EditProductModal'
 
-export const ProductItem = ({
-  product,
-  onDelete
-}: {
-  product: ProductWithCategory
-  onDelete: () => void
-}) => (
+export const ProductItem = ({ product }: { product: ProductWithCategory }) => (
   <SimpleBox>
     <Flex alignItems="center" justifyContent="space-between">
       <Heading as="h2" size="sm" noOfLines={2}>
         {product.name}
       </Heading>
 
-      <EditProductModal product={product} onDelete={onDelete} />
+      <EditProductModal product={product} />
     </Flex>
 
     <Divider my={2} />
