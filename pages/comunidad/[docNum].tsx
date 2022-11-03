@@ -1,8 +1,8 @@
 import { Alert, Flex } from '@chakra-ui/react'
 import { FullyCenteredSpinner } from 'components/app'
 import { AddProductModal, ChargeSelectionModal, ReceivablesForm } from 'components/charges'
-import { CommunityLayout, CreateClientModal, PersonInfo } from 'components/community'
-import { usePerson } from 'hooks'
+import { ClientInfo, CommunityLayout, CreateClientModal } from 'components/community'
+import { useClient } from 'hooks'
 import { useReceivables } from 'hooks/charges'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -11,7 +11,7 @@ import { NextPageWithLayout } from 'pages/_app'
 const CommunityDetail: NextPageWithLayout = () => {
   const router = useRouter()
   const docNumber = router.query.docNum as string
-  const { person, error, isLoading } = usePerson(docNumber)
+  const { client, error, isLoading } = useClient(docNumber)
 
   const personNotFound = error?.statusCode === 404
 
@@ -35,9 +35,9 @@ const CommunityDetail: NextPageWithLayout = () => {
 
       {isLoading && <FullyCenteredSpinner />}
 
-      {person && (
+      {client && (
         <>
-          <PersonInfo person={person} />
+          <ClientInfo client={client} />
 
           {isEmpty && <Alert>Agregue los productos a cobrar...</Alert>}
           {!isEmpty && <ReceivablesForm onProductRemove={removeProduct} products={products} />}
@@ -49,7 +49,7 @@ const CommunityDetail: NextPageWithLayout = () => {
               width={{ base: 'full', sm: 'auto' }}
               products={products}
               disabled={products.length === 0}
-              personId={person.id}
+              personId={client.person.id}
               onRecord={async () => {
                 resetProducts()
               }}

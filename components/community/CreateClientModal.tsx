@@ -6,13 +6,31 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
-import { ClientForm } from './ClientForm'
+import { HttpError } from 'lib/http-error'
+import { useRouter } from 'next/router'
+import { createClient } from 'services/clients'
+import { ClientForm, ClientFormSubmitHandler } from './ClientForm'
 
 export const CreateClientModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
+  const router = useRouter()
+  const toast = useToast()
+
+  const handleSubmit: ClientFormSubmitHandler = async (data) => {
+    try {
+      const newClient = await createClient(data)
+      router.push(`/comunidad/${newClient.id}`)
+      toast({ status: 'success', description: 'Cliente creado' })
+    } catch (error) {
+      if (error instanceof HttpError) {
+        toast({ status: 'error', description: error.message })
+      }
+    }
+  }
 
   return (
     <>
@@ -25,7 +43,7 @@ export const CreateClientModal = () => {
           <ModalCloseButton />
 
           <ModalBody>
-            <ClientForm id="CreateClientForm" />
+            <ClientForm id="CreateClientForm" onSubmit={handleSubmit} />
           </ModalBody>
 
           <ModalFooter>

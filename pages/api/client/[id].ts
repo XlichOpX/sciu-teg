@@ -3,6 +3,7 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { clientWithPersonAndOccupation } from 'prisma/queries'
 import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
@@ -26,7 +27,8 @@ async function clientHandler(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos a UN cliente
       try {
         const client = await prisma.client.findFirst({
-          where: { id: Number(id) }
+          where: { id: Number(id) },
+          ...clientWithPersonAndOccupation
         })
         if (!client) res.status(404).end(`Client not found`)
         res.status(200).send(client)

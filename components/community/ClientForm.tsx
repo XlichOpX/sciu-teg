@@ -1,14 +1,15 @@
 import { FormControl, FormErrorMessage, FormLabel, Stack } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PersonInputs } from 'components/app'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { Controller, FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { createClientSchema } from 'schema/clientSchema'
 import { CreateClientInput } from 'types/client'
 import { OccupationSelect } from './OccupationSelect'
 
 export type ClientFormData = CreateClientInput
+export type ClientFormSubmitHandler = SubmitHandler<ClientFormData>
 
-export const ClientForm = ({ id }: { id: string }) => {
+export const ClientForm = ({ id, onSubmit }: { id: string; onSubmit: ClientFormSubmitHandler }) => {
   const methods = useForm<ClientFormData>({
     resolver: zodResolver(createClientSchema),
     defaultValues: {
@@ -29,7 +30,7 @@ export const ClientForm = ({ id }: { id: string }) => {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit((data) => console.log(data))} id={id} noValidate>
+      <form onSubmit={methods.handleSubmit(onSubmit)} id={id} noValidate>
         <Stack gap={3}>
           <PersonInputs />
 
