@@ -22,5 +22,8 @@ export const fetch = async (input: Input, { headers, body, ...init }: CustomInit
     if (error instanceof TypeError) {
       throw new Error('Ocurrió un error al conectar con el servidor.')
     }
+    if (error instanceof HttpError) {
+      throw error
+    }
   }
 }
