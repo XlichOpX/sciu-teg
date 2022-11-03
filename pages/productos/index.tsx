@@ -7,19 +7,10 @@ import Head from 'next/head'
 import { NextPageWithLayout } from 'pages/_app'
 
 const Products: NextPageWithLayout = () => {
-  const {
-    products,
-    page,
-    pages,
-    setPage,
-    setSearch,
-    error,
-    isLoading,
-    deleteProduct,
-    updateProduct
-  } = useProducts({
-    itemsPerPage: 20
-  })
+  const { products, page, pages, setPage, setSearch, error, isLoading, deleteProduct } =
+    useProducts({
+      itemsPerPage: 20
+    })
 
   return (
     <>
@@ -42,7 +33,6 @@ const Products: NextPageWithLayout = () => {
               <ProductItem
                 key={p.id}
                 product={p}
-                onUpdate={async (data) => await updateProduct(p.id, data)}
                 onDelete={async () => await deleteProduct(p.id)}
               />
             ))}

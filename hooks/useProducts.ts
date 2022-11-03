@@ -1,12 +1,8 @@
 import { useToast } from '@chakra-ui/react'
-import { HttpError } from 'lib/http-error'
 import { useCallback, useState } from 'react'
-import {
-  deleteProduct as deleteProductSv,
-  updateProduct as updateProductSv
-} from 'services/products'
+import { deleteProduct as deleteProductSv } from 'services/products'
 import useSWR from 'swr'
-import { GetProductsResponse, ProductInput } from 'types/product'
+import { GetProductsResponse } from 'types/product'
 import { calcPages } from 'utils/calcPages'
 import { usePagination } from './usePagination'
 
@@ -24,18 +20,6 @@ export const useProducts = ({
   const { data, error, mutate } = useSWR<GetProductsResponse, Error>(
     `/api/product?offset=${offset}&limit=${limit}${search ? `&keyword=${search}` : ''}`
   )
-
-  const updateProduct = async (id: number, data: ProductInput) => {
-    try {
-      await updateProductSv(id, data)
-      await mutate()
-      toast({ status: 'success', description: 'Producto actualizado' })
-    } catch (error) {
-      if (error instanceof HttpError) {
-        toast({ status: 'error', description: error.message })
-      }
-    }
-  }
 
   const deleteProduct = async (id: number) => {
     try {
@@ -66,7 +50,6 @@ export const useProducts = ({
     pages: data?.count && calcPages(data.count, itemsPerPage),
     error,
     isLoading: !data && !error,
-    updateProduct,
     deleteProduct,
     search
   }
