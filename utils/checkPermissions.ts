@@ -8,16 +8,20 @@ import prisma from 'lib/prisma'
 
 export async function canUserDo({ user }: IronSession, expectedPermission: string) {
   if (!user) return false
-  const roles = user.role.map((rol) => rol.id)
-  console.log(JSON.stringify({ user }, null, 2))
-  const permission = await prisma.permission.findMany({
-    select: { id: true },
-    where: {
-      AND: {
-        permission: { contains: expectedPermission, mode: 'insensitive' },
-        roles: { some: { id: { in: roles } } }
+  if (user.role) {
+    const roles = user.role.map((rol) => rol.id)
+    console.log(JSON.stringify({ user }, null, 2))
+    const permission = await prisma.permission.findMany({
+      select: { id: true },
+      where: {
+        AND: {
+          permission: { contains: expectedPermission, mode: 'insensitive' },
+          roles: { some: { id: { in: roles } } }
+        }
       }
-    }
-  })
-  return permission.length > 0 ? true : false
+    })
+    return permission.length > 0 ? true : false
+  } else if (user.permissions) {
+    return user.permissions.some(({ permission }) => permission === expectedPermission)
+  } else return false
 }

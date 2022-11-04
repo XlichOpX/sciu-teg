@@ -6,8 +6,8 @@ export type CookieUser = Omit<
   User,
   'password' | 'secretId' | 'personId' | 'statusId' | 'createdAt' | 'updatedAt'
 > & {
-  role: Omit<Role, 'name' | 'level' | 'description' | 'createdAt' | 'updatedAt'>[]
-  permissions?: Omit<Permission, 'id' | 'createdAt' | 'updatedAt'>[]
+  role?: Pick<Role, 'id'>[]
+  permissions?: Pick<Permission, 'permission'>[]
   status: UserStatus
 }
 

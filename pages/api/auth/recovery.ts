@@ -21,7 +21,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         const anonymous = {
           id: 0,
           status: { id: 0, status: 'recovery' },
-          permissions: [{ permission: 'READ_SECRET', description: 'RECOVERY_MODE' }],
+          permissions: [{ permission: 'READ_SECRET' }],
           username: 'recovery_mode'
         } as CookieUser
 
@@ -71,10 +71,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         const anonymous = {
           id: 0,
           status: { id: 0, status: 'recovery' },
-          permissions: [
-            { permission: 'EDIT_USER', description: 'RECOVERY_MODE' },
-            { permission: 'ACCESS_USERS_MUTATION', description: 'RECOVERY_MODE' }
-          ],
+          permissions: [{ permission: 'EDIT_USER' }, { permission: 'ACCESS_USERS_MUTATION' }],
           username: 'recovery_mode'
         } as CookieUser
 
