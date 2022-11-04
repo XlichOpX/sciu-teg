@@ -21,7 +21,7 @@ const Receipts: NextPageWithLayout = () => {
       />
       {isLoading && <FullyCenteredSpinner />}
       {receipts && receipts.length > 0 && <ReceiptList receipts={receipts} />}
-      {receipts && receipts.length === 0 && <Alert>No hay resultados...</Alert>}
+      {receipts && receipts.length === 0 && <Alert>No hay recibos...</Alert>}
       {!!pages && pages > 0 && <Pagination page={page} pages={pages} setPage={setPage} />}
     </>
   )

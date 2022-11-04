@@ -19,7 +19,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUserDo(session, 'ACCESS_USERS_MUTATION'))
+  if (!(await canUserDo(session, 'ACCESS_USERS_MUTATION')))
     return res.status(403).send(`Can't access this.`)
 
   const { success } = idValidation.safeParse(id)
@@ -27,7 +27,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_USER')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_USER'))) return res.status(403).send(`Can't read this.`)
       //obtenemos a UN usuario
       try {
         const user = await prisma.user.findFirst({
@@ -43,7 +43,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUserDo(session, 'EDIT_USER')) return res.status(403).send(`Can't edit this.`)
+      if (!(await canUserDo(session, 'EDIT_USER'))) return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN usuario
       try {
         const user = await prisma.user.findFirst({
@@ -82,7 +82,8 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUserDo(session, 'DELETE_USER')) return res.status(403).send(`Can't delete this.`)
+      if (!(await canUserDo(session, 'DELETE_USER')))
+        return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN usuario
       try {
         const delUser = await prisma.user.delete({ where: { id: Number(id) } })

@@ -1,0 +1,65 @@
+import { useToast } from '@chakra-ui/react'
+import { Occupation } from '@prisma/client'
+import {
+  AsyncCreatableProps,
+  AsyncCreatableSelect,
+  GroupBase,
+  OptionBase
+} from 'chakra-react-select'
+import { HttpError } from 'lib/http-error'
+import { forwardRef, useState } from 'react'
+import { createOccupation, getOccupations } from 'services/occupations'
+
+interface Option extends OptionBase {
+  label: string
+  value: number
+}
+
+const getOption = (occupation: Occupation) => ({
+  label: occupation.ocupation,
+  value: occupation.id
+})
+
+export interface OccupationSelectProps
+  extends AsyncCreatableProps<Option, false, GroupBase<Option>> {
+  onChange: (value: Option | null) => void
+}
+
+export const OccupationSelect = forwardRef<any, OccupationSelectProps>(
+  ({ onChange, ...props }, ref) => {
+    const [value, setValue] = useState<Option | null>(null)
+
+    const toast = useToast()
+
+    const promiseOptions = async (search: string) => (await getOccupations(search)).map(getOption)
+
+    const handleChange = (value: Option | null) => {
+      setValue(value)
+      onChange(value)
+    }
+
+    const handleCreate = async (occupation: string) => {
+      try {
+        const newOccupation = await createOccupation(occupation)
+        handleChange(getOption(newOccupation))
+      } catch (error) {
+        if (error instanceof HttpError) {
+          toast({ status: 'error', description: error.message })
+        }
+      }
+    }
+
+    return (
+      <AsyncCreatableSelect<Option, false, GroupBase<Option>>
+        onCreateOption={handleCreate}
+        loadOptions={promiseOptions}
+        value={value}
+        onChange={handleChange}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+
+OccupationSelect.displayName = 'OccupationSelect'

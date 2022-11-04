@@ -11,7 +11,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_PARAMETER')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_PARAMETER')))
+        return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los parámetros
       try {
         const parameters = await prisma.parameters.findMany()
@@ -25,7 +26,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_PARAMETER')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_PARAMETER')))
+        return res.status(403).send(`Can't create this.`)
       //creamos UN parámetro
       try {
         const result = await prisma.parameters.create({

@@ -22,7 +22,7 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
     query: { id: docNum },
     session
   } = req
-  if (!canUserDo(session, 'CREATE_BILLING')) return res.status(403).send(`Can't read this.`)
+  if (!(await canUserDo(session, 'CREATE_BILLING'))) return res.status(403).send(`Can't read this.`)
 
   // Validamos que el método utilizado sea GET.
   if (method !== 'GET') {

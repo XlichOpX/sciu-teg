@@ -16,7 +16,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   } = req
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_SECRETQUESTION'))
+      if (!(await canUserDo(session, 'READ_SECRETQUESTION')))
         return res.status(403).send(`Can't read this.`)
       //obtenemos TODAS las preguntas secretas
       try {
@@ -31,7 +31,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_SECRETQUESTION'))
+      if (!(await canUserDo(session, 'CREATE_SECRETQUESTION')))
         return res.status(403).send(`Can't create this.`)
       //creamos UNA pregunta secreta
       try {

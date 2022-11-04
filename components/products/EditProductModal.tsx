@@ -6,30 +6,53 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { productKeysMatcher, useMatchMutate } from 'hooks'
+import { HttpError } from 'lib/http-error'
+import { useForm } from 'react-hook-form'
 import { productSchema } from 'schema/productSchema'
-import type { ProductInput } from 'types/product'
-import { ProductForm } from './ProductForm'
+import { deleteProduct, updateProduct } from 'services/products'
+import type { ProductInput, ProductWithCategory } from 'types/product'
+import { ProductForm, ProductFormSubmitHandler } from './ProductForm'
 
-export const EditProductModal = ({
-  onDelete,
-  onSubmit,
-  defaultValues
-}: {
-  onDelete: () => void
-  defaultValues: ProductInput
-  onSubmit: SubmitHandler<ProductInput>
-}) => {
+export const EditProductModal = ({ product }: { product: ProductWithCategory }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
+  const toast = useToast()
+  const matchMutate = useMatchMutate()
 
   const formHook = useForm<ProductInput>({
     resolver: zodResolver(productSchema),
-    defaultValues
+    defaultValues: product
   })
+
+  const handleSubmit: ProductFormSubmitHandler = async (data) => {
+    try {
+      await updateProduct(product.id, data)
+      await matchMutate(productKeysMatcher)
+      toast({ status: 'success', description: 'Producto actualizado' })
+      onClose()
+    } catch (error) {
+      if (error instanceof HttpError) {
+        toast({ status: 'error', description: error.message })
+      }
+    }
+  }
+
+  const handleDelete = async () => {
+    try {
+      await deleteProduct(product.id)
+      await matchMutate(productKeysMatcher)
+      toast({ status: 'success', description: 'Producto eliminado' })
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({ status: 'error', description: error.message })
+      }
+    }
+  }
 
   return (
     <>
@@ -38,27 +61,22 @@ export const EditProductModal = ({
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
-            <h2>Editar producto</h2>
-          </ModalHeader>
+          <ModalHeader>Editar producto</ModalHeader>
           <ModalCloseButton />
 
           <ModalBody>
             <ProductForm
               formHook={formHook}
               id="EditProductForm"
-              onSubmit={async (data) => {
-                await onSubmit(data)
-                onClose()
-              }}
-              defaultValues={defaultValues}
+              onSubmit={handleSubmit}
+              defaultValues={product}
             />
           </ModalBody>
 
           <ModalFooter>
             <DeleteButton
               confirmBody="¿Está seguro de eliminar este producto?"
-              onDelete={onDelete}
+              onDelete={handleDelete}
               mr="auto"
             />
             <CancelButton mr={3} onClick={onClose} />

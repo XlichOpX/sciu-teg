@@ -20,7 +20,8 @@ async function handle(
 
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_RECEIPT')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_RECEIPT')))
+        return res.status(403).send(`Can't read this.`)
       try {
         const response = await getReceipts(query, prisma)
         res.json(response)
@@ -30,7 +31,8 @@ async function handle(
       break
 
     case 'POST':
-      if (!canUserDo(session, 'CREATE_RECEIPT')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_RECEIPT')))
+        return res.status(403).send(`Can't create this.`)
       //creamos UN recibo
       try {
         //validate

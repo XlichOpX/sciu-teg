@@ -17,9 +17,9 @@ export const secretSchema = z.object({
  */
 export const personSchema = z.object({
   firstName: z.string().min(1).max(20),
-  middleName: z.string().min(1).max(20).optional(),
+  middleName: z.string().min(1).max(20).nullish(),
   firstLastName: z.string().min(1).max(20),
-  secondLastName: z.string().min(1).max(20).optional(),
+  secondLastName: z.string().min(1).max(20).nullish(),
   docNumber: z.string().min(1).max(12),
   docTypeId: z.number().positive().int(),
   address: z.string().min(1).max(120),
@@ -40,5 +40,6 @@ export const userSchema = z.object({
 })
 
 export const userUpdateSchema = z.object({
-  roles: z.number().int().positive().array().min(1)
+  roles: z.number().int().positive().array().min(1),
+  statusId: userSchema.shape.statusId
 })

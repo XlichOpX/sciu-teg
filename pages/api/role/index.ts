@@ -19,7 +19,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_ROLE')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_ROLE'))) return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los roles
       try {
         const roles = await prisma.role.findMany({
@@ -34,7 +34,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_ROLE')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_ROLE')))
+        return res.status(403).send(`Can't create this.`)
       //creamos UN rol
       try {
         const result: Role = await prisma.role.create({

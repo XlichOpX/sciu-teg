@@ -4,18 +4,23 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  InputGroup,
+  InputLeftElement,
   Select,
   SimpleGrid,
   VStack
 } from '@chakra-ui/react'
+import { FullyCenteredSpinner } from 'components/app'
 import { useCategories } from 'hooks'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { ProductInput } from 'types/product'
 
+export type ProductFormSubmitHandler = SubmitHandler<ProductInput>
+
 interface Props {
   id: string
-  onSubmit: SubmitHandler<ProductInput>
+  onSubmit: ProductFormSubmitHandler
   formHook: ReturnType<typeof useForm<ProductInput>>
   defaultValues?: Partial<ProductInput>
 }
@@ -36,6 +41,8 @@ export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Pro
 
   const [hasStock, setHasStock] = useState((getValues('stock') ?? -1) >= 0)
 
+  if (!categories) return <FullyCenteredSpinner />
+
   return (
     <VStack gap={3} as="form" onSubmit={handleSubmit(onSubmit)} {...props} noValidate>
       <FormControl isInvalid={!!errors.name} isRequired>
@@ -47,12 +54,11 @@ export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Pro
       <FormControl isInvalid={!!errors.categoryId} isRequired>
         <FormLabel>Categoría</FormLabel>
         <Select {...register('categoryId', { valueAsNumber: true })}>
-          {categories &&
-            categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
         </Select>
         <FormErrorMessage>{errors.categoryId?.message}</FormErrorMessage>
       </FormControl>
@@ -60,7 +66,12 @@ export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Pro
       <SimpleGrid columns={2} gap={4}>
         <FormControl isInvalid={!!errors.price} isRequired>
           <FormLabel>Precio</FormLabel>
-          <Input type="number" {...register('price', { valueAsNumber: true })} />
+          <InputGroup>
+            <InputLeftElement pointerEvents="none" color="gray.300">
+              $
+            </InputLeftElement>
+            <Input type="number" {...register('price', { valueAsNumber: true })} />
+          </InputGroup>
           <FormErrorMessage>{errors.price?.message}</FormErrorMessage>
         </FormControl>
 

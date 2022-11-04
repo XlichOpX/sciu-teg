@@ -82,7 +82,7 @@ export const ChargesForm = ({
           ))}
           {amountDiff && (
             <FormHelperText textAlign="center" color="red.300">
-              Diferencia: {amountDiff}
+              Diferencia: $ {amountDiff}
             </FormHelperText>
           )}
         </FormControl>

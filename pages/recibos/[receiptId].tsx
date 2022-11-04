@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  chakra,
   Container,
   Divider,
   Flex,
@@ -14,10 +15,10 @@ import {
   Td,
   Text,
   Tfoot,
-  Th,
   Thead,
   Tr
 } from '@chakra-ui/react'
+import { Logo } from 'components/app'
 import dayjs from 'dayjs'
 import { useParameters, useReceipt } from 'hooks'
 import { NextPage } from 'next'
@@ -43,7 +44,12 @@ const Receipts: NextPage = () => {
   }
 
   return (
-    <Container maxW="container.lg" py={4}>
+    <Container
+      maxW="container.lg"
+      minH="100vh"
+      sx={{ '@media print': { backgroundColor: 'white', color: 'black' } }}
+      py={4}
+    >
       <Head>
         <title>Recibo {receipt?.id}</title>
       </Head>
@@ -59,7 +65,9 @@ const Receipts: NextPage = () => {
           }
         }}
       >
-        <Heading as="span">SCIU</Heading>
+        <Heading as="span">
+          <Logo height="50px" />
+        </Heading>
         <Text
           textAlign={['center', 'right']}
           sx={{
@@ -114,12 +122,14 @@ const Receipts: NextPage = () => {
         <Table>
           <Thead>
             <Tr>
-              <Th pl={0}>Concepto</Th>
-              <Th textAlign="center">Precio</Th>
-              <Th textAlign="center">Cantidad</Th>
-              <Th textAlign="right" pr={0}>
+              <chakra.th pl={0} textAlign="left">
+                Concepto
+              </chakra.th>
+              <chakra.th>Precio</chakra.th>
+              <chakra.th>Cantidad</chakra.th>
+              <chakra.th textAlign="right" pr={0}>
                 Total
-              </Th>
+              </chakra.th>
             </Tr>
           </Thead>
 
@@ -127,10 +137,10 @@ const Receipts: NextPage = () => {
             {receipt.chargedProducts.map((cp) => (
               <Tr key={cp.id}>
                 <Td pl={0}>{cp.billing ? cp.billing.productName : cp.product.name}</Td>
-                <Td textAlign="center">{cp.price.toFixed(2)}</Td>
+                <Td textAlign="center">$ {cp.price.toFixed(2)}</Td>
                 <Td textAlign="center">{cp.quantity ?? 1}</Td>
                 <Td pr={0} textAlign="right">
-                  {(cp.price * (cp.quantity ?? 1)).toFixed(2)}
+                  $ {(cp.price * (cp.quantity ?? 1)).toFixed(2)}
                 </Td>
               </Tr>
             ))}
@@ -142,7 +152,7 @@ const Receipts: NextPage = () => {
                 TOTAL
               </Td>
               <Td fontWeight="bold" pr={0} textAlign="right">
-                {receipt.amount.toFixed(2)}
+                $ {receipt.amount.toFixed(2)}
               </Td>
             </Tr>
             {receipt.charges.map((c) => (
@@ -164,7 +174,7 @@ const Receipts: NextPage = () => {
                   </Box>
                 </Td>
                 <Td fontWeight="bold" pr={0} textAlign="right">
-                  {c.amount.toFixed(2)}
+                  $ {c.amount.toFixed(2)}
                 </Td>
               </Tr>
             ))}

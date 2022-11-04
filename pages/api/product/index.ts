@@ -13,7 +13,7 @@ export default withIronSessionApiRoute(handle, ironOptions)
 async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { body, method, query, session } = req
 
-  if (!canUserDo(session, 'READ_PRODUCT')) return res.status(403).send(`Can't read this.`)
+  if (!(await canUserDo(session, 'READ_PRODUCT'))) return res.status(403).send(`Can't read this.`)
 
   switch (method) {
     case 'GET':
@@ -37,7 +37,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       break
     case 'POST':
       // creamos UN producto
-      if (!canUserDo(session, 'EDIT_PRODUCT')) return res.status(403).send(`Can't edit this.`)
+      if (!(await canUserDo(session, 'EDIT_PRODUCT')))
+        return res.status(403).send(`Can't edit this.`)
       try {
         const data = productSchema.parse(body)
         const result = await prisma.product.create({

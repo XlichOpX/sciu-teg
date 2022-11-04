@@ -11,7 +11,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_STUDENTSTATUS')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_STUDENTSTATUS')))
+        return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los estado de estudiantes
       try {
         const status = await prisma.studentStatus.findMany()
@@ -23,7 +24,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_STUDENTSTATUS'))
+      if (!(await canUserDo(session, 'CREATE_STUDENTSTATUS')))
         return res.status(403).send(`Can't create this.`)
       //creamos UN estado de estudiante
       try {

@@ -9,13 +9,21 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Select,
+  Stack,
   useDisclosure,
   useToast
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Select } from 'chakra-react-select'
-import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
-import { useMatchMutate, userKeysMatcher, useRoles } from 'hooks'
+import { Select as RSelect } from 'chakra-react-select'
+import {
+  CancelButton,
+  DeleteButton,
+  EditButton,
+  FullyCenteredSpinner,
+  SaveButton
+} from 'components/app'
+import { useMatchMutate, userKeysMatcher, useRoles, useUserStatus } from 'hooks'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { userUpdateSchema } from 'schema/userSchema'
 import { deleteUser, updateUser } from 'services/users'
@@ -27,13 +35,15 @@ type EditUserForm = z.infer<typeof userUpdateSchema>
 export const EditUserModal = ({ user }: { user: UserEssencials }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const { selectOptions } = useRoles()
+  const { userStatus } = useUserStatus()
   const toast = useToast()
   const matchMutate = useMatchMutate()
 
   const {
     handleSubmit,
     control,
-    formState: { errors }
+    formState: { errors, isSubmitting },
+    register
   } = useForm<EditUserForm>({
     resolver: zodResolver(userUpdateSchema),
     defaultValues: { roles: user.roles.map((r) => r.id) }
@@ -61,6 +71,8 @@ export const EditUserModal = ({ user }: { user: UserEssencials }) => {
     }
   }
 
+  const isLoading = !userStatus || !selectOptions
+
   return (
     <>
       <EditButton onClick={onOpen} />
@@ -73,26 +85,51 @@ export const EditUserModal = ({ user }: { user: UserEssencials }) => {
           <ModalCloseButton />
 
           <ModalBody>
-            <form onSubmit={handleSubmit(onSubmit)} id="EditUserForm">
-              <Controller
-                name="roles"
-                control={control}
-                render={({ field }) => (
-                  <FormControl isInvalid={!!errors.roles} isRequired>
-                    <FormLabel>Roles</FormLabel>
-                    <Select
-                      {...field}
-                      onChange={(newValue) => field.onChange(newValue.map((nv) => nv.value))}
-                      value={selectOptions?.filter((so) => field.value.includes(so.value))}
-                      isMulti
-                      options={selectOptions}
-                      placeholder="Seleccionar roles..."
-                    />
-                    <FormErrorMessage>{errors.roles?.message}</FormErrorMessage>
-                  </FormControl>
-                )}
-              />
-            </form>
+            {isLoading ? (
+              <FullyCenteredSpinner />
+            ) : (
+              <Stack
+                as="form"
+                onSubmit={handleSubmit(onSubmit)}
+                id="EditUserForm"
+                gap={3}
+                noValidate
+              >
+                <FormControl isInvalid={!!errors.statusId} isRequired>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    defaultValue={user.status.id}
+                    {...register('statusId', { valueAsNumber: true })}
+                  >
+                    {userStatus.map((us) => (
+                      <option key={us.id} value={us.id}>
+                        {us.status}
+                      </option>
+                    ))}
+                  </Select>
+                  <FormErrorMessage>{errors.statusId?.message}</FormErrorMessage>
+                </FormControl>
+
+                <Controller
+                  name="roles"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl isInvalid={!!errors.roles} isRequired>
+                      <FormLabel>Roles</FormLabel>
+                      <RSelect
+                        {...field}
+                        onChange={(newValue) => field.onChange(newValue.map((nv) => nv.value))}
+                        value={selectOptions?.filter((so) => field.value.includes(so.value))}
+                        isMulti
+                        options={selectOptions}
+                        placeholder="Seleccionar roles..."
+                      />
+                      <FormErrorMessage>{errors.roles?.message}</FormErrorMessage>
+                    </FormControl>
+                  )}
+                />
+              </Stack>
+            )}
           </ModalBody>
 
           <ModalFooter>
@@ -104,7 +141,7 @@ export const EditUserModal = ({ user }: { user: UserEssencials }) => {
 
             <CancelButton mr={3} onClick={onClose} />
 
-            <SaveButton type="submit" form="EditUserForm" />
+            <SaveButton type="submit" form="EditUserForm" isLoading={isSubmitting} />
           </ModalFooter>
         </ModalContent>
       </Modal>

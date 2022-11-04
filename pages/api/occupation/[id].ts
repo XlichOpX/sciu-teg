@@ -17,7 +17,8 @@ async function occupationHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUserDo(session, 'READ_OCCUPATION')) return res.status(403).send(`Can't read this.`)
+  if (!(await canUserDo(session, 'READ_OCCUPATION')))
+    return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -38,7 +39,8 @@ async function occupationHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUserDo(session, 'EDIT_OCCUPATION')) return res.status(403).send(`Can't edit this.`)
+      if (!(await canUserDo(session, 'EDIT_OCCUPATION')))
+        return res.status(403).send(`Can't edit this.`)
       //actualizamos a UNA ocupación de cliente
       try {
         const occupation = await prisma.occupation.findFirst({
@@ -61,7 +63,7 @@ async function occupationHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUserDo(session, 'DELETE_OCCUPATION'))
+      if (!(await canUserDo(session, 'DELETE_OCCUPATION')))
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA ocupación de cliente
       try {

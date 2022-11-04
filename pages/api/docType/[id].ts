@@ -16,7 +16,7 @@ async function docTypeHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUserDo(session, 'READ_DOCTYPE')) return res.status(403).send(`Can't read this.`)
+  if (!(await canUserDo(session, 'READ_DOCTYPE'))) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -37,7 +37,8 @@ async function docTypeHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUserDo(session, 'EDIT_DOCTYPE')) return res.status(403).send(`Can't edit this.`)
+      if (!(await canUserDo(session, 'EDIT_DOCTYPE')))
+        return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN tipo de documento
       try {
         const docType = await prisma.docType.findFirst({
@@ -61,7 +62,8 @@ async function docTypeHandler(req: NextApiRequest, res: NextApiResponse) {
       break
     case 'DELETE':
       try {
-        if (!canUserDo(session, 'DELETE_DOCTYPE')) return res.status(403).send(`Can't delete this.`)
+        if (!(await canUserDo(session, 'DELETE_DOCTYPE')))
+          return res.status(403).send(`Can't delete this.`)
         //eliminamos a UN tipo de documento
         const person = await prisma.person.findFirst({
           where: { docTypeId: Number(id) }

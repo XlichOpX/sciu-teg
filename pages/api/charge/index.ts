@@ -12,7 +12,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_CHARGE')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_CHARGE')))
+        return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los cargos
       try {
         const charges = await prisma.charge.findMany()
@@ -26,7 +27,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_CHARGE')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_CHARGE')))
+        return res.status(403).send(`Can't create this.`)
       //creamos UN cargo
       try {
         const result = await prisma.charge.create({

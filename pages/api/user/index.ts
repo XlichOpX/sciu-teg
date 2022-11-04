@@ -13,12 +13,12 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { body, method, session } = req
 
   // es una idea temporal...
-  if (!canUserDo(session, 'ACCESS_USERS_MUTATION'))
+  if (!(await canUserDo(session, 'ACCESS_USERS_MUTATION')))
     return res.status(403).send(`Can't access this.`)
 
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_USER')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_USER'))) return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los usuarios
       try {
         const users = await prisma.user.findMany({
@@ -34,7 +34,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_USER')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_USER')))
+        return res.status(403).send(`Can't create this.`)
       //creamos UN usuario
       try {
         // Validamos los campos

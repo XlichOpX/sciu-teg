@@ -11,7 +11,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_SEMESTER')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_SEMESTER')))
+        return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los semestres
       try {
         const semesters = await prisma.semester.findMany()
@@ -23,7 +24,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_SEMESTER')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_SEMESTER')))
+        return res.status(403).send(`Can't create this.`)
       //creamos UN semestre
       try {
         const result = await prisma.semester.create({

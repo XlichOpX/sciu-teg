@@ -12,7 +12,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_PAYMENTMETHOD')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_PAYMENTMETHOD')))
+        return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los métodos de pago
       try {
         const paymentMethod = await prisma.paymentMethod.findMany({
@@ -28,7 +29,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_PAYMENTMETHOD'))
+      if (!(await canUserDo(session, 'CREATE_PAYMENTMETHOD')))
         return res.status(403).send(`Can't create this.`)
       //creamos UN método de pago
       try {

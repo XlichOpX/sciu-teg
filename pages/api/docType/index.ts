@@ -12,7 +12,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_DOCTYPE')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_DOCTYPE')))
+        return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los tipos de documentos
       try {
         const docTypes = await prisma.docType.findMany()
@@ -26,7 +27,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_DOCTYPE')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_DOCTYPE')))
+        return res.status(403).send(`Can't create this.`)
       //creamos UN tipo de documento
       try {
         const result: DocType = await prisma.docType.create({

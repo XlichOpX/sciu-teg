@@ -25,11 +25,11 @@ import { SubmitHandler } from 'react-hook-form'
 import { BsWalletFill } from 'react-icons/bs'
 import { createReceipt } from 'services/receipts'
 import { BillingComparatorArgs } from 'types/billing'
-import { ProductReceivable } from './BillingsForm'
 import { ChargesForm, ChargesFormData } from './ChargesForm'
+import { ProductReceivable } from './ReceivablesForm'
 
 interface ChargeSelectionModalProps extends ButtonProps {
-  billings: BillingComparatorArgs[]
+  billings?: BillingComparatorArgs[]
   personId: number
   products: ProductReceivable[]
   onRecord: () => void
@@ -43,18 +43,17 @@ export const ChargeSelectionModal = ({
   ...props
 }: ChargeSelectionModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-
   const toast = useToast()
 
-  const totalAmount =
-    billings.reduce((ac, sb) => ac + sb.amount, 0) +
-    products.reduce((ac, p) => ac + p.price * p.quantity, 0)
+  let totalAmount = 0
+  totalAmount += billings?.reduce((ac, sb) => ac + sb.amount, 0) ?? 0
+  totalAmount += products.reduce((ac, p) => ac + p.price * p.quantity, 0)
 
   const onRecordCharge: SubmitHandler<ChargesFormData> = async (data) => {
     try {
       const receipt = await createReceipt({
         ...data,
-        billings: billings.map((sb) => sb.id),
+        billings: billings?.map((sb) => sb.id) ?? [],
         products: products.map((p) => ({ id: p.id, quantity: p.quantity })),
         amount: totalAmount,
         person: personId
@@ -95,11 +94,11 @@ export const ChargeSelectionModal = ({
                 </Thead>
 
                 <Tbody>
-                  {billings.map((sb) => (
+                  {billings?.map((sb) => (
                     <Tr key={sb.id}>
                       <Td pl={0}>{sb.productName}</Td>
                       <Td textAlign="right" pr={0}>
-                        {sb.amount}
+                        $ {sb.amount}
                       </Td>
                     </Tr>
                   ))}
@@ -110,7 +109,7 @@ export const ChargeSelectionModal = ({
                         {p.name} (x{p.quantity})
                       </Td>
                       <Td textAlign="right" pr={0}>
-                        {p.price * p.quantity}
+                        $ {p.price * p.quantity}
                       </Td>
                     </Tr>
                   ))}
@@ -120,7 +119,7 @@ export const ChargeSelectionModal = ({
                   <Tr fontWeight="bold">
                     <Td pl={0}>Total</Td>
                     <Td pr={0} textAlign="right">
-                      {totalAmount}
+                      $ {totalAmount}
                     </Td>
                   </Tr>
                 </Tfoot>

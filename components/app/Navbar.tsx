@@ -1,24 +1,36 @@
-import { Box, Button, Container, Link, useColorModeValue, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, Container, Link, useDisclosure } from '@chakra-ui/react'
 import NextLink from 'next/link'
-import { MdMenu, MdSettings } from 'react-icons/md'
+import { FaGraduationCap, FaReceipt } from 'react-icons/fa'
+import { IoIosPeople, IoMdAnalytics } from 'react-icons/io'
+import { MdInventory, MdMenu, MdSettings } from 'react-icons/md'
+import { Logo } from './Logo'
 import { LogoutButton } from './LogoutButton'
 
 const links = [
   {
     href: '/estudiantes',
-    text: 'Estudiantes'
+    text: 'Estudiantes',
+    icon: <FaGraduationCap />
+  },
+  {
+    href: '/comunidad',
+    text: 'Comunidad',
+    icon: <IoIosPeople />
   },
   {
     href: '/recibos',
-    text: 'Recibos'
+    text: 'Recibos',
+    icon: <FaReceipt />
   },
   {
     href: '/productos',
-    text: 'Productos'
+    text: 'Productos',
+    icon: <MdInventory />
   },
   {
     href: '/informes',
-    text: 'Informes'
+    text: 'Informes',
+    icon: <IoMdAnalytics />
   },
   {
     href: '/configuracion/general',
@@ -29,10 +41,18 @@ const links = [
 
 export const Navbar = () => {
   const { getButtonProps, getDisclosureProps, isOpen, onClose } = useDisclosure()
-  const bg = useColorModeValue('white', 'gray.800')
 
   return (
-    <Box as="nav" shadow="base" pos="sticky" top={0} bgColor={bg} zIndex={20}>
+    <Box
+      as="nav"
+      pos="sticky"
+      top={0}
+      bgColor="transparent"
+      zIndex={20}
+      backdropFilter="auto"
+      backdropBlur="12px"
+      shadow="md"
+    >
       <Container
         maxW="container.xl"
         display="flex"
@@ -42,7 +62,7 @@ export const Navbar = () => {
       >
         <NextLink href="/" passHref>
           <Link fontSize="2xl" fontWeight="bold">
-            SCIU
+            <Logo />
           </Link>
         </NextLink>
 
@@ -58,10 +78,10 @@ export const Navbar = () => {
 
         {/* Desktop menu */}
         <Box as="ul" display={['none', null, 'flex']} gap="2" listStyleType="none">
-          {links.map(({ href, text, title }) => (
+          {links.map(({ href, text, title, icon }) => (
             <li key={href}>
               <NextLink href={href} passHref>
-                <Button as="a" variant="ghost" title={title}>
+                <Button as="a" variant="ghost" title={title} leftIcon={icon}>
                   {text}
                 </Button>
               </NextLink>
@@ -77,15 +97,21 @@ export const Navbar = () => {
       <Box
         as="ul"
         listStyleType="none"
-        bgColor={bg}
         display={['flex', null, 'none']}
         flexDirection="column"
         {...getDisclosureProps()}
       >
-        {links.map(({ href, text, title }) => (
+        {links.map(({ href, text, title, icon }) => (
           <li key={href}>
             <NextLink href={href} passHref>
-              <Button as="a" variant="ghost" width="full" title={title} onClick={onClose}>
+              <Button
+                as="a"
+                variant="ghost"
+                width="full"
+                title={title}
+                onClick={onClose}
+                leftIcon={icon}
+              >
                 {text}
               </Button>
             </NextLink>

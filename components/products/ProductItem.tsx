@@ -1,44 +1,31 @@
 import { Divider, Flex, Heading, HStack, VStack } from '@chakra-ui/react'
 import { SimpleBox } from 'components/app'
-import { SubmitHandler } from 'react-hook-form'
 import { BsBoxSeam, BsCurrencyDollar } from 'react-icons/bs'
 import { MdOutlineCategory } from 'react-icons/md'
-import { ProductInput, ProductWithCategory } from 'types/product'
+import { ProductWithCategory } from 'types/product'
 import { EditProductModal } from './EditProductModal'
 
-export const ProductItem = ({
-  product: { categoryId, category, name, price, stock },
-  onUpdate,
-  onDelete
-}: {
-  product: ProductWithCategory
-  onUpdate: SubmitHandler<ProductInput>
-  onDelete: () => void
-}) => (
+export const ProductItem = ({ product }: { product: ProductWithCategory }) => (
   <SimpleBox>
     <Flex alignItems="center" justifyContent="space-between">
       <Heading as="h2" size="sm" noOfLines={2}>
-        {name}
+        {product.name}
       </Heading>
 
-      <EditProductModal
-        defaultValues={{ categoryId, name, price, stock }}
-        onSubmit={onUpdate}
-        onDelete={onDelete}
-      />
+      <EditProductModal product={product} />
     </Flex>
 
     <Divider my={2} />
 
     <VStack align="flex-start">
       <HStack as="p">
-        <BsCurrencyDollar /> <span>Precio: {price}</span>
+        <BsCurrencyDollar /> <span>Precio: {product.price}</span>
       </HStack>
       <HStack as="p">
-        <BsBoxSeam /> <span>Inventario: {stock >= 0 ? stock : 'No aplica'}</span>
+        <BsBoxSeam /> <span>Inventario: {product.stock >= 0 ? product.stock : 'No aplica'}</span>
       </HStack>
       <HStack as="p">
-        <MdOutlineCategory /> <span>Categoría: {category.name}</span>
+        <MdOutlineCategory /> <span>Categoría: {product.category.name}</span>
       </HStack>
     </VStack>
   </SimpleBox>
