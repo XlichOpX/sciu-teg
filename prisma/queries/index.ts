@@ -32,7 +32,7 @@ export const chargeWithPaymentMethodAndConversion = Prisma.validator<Prisma.Char
 })
 
 export const clientWithPersonAndOccupation = Prisma.validator<Prisma.ClientArgs>()({
-  include: { person: true, occupation: true }
+  include: { person: { include: { docType: { select: { type: true } } } }, occupation: true }
 })
 
 export const paymentMethodWithConversion = Prisma.validator<Prisma.PaymentMethodArgs>()({
