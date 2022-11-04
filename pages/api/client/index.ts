@@ -15,7 +15,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case 'GET':
       //obtenemos TODAS los clientes
-      // if (!canUserDo(session, 'READ_CLIENT')) return res.status(403).send(`Can't read this.`)
+      if (!canUserDo(session, 'READ_CLIENT')) return res.status(403).send(`Can't read this.`)
       try {
         const { keyword } = query
         const searchQuery = stringSearch(keyword)
