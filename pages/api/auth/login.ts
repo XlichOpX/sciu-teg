@@ -39,12 +39,16 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
     if (status.id === 0) return res.status(403).json('User is inactive. Contact an admin.')
 
     // Retrieve permissions of the roles of user.
-    const permissions = await prisma.permission.findMany({
-      select: { permission: true, description: true },
-      where: { roles: { some: { users: { some: { id: user?.id } } } } }
+    // const permissions = await prisma.permission.findMany({
+    //   select: { permission: true, description: true },
+    //   where: { roles: { some: { users: { some: { id: user?.id } } } } }
+    // })
+    const role = await prisma.role.findMany({
+      select: { id: true },
+      where: { users: { some: { id: user?.id } } }
     })
 
-    req.session.user = { id, status, permissions, username }
+    req.session.user = { id, status, username, role }
 
     // save iSession cookie
     await req.session.save()
