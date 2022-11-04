@@ -17,8 +17,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      console.log(session.user?.permissions, canUserDo(session, 'READ_SECRET'))
-      if (!canUserDo(session, 'READ_SECRET')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_SECRET')))
+        return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los secretos
       try {
         const where = { user: { username: stringSearch(username) } }
@@ -48,7 +48,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_SECRET')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_SECRET')))
+        return res.status(403).send(`Can't create this.`)
       //creamos UN secreto
       try {
         const result = await prisma.secret.create({

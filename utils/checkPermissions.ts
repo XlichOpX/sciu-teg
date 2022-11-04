@@ -19,7 +19,5 @@ export async function canUserDo({ user }: IronSession, expectedPermission: strin
       }
     }
   })
-  console.log({ roles })
-  console.log({ permission })
   return permission.length > 0 ? true : false
 }

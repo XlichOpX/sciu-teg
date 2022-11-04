@@ -16,7 +16,8 @@ async function studentStatusHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUserDo(session, 'READ_USERSTATUS')) return res.status(403).send(`Can't read this.`)
+  if (!(await canUserDo(session, 'READ_USERSTATUS')))
+    return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -37,7 +38,8 @@ async function studentStatusHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUserDo(session, 'EDIT_USERSTATUS')) return res.status(403).send(`Can't edit this.`)
+      if (!(await canUserDo(session, 'EDIT_USERSTATUS')))
+        return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN estado de usuario
       try {
         const status = await prisma.userStatus.findFirst({
@@ -59,7 +61,7 @@ async function studentStatusHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUserDo(session, 'DELETE_USERSTATUS'))
+      if (!(await canUserDo(session, 'DELETE_USERSTATUS')))
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN estado de usuario
       try {

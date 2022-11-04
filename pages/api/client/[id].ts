@@ -18,7 +18,7 @@ async function clientHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUserDo(session, 'READ_CLIENT')) return res.status(403).send(`Can't read this.`)
+  if (!(await canUserDo(session, 'READ_CLIENT'))) return res.status(403).send(`Can't read this.`)
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
 
@@ -39,7 +39,8 @@ async function clientHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUserDo(session, 'EDIT_CLIENT')) return res.status(403).send(`Can't edit this.`)
+      if (!(await canUserDo(session, 'EDIT_CLIENT')))
+        return res.status(403).send(`Can't edit this.`)
       //actualizamos a UN cliente
       try {
         const client = await prisma.client.findFirst({
@@ -62,7 +63,8 @@ async function clientHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUserDo(session, 'DELETE_CLIENT')) return res.status(403).send(`Can't delete this.`)
+      if (!(await canUserDo(session, 'DELETE_CLIENT')))
+        return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN cliente
       try {
         const delClient: Client = await prisma.client.delete({ where: { id: Number(id) } })

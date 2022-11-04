@@ -46,7 +46,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_CLIENT')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_CLIENT')))
+        return res.status(403).send(`Can't create this.`)
       //creamos UN cliente
       try {
         const result = await prisma.client.create({

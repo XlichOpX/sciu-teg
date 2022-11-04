@@ -15,7 +15,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
     query: { keyword },
     session
   } = req
-  if (!canUserDo(session, 'READ_CAREER')) return res.status(403).send(`Can't read this.`)
+  if (!(await canUserDo(session, 'READ_CAREER'))) return res.status(403).send(`Can't read this.`)
 
   switch (method) {
     case 'GET':
@@ -32,7 +32,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_CAREER')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_CAREER')))
+        return res.status(403).send(`Can't create this.`)
       try {
         //creamos una carrera
         const result = await prisma.career.create({

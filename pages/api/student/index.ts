@@ -14,7 +14,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_STUDENT')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_STUDENT')))
+        return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los estudiantes
       try {
         const { keyword } = query
@@ -46,7 +47,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_STUDENT')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_STUDENT')))
+        return res.status(403).send(`Can't create this.`)
       //creamos UN estudiante
       try {
         const result = await prisma.student.create({

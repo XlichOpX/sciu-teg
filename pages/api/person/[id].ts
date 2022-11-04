@@ -19,7 +19,7 @@ async function personHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
-  if (!canUserDo(session, 'READ_PERSON')) return res.status(403).send(`Can't read this.`)
+  if (!(await canUserDo(session, 'READ_PERSON'))) return res.status(403).send(`Can't read this.`)
 
   const { success } = idValidation.safeParse(id)
   if (!success) return res.status(404).send(`Id ${id} Not Allowed`)
@@ -41,7 +41,8 @@ async function personHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'PUT':
-      if (!canUserDo(session, 'EDIT_PERSON')) return res.status(403).send(`Can't edit this.`)
+      if (!(await canUserDo(session, 'EDIT_PERSON')))
+        return res.status(403).send(`Can't edit this.`)
       //actualizamos a UNA persona
       try {
         const person = await prisma.person.findFirst({
@@ -64,7 +65,8 @@ async function personHandler(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'DELETE':
-      if (!canUserDo(session, 'DELETE_PERSON')) return res.status(403).send(`Can't delete this.`)
+      if (!(await canUserDo(session, 'DELETE_PERSON')))
+        return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA persona
       try {
         const delPerson: Person = await prisma.person.delete({ where: { id: Number(id) } })

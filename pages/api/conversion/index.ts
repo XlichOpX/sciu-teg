@@ -11,7 +11,8 @@ export default withIronSessionApiRoute(handle, ironOptions)
 
 async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { body, method, session, query } = req
-  if (!canUserDo(session, 'READ_CONVERSION')) return res.status(403).send(`Can't read this.`)
+  if (!(await canUserDo(session, 'READ_CONVERSION')))
+    return res.status(403).send(`Can't read this.`)
   switch (method) {
     case 'GET':
       try {
@@ -38,7 +39,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'EDIT_CONVERSION')) return res.status(403).send(`Can't edit this.`)
+      if (!(await canUserDo(session, 'EDIT_CONVERSION')))
+        return res.status(403).send(`Can't edit this.`)
       try {
         //creamos UNA conversión
         const result: Conversion = await prisma.conversion.create({

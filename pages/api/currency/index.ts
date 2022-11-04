@@ -8,7 +8,7 @@ export default withIronSessionApiRoute(handle, ironOptions)
 
 async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { body, method, session } = req
-  if (!canUserDo(session, 'READ_CURRENCY')) return res.status(403).send(`Can't read this.`)
+  if (!(await canUserDo(session, 'READ_CURRENCY'))) return res.status(403).send(`Can't read this.`)
   switch (method) {
     case 'GET':
       try {
@@ -21,7 +21,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_CURRENCY')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_CURRENCY')))
+        return res.status(403).send(`Can't create this.`)
       try {
         const result = await prisma.currency.create({
           data: { ...body }

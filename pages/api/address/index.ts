@@ -16,7 +16,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   } = req
   switch (method) {
     case 'GET':
-      if (!canUserDo(session, 'READ_ADDRESS')) return res.status(403).send(`Can't read this.`)
+      if (!(await canUserDo(session, 'READ_ADDRESS')))
+        return res.status(403).send(`Can't read this.`)
       //obtenemos TODAS las direcciones
       try {
         const addresses = await prisma.address.findMany({
@@ -30,7 +31,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!canUserDo(session, 'CREATE_ADDRESS')) return res.status(403).send(`Can't create this.`)
+      if (!(await canUserDo(session, 'CREATE_ADDRESS')))
+        return res.status(403).send(`Can't create this.`)
       //creamos UNA dirección
       try {
         const result = await prisma.address.create({
