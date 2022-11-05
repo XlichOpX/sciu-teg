@@ -10,7 +10,6 @@ export async function canUserDo({ user }: IronSession, expectedPermission: strin
   if (!user) return false
   if (user.role) {
     const roles = user.role.map((rol) => rol.id)
-    console.log(JSON.stringify({ user }, null, 2))
     const permission = await prisma.permission.findMany({
       select: { id: true },
       where: {
