@@ -25,7 +25,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       const byDocNumber = parseData(dataCell)
       const receiptArr: Receipt[] = []
       for (const docNum in byDocNumber) {
-        const person = await prisma.student.findFirstOrThrow({
+        const student = await prisma.student.findFirstOrThrow({
           select: { personId: true },
           where: { person: { docNumber: { equals: docNum } } }
         })
@@ -39,7 +39,11 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         for (const row of rows) {
           const billing = await prisma.billing.findFirst({
             select: { id: true, amount: true, isCharged: true },
-            where: { productName: stringSearch(row.productName), isCharged: false }
+            where: {
+              productName: stringSearch(row.productName),
+              isCharged: false,
+              student: { personId: student.personId }
+            }
           })
           const product = await prisma.product.findFirst({
             select: { id: true, price: true },
@@ -98,7 +102,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           billings,
           charges,
           products,
-          person: person.personId,
+          person: student.personId,
           amount: receiptAmount
         }
         // console.log(JSON.stringify({ receiptData }, null, 2))
