@@ -2,10 +2,7 @@ import { Permission, Role, User, UserStatus } from '@prisma/client'
 import { IronSessionOptions } from 'iron-session'
 
 // define an user type from cookies without password and secret relation.
-export type CookieUser = Omit<
-  User,
-  'password' | 'secretId' | 'personId' | 'statusId' | 'createdAt' | 'updatedAt'
-> & {
+export type CookieUser = Pick<User, 'id' | 'username' | 'statusId'> & {
   role?: Pick<Role, 'id'>[]
   permissions?: Pick<Permission, 'permission'>[]
   status: UserStatus
