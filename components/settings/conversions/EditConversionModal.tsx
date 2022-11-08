@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { Conversion } from '@prisma/client'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
-import { conversionKeysMatcher, useMatchMutate } from 'hooks'
+import { conversionKeysMatcher, useAuth, useMatchMutate } from 'hooks'
 import { useState } from 'react'
 import { deleteConversion, updateConversion } from 'services/conversions'
 import { ConversionForm, ConversionFormSubmitHandler } from './ConversionForm'
@@ -25,6 +25,7 @@ export const EditConversionModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { isOpen, onClose, onOpen } = useDisclosure()
   const toast = useToast()
+  const { user } = useAuth()
 
   const matchMutate = useMatchMutate()
   const onUpdate: ConversionFormSubmitHandler = async (data) => {
@@ -62,9 +63,7 @@ export const EditConversionModal = ({
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
-            <h3>Editar tasa de cambio</h3>
-          </ModalHeader>
+          <ModalHeader>Editar tasa de cambio</ModalHeader>
           <ModalCloseButton />
 
           <ModalBody>
@@ -76,12 +75,14 @@ export const EditConversionModal = ({
           </ModalBody>
 
           <ModalFooter>
-            <DeleteButton
-              mr="auto"
-              onDelete={onDelete}
-              confirmBody="¿Está seguro de eliminar esta tasa de cambio?"
-              disabled={isSubmitting}
-            />
+            {user?.permissions.includes('DELETE_CONVERSION') && (
+              <DeleteButton
+                mr="auto"
+                onDelete={onDelete}
+                confirmBody="¿Está seguro de eliminar esta tasa de cambio?"
+                disabled={isSubmitting}
+              />
+            )}
             <CancelButton mr={3} onClick={onClose} />
             <SaveButton type="submit" form="EditConversionForm" isLoading={isSubmitting} />
           </ModalFooter>

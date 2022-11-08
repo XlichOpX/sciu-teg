@@ -2,14 +2,18 @@ import { Text, VStack } from '@chakra-ui/react'
 import { Conversion } from '@prisma/client'
 import { SimpleBox } from 'components/app'
 import dayjs from 'dayjs'
+import { useAuth } from 'hooks'
 import { EditConversionModal } from './EditConversionModal'
 
 export const ConversionItem = ({ conversion }: { conversion: Conversion }) => {
   const isRecent = dayjs(conversion.date).add(30, 'minute').isAfter(dayjs())
+  const { user } = useAuth()
 
   return (
     <SimpleBox as="li" pos="relative">
-      {isRecent && <EditConversionModal conversion={conversion} />}
+      {isRecent && user?.permissions.includes('EDIT_CONVERSION') && (
+        <EditConversionModal conversion={conversion} />
+      )}
 
       <VStack align="stretch">
         <p>
