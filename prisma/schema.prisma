@@ -283,7 +283,7 @@ model Billing {
   productId   Int
   isCharged   Boolean       @default(false)
   createAt    DateTime      @default(now())
-  updateAt    DateTime?
+  dateToPay   DateTime?
   productName String        @db.VarChar(64)
   amount      Float
   createdAt   DateTime      @default(now())

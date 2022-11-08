@@ -57,24 +57,24 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
     const monthsOfSemester = semester ? calculateMonths(semester) : 0
     // Obtenemos el producto 'mensualidad' de la base de datos
     const monthlyPayment = await prisma.product.findFirst({
-      where: { name: { contains: 'Mensualidad', mode: 'insensitive' } }
+      where: { name: stringSearch('Mensualidad') }
     })
     if (!monthlyPayment) return res.status(404).end(`Monthly Payment product not found`)
     // Obtenemos el producto 'Inscripción' de la base de datos
     const inscription = await prisma.product.findFirst({
-      where: { name: { contains: 'Inscripción', mode: 'insensitive' } }
+      where: { name: stringSearch('Inscripción') }
     })
     if (!inscription) return res.status(404).end(`Inscription product not found`)
 
     // Generamos los productos correspondiente al semestre (Todas las mensualidades para el semestre actual)
     const createBilling = async () => {
       const data: Prisma.Enumerable<Prisma.BillingCreateManyInput> = []
-      const dateToPay = dayjs(semester?.startDate).locale('es').set('date', 1)
+      const dateToPay = dayjs(semester.startDate).locale('es').set('date', 1) // semester.startDate == 10/2/2022 ==> 1/2/2022
       // Iteramos los meses del semestre y creamos los objetos pertinentes de 'cobro'
       for (let i = 0; i < monthsOfSemester; i++) {
-        const newMonth = dayjs(semester?.startDate).locale('es').add(i, 'month').format('MMMM')
-        const productName = `Mensualidad de ${newMonth} ${semester?.semester}`
-        const date = dateToPay.add(i, 'month').toDate()
+        const newMonth = dayjs(semester.startDate).locale('es').add(i, 'month').format('MMMM')
+        const productName = `Mensualidad de ${newMonth} ${semester.semester}`
+        const date = dateToPay.add(i, 'month').toDate() // 1/2/2022 0 1 2 3 4 5 6
         data.push(constructBilling(monthlyPayment, student as Student, semester, productName, date))
       }
       // si el semestre tiene menos de 6 meses, entonces creamos una inscripción por cobra
@@ -85,7 +85,7 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
             inscription,
             student as Student,
             semester,
-            `Inscripción del semestre ${semester?.semester}`,
+            `Inscripción del semestre ${semester.semester}`,
             date
           )
         )
@@ -99,13 +99,13 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
     let billings = await prisma.billing.findMany({
       ...billing,
       where: {
-        student: { id: { equals: student?.id } },
-        isCharged: { equals: false }
+        student: { id: { equals: student?.id } }
+        // isCharged: { equals: false }
       }
     })
 
     const latePayment = await prisma.product.findFirst({
-      where: { name: { contains: 'Recargo por Retardo', mode: 'insensitive' } }
+      where: { name: stringSearch('Recargo por Retardo') }
     })
     if (!latePayment) return res.status(404).end(`Retarded Payment product not found`)
     //Validar que tan antiguo es el cobro no pagado.
@@ -114,9 +114,10 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
         const {
           product: { id }
         } = billing
-        if (id === monthlyPayment.id && dayjs(billing.updateAt).add(15, 'days') <= dayjs()) {
+        // Sí, se encuentra una mensualidad que tiene más de 15 días de emitida
+        if (id === monthlyPayment.id && dayjs(billing.dateToPay).add(15, 'days') <= dayjs()) {
           const existLatePayment = billings.some((bill) => {
-            const differenceBothDates = dayjs(bill.updateAt).diff(dayjs(billing.updateAt))
+            const differenceBothDates = dayjs(bill.dateToPay).diff(dayjs(billing.dateToPay))
             const isDateEqual = differenceBothDates === 0
             const isDelayed = bill.product.id === latePayment.id
             return isDateEqual && isDelayed
@@ -129,7 +130,7 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
               student as Student,
               semester,
               `Retardo de ${billing.productName}`,
-              billing.updateAt
+              billing.dateToPay
             )
         } else {
           return undefined
@@ -180,7 +181,7 @@ function constructBilling(
     productName,
     semesterId: semester.id,
     studentId: student.id,
-    updateAt: dateToPay
+    dateToPay
   }
 }
 
