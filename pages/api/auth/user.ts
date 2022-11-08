@@ -2,9 +2,10 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { GetUserResponse } from 'types/auth'
 export default withIronSessionApiRoute(handle, ironOptions)
 
-async function handle(req: NextApiRequest, res: NextApiResponse) {
+async function handle(req: NextApiRequest, res: NextApiResponse<GetUserResponse | string>) {
   try {
     const { session } = req
     const { user } = session
