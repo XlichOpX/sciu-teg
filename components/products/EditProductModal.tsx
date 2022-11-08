@@ -49,8 +49,12 @@ export const EditProductModal = ({ product }: { product: ProductWithCategory }) 
       await matchMutate(productKeysMatcher)
       toast({ status: 'success', description: 'Producto eliminado' })
     } catch (error) {
-      if (error instanceof Error) {
-        toast({ status: 'error', description: error.message })
+      if (error instanceof HttpError) {
+        if (error.statusCode === 409) {
+          toast({ status: 'error', description: 'El producto se encuentra en uno o más recibos' })
+        } else {
+          toast({ status: 'error', description: error.message })
+        }
       }
     }
   }
