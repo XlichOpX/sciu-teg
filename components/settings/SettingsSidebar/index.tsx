@@ -1,11 +1,11 @@
 import { Button, Divider, Flex } from '@chakra-ui/react'
-import { FullyCenteredSpinner } from 'components/app'
 import { useAuth } from 'hooks'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { BsCreditCardFill, BsGearFill, BsPersonFill } from 'react-icons/bs'
 import { FaCoins, FaExchangeAlt, FaGraduationCap, FaIdCardAlt, FaRedhat } from 'react-icons/fa'
 import { MdCategory } from 'react-icons/md'
+import { SettingsSidebarSkeleton } from './SettingsSidebarSkeleton'
 
 const links = [
   {
@@ -74,7 +74,7 @@ export const SettingsSidebar = () => {
   const { asPath } = useRouter()
 
   const { user } = useAuth()
-  if (!user) return <FullyCenteredSpinner />
+  if (!user) return <SettingsSidebarSkeleton />
 
   return (
     <>
