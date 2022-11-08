@@ -1,4 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react'
+import { AuthProvider } from 'contexts/AuthContext'
 import { swrConfig } from 'lib/swr'
 import 'lib/zod'
 import { NextPage } from 'next'
@@ -20,7 +21,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <ChakraProvider theme={theme}>
-      <SWRConfig value={swrConfig}>{getLayout(<Component {...pageProps} />)}</SWRConfig>
+      <SWRConfig value={swrConfig}>
+        <AuthProvider>{getLayout(<Component {...pageProps} />)}</AuthProvider>
+      </SWRConfig>
     </ChakraProvider>
   )
 }
