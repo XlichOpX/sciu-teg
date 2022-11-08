@@ -1,6 +1,7 @@
 import { Text } from '@chakra-ui/react'
 import { Category } from '@prisma/client'
 import { SimpleBox } from 'components/app'
+import { useAuth } from 'hooks'
 import { SubmitHandler } from 'react-hook-form'
 import { CategoryInput } from 'types/category'
 import { EditCategoryModal } from './EditCategoryModal'
@@ -13,9 +14,15 @@ export const CategoryItem = ({
   category: Category
   onUpdate: SubmitHandler<CategoryInput>
   onDelete: () => Promise<void>
-}) => (
-  <SimpleBox pos="relative">
-    <EditCategoryModal defaultValues={category} onSubmit={onUpdate} onDelete={onDelete} />
-    <Text fontWeight="bold">{category.name}</Text>
-  </SimpleBox>
-)
+}) => {
+  const { user } = useAuth()
+
+  return (
+    <SimpleBox pos="relative">
+      {user?.permissions.includes('EDIT_CATEGORY') && (
+        <EditCategoryModal defaultValues={category} onSubmit={onUpdate} onDelete={onDelete} />
+      )}
+      <Text fontWeight="bold">{category.name}</Text>
+    </SimpleBox>
+  )
+}
