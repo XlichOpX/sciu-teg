@@ -23,7 +23,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       // obtenemos los datos en un formate manejable.
       const { dataCell } = handleBody(req.body)
       const byDocNumber = parseData(dataCell)
-      console.log(JSON.stringify(byDocNumber, null, 2))
+      // console.log(JSON.stringify(byDocNumber, null, 2))
       const receiptArr: Receipt[] = []
       for (const docNum in byDocNumber) {
         // iteramos, por cada agrupación por identificación
@@ -33,6 +33,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           select: { personId: true },
           where: { person: { docNumber: { equals: docNum } } }
         })
+        // llamar a Billings para 'preparar' posibles cobros/retardos
 
         // preparamos las propiedades del recibo
         const rows = byDocNumber[docNum] //tomamos el array de filas referentes al estudiante.
@@ -44,25 +45,32 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         // Iteramos cada fila del excel asociada al estudiante para preparar los productos, facturacion y cobros
         for (const row of rows) {
           // Billing y Productos
-          const billing = await prisma.billing.findFirst({
-            select: { id: true, amount: true, isCharged: true },
+          const matchedBillings = await prisma.billing.findMany({
+            select: { id: true, amount: true, isCharged: true, productName: true },
             where: {
               productName: stringSearch(row.productName),
-              isCharged: false,
+              isCharged: { equals: false },
               student: { personId: student.personId }
             }
           })
+
+          const billing =
+            matchedBillings.length <= 1
+              ? matchedBillings[0]
+              : matchedBillings.filter((bill) => bill.productName.startsWith(row.productName))[0]
+          console.log({ matchedBillings })
           const product = await prisma.product.findFirst({
             select: { id: true, price: true },
             where: { name: stringSearch(row.productName) }
           })
+
           let amount: number
           if (billing) {
             billings.push(billing.id)
             amount = billing.amount
           } else if (product) {
             products.push({ id: product.id, quantity: row.quantity })
-            amount = product.price
+            amount = product.price * row.quantity
           } else {
             throw new Error('Billing or Product not Found')
           }
@@ -100,10 +108,20 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
           // Acumulamos el monto del cobro para el recibo
           receiptAmount += amount
-          charges.push({
-            paymentMethod: { metaPayment, id: paymentMethod.id, conversion: conversion.id },
-            amount
-          })
+          const index = charges.findIndex((charge) =>
+            charge.paymentMethod.metaPayment?.some(
+              (mp) => mp.name === 'referencia' && mp.value === row.referencia
+            )
+          )
+
+          if (index !== -1) {
+            charges[index].amount += amount
+          } else {
+            charges.push({
+              paymentMethod: { metaPayment, id: paymentMethod.id, conversion: conversion.id },
+              amount
+            })
+          }
         }
         // declaramos la agrupación de información contenida en un recibo
         const receiptData: CreateReceiptInput = {
@@ -151,7 +169,9 @@ const handleBody = (body: NextApiRequest['body']) => {
       .map((col, index) => {
         // convertimos cada fila en un arreglo [col]: valor
         const c = index //col Index
-        const cell = col.v || col.w?.trim()
+        let cell = col.v || col.w // fecha  col.v == DATE  col.w == 426758
+        if (typeof cell === 'string') cell = cell.toLocaleLowerCase().trim()
+
         const addr = XLSX.utils.encode_cell({ r, c })
         const prop = XLSX.utils.format_cell(arr[0][c])
         return { [prop]: cell, [`${prop}_addr`]: addr }
@@ -195,7 +215,7 @@ const parseData = (
     if (!fecha) throw new Error(`not found data in ${row['fecha_addr']}`)
     const productName =
       row['producto'] == 'mensualidad'
-        ? `${row['mensualidad']} ${row['semestre']}`
+        ? `${row['producto']} de ${row['mensualidad']} ${row['semestre']}`
         : (row['producto'] as string)
     if (!productName)
       throw new Error(
