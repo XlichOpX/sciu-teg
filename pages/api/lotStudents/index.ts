@@ -23,20 +23,27 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       // obtenemos los datos en un formate manejable.
       const { dataCell } = handleBody(req.body)
       const byDocNumber = parseData(dataCell)
+      console.log(JSON.stringify(byDocNumber, null, 2))
       const receiptArr: Receipt[] = []
       for (const docNum in byDocNumber) {
+        // iteramos, por cada agrupación por identificación
+
+        //se obtiene el estudiante para saber el ID de la persona y si es un estudiante válido
         const student = await prisma.student.findFirstOrThrow({
           select: { personId: true },
           where: { person: { docNumber: { equals: docNum } } }
         })
 
+        // preparamos las propiedades del recibo
         const rows = byDocNumber[docNum] //tomamos el array de filas referentes al estudiante.
         const billings: CreateReceiptInput['billings'] = []
         const products: CreateReceiptInput['products'] = []
         const charges: CreateReceiptInput['charges'] = []
         let receiptAmount = 0
 
+        // Iteramos cada fila del excel asociada al estudiante para preparar los productos, facturacion y cobros
         for (const row of rows) {
+          // Billing y Productos
           const billing = await prisma.billing.findFirst({
             select: { id: true, amount: true, isCharged: true },
             where: {
@@ -75,7 +82,9 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           )
           let date = dayjs(row.fecha)
           const day = date.day()
+
           if (day === SATURDAY || day === SUNDAY) date = date.subtract(day - FRIDAY, 'day')
+
           const gt = date.set('h', 0).set('m', 0).set('s', 0).set('ms', 0).toDate()
           const lt = date.set('h', 23).set('m', 59).set('s', 59).set('ms', 999).toDate()
           const conversion = await prisma.conversion.findFirstOrThrow({
@@ -83,10 +92,12 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
             where: { date: { lt, gt } },
             orderBy: { date: 'desc' }
           })
-          //Convertimos en bolívares el valor del producto
+          // Convertimos en bolívares el valor del producto para validar que está dentro del monto pasado en el excel
           const amountConv = amount * conversion.dolar
+
           if (amountConv > row.amount)
             throw new Error(` the value: ${amountConv} is greater than ${row.amount} validate.`)
+
           // Acumulamos el monto del cobro para el recibo
           receiptAmount += amount
           charges.push({
@@ -94,10 +105,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
             amount
           })
         }
-
-        // if (charges.length < 0 || !(billings.length < 0) || products.length < 0)
-        //   throw new Error(`Charges, billing or products it's empty`)
-
+        // declaramos la agrupación de información contenida en un recibo
         const receiptData: CreateReceiptInput = {
           billings,
           charges,
@@ -105,13 +113,11 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           person: student.personId,
           amount: receiptAmount
         }
-        // console.log(JSON.stringify({ receiptData }, null, 2))
+        // generamos el recibo y lo introducimos en el arreglo de recibos creados
         const receipt = await insertReceipt(receiptData)
-        console.log({ receipt })
         receiptArr.push(receipt)
       }
-      // const result = {}
-      // Preparamos las queries a realizar
+      // Una vez iterado todos los grupos de recibos se devuelve un arreglo con toda la información de estos al frontend
       res.json({ receiptArr })
     } catch (error) {
       console.error(error)
@@ -122,43 +128,13 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
     res.status(405).end(`Method ${req.method} Not Allowed`)
   }
 }
-/**
- * Enpoint temporal para la creación de la lógica de cargar un excel con muchos cobros.
- * Para lograr esto requerimos dos partes de lógica.
- * En el front, surtir una interface con un uploader de archivos EXCEL
- * (SOLO 'Hojas de Cálculo' o CSV, aún por definir las extensiones a admitir, falta buscar una lib que lo haga)
- * en el back, se recibirá un POST con el archivo suministrado y se parseará a javascript Object.
- *
- * Se extrae la data de este y se iterará por 'ROW' ? (Filas)
- *
- * Cada fila será un producto. A no ser que se vea una forma de generar args ilimitados por columnas
- * (a partir de una en particular)
- *
- * Al iterar, se debe almacenar una referencia al campo que se está leyendo en todo momento, en caso de error devolver
- * un mensaje amigable con esta referencia para su correción Incluso poder facilitar observaciones de posibles errores.
- *
- * Se validará que la data sea consistente y no se haya cobrado anteriormente
- * (al menos que el último cobro no haya sido demasiado similar persona/monto/fecha/metpago/algún otro valor que determinemos clave)
- *
- * Antes/durante/después de la validación, se organizarán los cobros para realizar el mínimo número de recibos por estudiantes
- * generando así un recibo por estudiante/persona en el archivo de ser posible
- *
- * Por cada recibo que se genere se ha de mandar a 'imprimir' dicho recibo y entregarlo en PDF
- * o bien enviarlo directamente a un correo que estará indicado en el archivo cargado / registrado en el sistema
- *
- * Buscar la manera (de ser posible) de mostar el progreso en el frontend. Caso contrario dar un loading y entregar
- * respuesta de éxito o error.
- *
- * En caso de error NADA debería de hacerse. (todo el proceso debería de invertirse y no tocar nada.)
- *
- */
 
 /**
- * manejo del cuerpo de la request para convertir el archivo en un objeto manejable
- * con XLSX
+ * manejo del cuerpo de la request para convertir el archivo (codeado en Base64)
+ * en un objeto manejable con la libreria XLSX
  */
 const handleBody = (body: NextApiRequest['body']) => {
-  //Leemos el cuerpo y formateamos a un workBook, básicamente a un objeto manejable en js
+  //Leemos el cuerpo y formateamos a un workBook, un objeto manejable en js
   const workBook = XLSX.read(body, {
     type: 'base64',
     cellDates: true,
@@ -167,28 +143,37 @@ const handleBody = (body: NextApiRequest['body']) => {
   })
   const sheetName = workBook.SheetNames[0]
   const workSheet = workBook.Sheets[sheetName]['!data']
+  if (!workSheet) throw new Error('not Worksheet initied')
 
-  const rows = workSheet?.map((row, index, arr) => {
-    const r = index
+  const rows = workSheet.map((row, index, arr) => {
+    const r = index //row Index
     return row
       .map((col, index) => {
-        const c = index
-        const cell = col.v || col.w
+        // convertimos cada fila en un arreglo [col]: valor
+        const c = index //col Index
+        const cell = col.v || col.w?.trim()
         const addr = XLSX.utils.encode_cell({ r, c })
         const prop = XLSX.utils.format_cell(arr[0][c])
         return { [prop]: cell, [`${prop}_addr`]: addr }
       })
       .reduce((row, cell) => {
+        // reducimos la matriz a un solo arreglo de objetos [col]: valor
         return { ...row, ...cell }
       }, {})
   })
 
   // eliminamos el registro 0 (cabecera)
-  rows?.shift()
-  //Devolvemos el workbook inicial y el dataCell formateado.
-  return { workBook, dataCell: rows }
+  rows.shift()
+  //Devolvemos el dataCell formateado.
+  return { dataCell: rows }
 }
 
+/**
+ * Recibe el arreglo de filas y extrae la información necesaria y elimina los espacios innecesarios de los strings
+ * Así como ordena en un objeto docNum -> Array de columnas para facilitar la iteración de estos
+ * @param dataCell
+ * @returns
+ */
 const parseData = (
   dataCell: { [x: string]: string | number | Date | boolean | undefined }[] | undefined
 ) => {
@@ -233,3 +218,34 @@ const parseData = (
   })
   return _.groupBy(rows, 'person')
 }
+
+/**
+ * Enpoint temporal para la creación de la lógica de cargar un excel con muchos cobros.
+ * Para lograr esto requerimos dos partes de lógica.
+ * En el front, surtir una interface con un uploader de archivos EXCEL
+ * (SOLO 'Hojas de Cálculo' o CSV, aún por definir las extensiones a admitir, falta buscar una lib que lo haga)
+ * en el back, se recibirá un POST con el archivo suministrado y se parseará a javascript Object.
+ *
+ * Se extrae la data de este y se iterará por 'ROW' ? (Filas)
+ *
+ * Cada fila será un producto. A no ser que se vea una forma de generar args ilimitados por columnas
+ * (a partir de una en particular)
+ *
+ * Al iterar, se debe almacenar una referencia al campo que se está leyendo en todo momento, en caso de error devolver
+ * un mensaje amigable con esta referencia para su correción Incluso poder facilitar observaciones de posibles errores.
+ *
+ * Se validará que la data sea consistente y no se haya cobrado anteriormente
+ * (al menos que el último cobro no haya sido demasiado similar persona/monto/fecha/metpago/algún otro valor que determinemos clave)
+ *
+ * Antes/durante/después de la validación, se organizarán los cobros para realizar el mínimo número de recibos por estudiantes
+ * generando así un recibo por estudiante/persona en el archivo de ser posible
+ *
+ * Por cada recibo que se genere se ha de mandar a 'imprimir' dicho recibo y entregarlo en PDF
+ * o bien enviarlo directamente a un correo que estará indicado en el archivo cargado / registrado en el sistema
+ *
+ * Buscar la manera (de ser posible) de mostar el progreso en el frontend. Caso contrario dar un loading y entregar
+ * respuesta de éxito o error.
+ *
+ * En caso de error NADA debería de hacerse. (todo el proceso debería de invertirse y no tocar nada.)
+ *
+ */
