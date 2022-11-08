@@ -6,7 +6,7 @@ export {}
  * Para crear reportes en este sistema:
  * 1.) Crear tabla donde almacenar la estructura de estos.
  *
- * 2.) Definir la estructura y evidentemente elos datos que almacenará la tabla relacionada
+ * 2.) Definir la estructura y evidentemente los datos que almacenará la tabla relacionada
  *
  * 3.) Recuperar la estrucutura almacenada en la tabla, iterarla para preparar la/las queries necesarias
  * generando así las consultas necesarias a la base de datos y entregando información lógica bajo
