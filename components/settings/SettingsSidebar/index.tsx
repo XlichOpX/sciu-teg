@@ -2,7 +2,7 @@ import { Button, Divider, Flex } from '@chakra-ui/react'
 import { useAuth } from 'hooks'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { BsCreditCardFill, BsGearFill, BsPersonFill } from 'react-icons/bs'
+import { BsCreditCardFill, BsFileSpreadsheetFill, BsGearFill, BsPersonFill } from 'react-icons/bs'
 import { FaCoins, FaExchangeAlt, FaGraduationCap, FaIdCardAlt, FaRedhat } from 'react-icons/fa'
 import { MdCategory } from 'react-icons/md'
 import { SettingsSidebarSkeleton } from './SettingsSidebarSkeleton'
@@ -61,6 +61,12 @@ const links = [
     text: 'Carreras',
     icon: <FaGraduationCap />,
     permission: 'READ_CAREER'
+  },
+  {
+    href: '/configuracion/importar-lote',
+    text: 'Importar lote de cobros',
+    icon: <BsFileSpreadsheetFill />,
+    permission: 'CREATE_RECEIPT'
   }
 ]
 
