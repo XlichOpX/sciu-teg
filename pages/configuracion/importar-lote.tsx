@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { SaveButton } from 'components/app'
 import { SettingsLayout } from 'components/settings'
+import { ExampleSheetModal } from 'components/settings/charges-batch-import'
 import { NextPageWithLayout } from 'pages/_app'
 import React, { useState } from 'react'
 import { BsCheckCircleFill, BsPlusLg, BsXCircleFill } from 'react-icons/bs'
@@ -85,7 +86,10 @@ const BatchImport: NextPageWithLayout = () => {
 
   return (
     <Stack gap={3}>
-      <Heading size="lg">Importar lote de cobros</Heading>
+      <Flex alignItems="center" justify="space-between">
+        <Heading size="lg">Importar lote de cobros</Heading>
+        <ExampleSheetModal />
+      </Flex>
 
       <FormLabel _hover={{ cursor: 'pointer' }}>
         <chakra.div mb={3}>Archivo de Excel</chakra.div>
