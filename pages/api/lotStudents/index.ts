@@ -42,7 +42,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         const charges: CreateReceiptInput['charges'] = []
         let receiptAmount = 0
 
-        // Iteramos cada fila del excel asociada al estudiante para preparar los productos, facturacion y cobros
+        // Iteramos cada fila del excel asociada al estudiante para preparar los productos, facturación y cobros
         for (const row of rows) {
           // Billing y Productos
           const matchedBillings = await prisma.billing.findMany({
@@ -149,7 +149,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
 /**
  * manejo del cuerpo de la request para convertir el archivo (codeado en Base64)
- * en un objeto manejable con la libreria XLSX
+ * en un objeto manejable con la librería XLSX
  */
 const handleBody = (body: NextApiRequest['body']) => {
   //Leemos el cuerpo y formateamos a un workBook, un objeto manejable en js
@@ -161,7 +161,7 @@ const handleBody = (body: NextApiRequest['body']) => {
   })
   const sheetName = workBook.SheetNames[0]
   const workSheet = workBook.Sheets[sheetName]['!data']
-  if (!workSheet) throw new Error('not Worksheet initied')
+  if (!workSheet) throw new Error('not Worksheet initiated')
 
   const rows = workSheet.map((row, index, arr) => {
     const r = index //row Index
@@ -240,11 +240,11 @@ const parseData = (
 }
 
 /**
- * Enpoint temporal para la creación de la lógica de cargar un excel con muchos cobros.
+ * Endpoint temporal para la creación de la lógica de cargar un excel con muchos cobros.
  * Para lograr esto requerimos dos partes de lógica.
  * En el front, surtir una interface con un uploader de archivos EXCEL
  * (SOLO 'Hojas de Cálculo' o CSV, aún por definir las extensiones a admitir, falta buscar una lib que lo haga)
- * en el back, se recibirá un POST con el archivo suministrado y se parseará a javascript Object.
+ * en el back, se recibirá un POST con el archivo suministrado y se transforma a javascript Object.
  *
  * Se extrae la data de este y se iterará por 'ROW' ? (Filas)
  *
@@ -252,10 +252,10 @@ const parseData = (
  * (a partir de una en particular)
  *
  * Al iterar, se debe almacenar una referencia al campo que se está leyendo en todo momento, en caso de error devolver
- * un mensaje amigable con esta referencia para su correción Incluso poder facilitar observaciones de posibles errores.
+ * un mensaje amigable con esta referencia para su corrección Incluso poder facilitar observaciones de posibles errores.
  *
  * Se validará que la data sea consistente y no se haya cobrado anteriormente
- * (al menos que el último cobro no haya sido demasiado similar persona/monto/fecha/metpago/algún otro valor que determinemos clave)
+ * (al menos que el último cobro no haya sido demasiado similar persona/monto/fecha/método de pago/algún otro valor que determinemos clave)
  *
  * Antes/durante/después de la validación, se organizarán los cobros para realizar el mínimo número de recibos por estudiantes
  * generando así un recibo por estudiante/persona en el archivo de ser posible
@@ -263,7 +263,7 @@ const parseData = (
  * Por cada recibo que se genere se ha de mandar a 'imprimir' dicho recibo y entregarlo en PDF
  * o bien enviarlo directamente a un correo que estará indicado en el archivo cargado / registrado en el sistema
  *
- * Buscar la manera (de ser posible) de mostar el progreso en el frontend. Caso contrario dar un loading y entregar
+ * Buscar la manera (de ser posible) de mostrar el progreso en el frontend. Caso contrario dar un loading y entregar
  * respuesta de éxito o error.
  *
  * En caso de error NADA debería de hacerse. (todo el proceso debería de invertirse y no tocar nada.)

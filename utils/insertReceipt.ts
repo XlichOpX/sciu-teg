@@ -1,10 +1,11 @@
-import { Prisma } from '@prisma/client'
+import { Prisma, Receipt } from '@prisma/client'
 import prisma from 'lib/prisma'
 import { receiptWithAll } from 'prisma/queries'
 import { CreateReceiptInput } from 'types/receipt'
 
 export const insertReceipt = async (body: CreateReceiptInput) => {
-  const result = await prisma.$transaction(async (tc) => {
+  //@ts-ignore
+  const result = (await prisma.$transaction(async (tc) => {
     //validate
     if (
       !body.products &&
@@ -94,7 +95,7 @@ export const insertReceipt = async (body: CreateReceiptInput) => {
       ...receiptWithAll
     }
     return await tc.receipt.create(receiptInput)
-  })
+  })) as Receipt
   // Creamos el recibo
   if (!result) throw new Error(`Something is wrong`)
 
