@@ -1,5 +1,6 @@
 import { UserStatus } from '@prisma/client'
 import { fetch } from 'lib/fetch'
+import { GetUserResponse } from 'types/auth'
 
 /** The backend sets a cookie with the permission to read user recovery questions */
 export const getRecoveryCookie = async (username: string) =>
@@ -55,4 +56,11 @@ export const updatePassword = async (
       name: string
     }[]
   }
+}
+
+export const getUser = async () => {
+  const { username, id, status, ...res } = (await fetch('/api/auth/user')) as GetUserResponse
+  const permissions = res.permissions.map((p) => p.permission)
+
+  return { username, id, status, permissions }
 }

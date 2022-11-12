@@ -11,13 +11,14 @@ import {
 } from '@chakra-ui/react'
 import { Permission } from '@prisma/client'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
-import { roleKeysMatcher, useMatchMutate } from 'hooks'
+import { roleKeysMatcher, useAuth, useMatchMutate } from 'hooks'
 import { useState } from 'react'
 import { deleteRole, updateRole } from 'services/roles'
 import { RoleForm, RoleFormSubmitHandler } from './RoleForm'
 
 export const EditRoleModal = ({ role }: { role: any }) => {
   const { onOpen, isOpen, onClose } = useDisclosure()
+  const { user } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const permissions = role.permissions.map((p: Permission) => ({
@@ -73,12 +74,14 @@ export const EditRoleModal = ({ role }: { role: any }) => {
           </ModalBody>
 
           <ModalFooter>
-            <DeleteButton
-              onDelete={onDelete}
-              confirmBody="¿Está seguro de eliminar este rol?"
-              disabled={isSubmitting}
-              mr="auto"
-            />
+            {user?.permissions.includes('DELETE_ROLE') && (
+              <DeleteButton
+                onDelete={onDelete}
+                confirmBody="¿Está seguro de eliminar este rol?"
+                disabled={isSubmitting}
+                mr="auto"
+              />
+            )}
 
             <CancelButton mr={3} onClick={onClose} />
             <SaveButton type="submit" form="EditRoleModal" isLoading={isSubmitting} />

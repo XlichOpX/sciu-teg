@@ -2,11 +2,16 @@ import { Alert, Divider, Flex } from '@chakra-ui/react'
 import { FullyCenteredSpinner, SearchInput } from 'components/app'
 import { SettingsLayout } from 'components/settings'
 import { CreateDoctypeModal, DoctypeList } from 'components/settings/doctypes'
-import { useDocTypes } from 'hooks'
+import { useAuth, useDocTypes } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
 const DoctypeSettings: NextPageWithLayout = () => {
   const { docTypes, error, isLoading, setSearch } = useDocTypes()
+
+  const { user } = useAuth()
+  if (user && !user.permissions.includes('READ_DOCTYPE')) {
+    return <Alert status="error">No tiene permiso para ver los tipos de documento</Alert>
+  }
 
   return (
     <>
@@ -15,7 +20,7 @@ const DoctypeSettings: NextPageWithLayout = () => {
           placeholder="Buscar tipos de documento"
           onChange={({ text }) => setSearch(text)}
         />
-        <CreateDoctypeModal />
+        {user?.permissions.includes('CREATE_DOCTYPE') && <CreateDoctypeModal />}
       </Flex>
 
       <Divider my={4} />

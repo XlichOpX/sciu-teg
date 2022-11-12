@@ -1,4 +1,4 @@
-import { Grid, GridItem } from '@chakra-ui/react'
+import { chakra, Flex } from '@chakra-ui/react'
 import { ReactNode } from 'react'
 
 export const SidebarLayout = ({
@@ -8,8 +8,8 @@ export const SidebarLayout = ({
   children: ReactNode
   sidebar: ReactNode
 }) => (
-  <Grid templateColumns={{ base: '1fr', md: '25% 1fr' }} gap={4}>
-    <GridItem>{sidebar}</GridItem>
-    <GridItem>{children}</GridItem>
-  </Grid>
+  <Flex flexDirection={{ base: 'column', md: 'row' }} gap={3}>
+    <chakra.div w={{ base: '100%', md: '25%' }}>{sidebar}</chakra.div>
+    <chakra.div w={{ base: '100%', md: '75%' }}>{children}</chakra.div>
+  </Flex>
 )

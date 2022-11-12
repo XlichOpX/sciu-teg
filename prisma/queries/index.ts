@@ -126,7 +126,7 @@ export const billing = Prisma.validator<Prisma.BillingArgs>()({
     amount: true,
     semester: true,
     createAt: true,
-    updateAt: true
+    dateToPay: true
   }
 })
 

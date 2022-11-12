@@ -2,11 +2,16 @@ import { Alert, Divider, Flex } from '@chakra-ui/react'
 import { FullyCenteredSpinner, SearchInput } from 'components/app'
 import { SettingsLayout } from 'components/settings'
 import { CreatePaymentMethodModal, PaymentMethodsList } from 'components/settings/payment-methods'
-import { usePaymentMethods } from 'hooks'
+import { useAuth, usePaymentMethods } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
 const PaymentMethodsSettings: NextPageWithLayout = () => {
   const { paymentMethods, setSearch, error, isLoading } = usePaymentMethods()
+
+  const { user } = useAuth()
+  if (user && !user.permissions.includes('READ_PAYMENTMETHOD')) {
+    return <Alert status="error">No tiene permiso para ver los métodos de pago</Alert>
+  }
 
   return (
     <>
@@ -17,7 +22,7 @@ const PaymentMethodsSettings: NextPageWithLayout = () => {
             setSearch(text)
           }}
         />
-        <CreatePaymentMethodModal />
+        {user?.permissions.includes('CREATE_PAYMENTMETHOD') && <CreatePaymentMethodModal />}
       </Flex>
       <Divider my={4} />
 

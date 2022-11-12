@@ -10,7 +10,7 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
-import { currencyKeysMatcher, useMatchMutate } from 'hooks'
+import { currencyKeysMatcher, useAuth, useMatchMutate } from 'hooks'
 import { SubmitHandler } from 'react-hook-form'
 import { currencyUpdateSchema } from 'schema/currencySchema'
 import { deleteCurrency, updateCurrency } from 'services/currencies'
@@ -24,6 +24,7 @@ export const EditCurrencyModal = ({ currency }: { currency: Currency }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const toast = useToast()
   const matchMutate = useMatchMutate()
+  const { user } = useAuth()
 
   const onSubmit: SubmitHandler<EditCurrencyForm> = async (data) => {
     try {
@@ -65,11 +66,13 @@ export const EditCurrencyModal = ({ currency }: { currency: Currency }) => {
           </ModalBody>
 
           <ModalFooter>
-            <DeleteButton
-              confirmBody="¿Está seguro de eliminar este moneda?"
-              onDelete={onDelete}
-              mr="auto"
-            />
+            {user?.permissions.includes('DELETE_CURRENCY') && (
+              <DeleteButton
+                confirmBody="¿Está seguro de eliminar este moneda?"
+                onDelete={onDelete}
+                mr="auto"
+              />
+            )}
 
             <CancelButton mr={3} onClick={onClose} />
 

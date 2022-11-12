@@ -10,7 +10,7 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
-import { careerKeysMatcher, useMatchMutate } from 'hooks'
+import { careerKeysMatcher, useAuth, useMatchMutate } from 'hooks'
 import { SubmitHandler } from 'react-hook-form'
 import { careerUpdateSchema } from 'schema/careerSchema'
 import { deleteCareer, updateCareer } from 'services/careers'
@@ -24,6 +24,7 @@ export const EditCareerModal = ({ career }: { career: Career }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const toast = useToast()
   const matchMutate = useMatchMutate()
+  const { user } = useAuth()
 
   const onSubmit: SubmitHandler<EditCareerForm> = async (data) => {
     try {
@@ -63,11 +64,13 @@ export const EditCareerModal = ({ career }: { career: Career }) => {
           </ModalBody>
 
           <ModalFooter>
-            <DeleteButton
-              confirmBody="¿Está seguro de eliminar esta carrera?"
-              onDelete={onDelete}
-              mr="auto"
-            />
+            {user?.permissions.includes('DELETE_CAREER') && (
+              <DeleteButton
+                confirmBody="¿Está seguro de eliminar esta carrera?"
+                onDelete={onDelete}
+                mr="auto"
+              />
+            )}
 
             <CancelButton mr={3} onClick={onClose} />
 

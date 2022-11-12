@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
+import { useAuth } from 'hooks'
 import { useId } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { categorySchema } from 'schema/categorySchema'
@@ -27,6 +28,7 @@ export const EditCategoryModal = ({
 }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const formId = useId()
+  const { user } = useAuth()
 
   const formHook = useForm<CategoryInput>({
     resolver: zodResolver(categorySchema),
@@ -57,11 +59,14 @@ export const EditCategoryModal = ({
           </ModalBody>
 
           <ModalFooter>
-            <DeleteButton
-              confirmBody="¿Está seguro de eliminar esta categoría?"
-              onDelete={onDelete}
-              mr="auto"
-            />
+            {user?.permissions.includes('DELETE_CATEGORY') && (
+              <DeleteButton
+                confirmBody="¿Está seguro de eliminar esta categoría?"
+                onDelete={onDelete}
+                mr="auto"
+              />
+            )}
+
             <CancelButton mr={3} onClick={onClose} />
             <SaveButton type="submit" form={formId} isLoading={formHook.formState.isSubmitting} />
           </ModalFooter>

@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
-import { paymentMethodKeysMatcher, useMatchMutate } from 'hooks'
+import { paymentMethodKeysMatcher, useAuth, useMatchMutate } from 'hooks'
 import { useForm } from 'react-hook-form'
 import { paymentMethodInputSchema } from 'schema/paymentMethodSchema'
 import { deletePaymentMethod, updatePaymentMethod } from 'services/paymentMethods'
@@ -31,6 +31,7 @@ export const EditPaymentMethodModal = ({
   const { onOpen, isOpen, onClose } = useDisclosure()
   const toast = useToast()
   const matchMutate = useMatchMutate()
+  const { user } = useAuth()
 
   const onUpdate: PaymentMethodFormSubmitHandler = async (data: PaymentMethodInput) => {
     try {
@@ -76,11 +77,13 @@ export const EditPaymentMethodModal = ({
           </ModalBody>
 
           <ModalFooter>
-            <DeleteButton
-              confirmBody="¿Está seguro de eliminar este método de pago?"
-              onDelete={onDelete}
-              mr="auto"
-            />
+            {user?.permissions.includes('DELETE_PAYMENTMETHOD') && (
+              <DeleteButton
+                confirmBody="¿Está seguro de eliminar este método de pago?"
+                onDelete={onDelete}
+                mr="auto"
+              />
+            )}
             <CancelButton mr={3} onClick={onClose} />
             <SaveButton
               type="submit"

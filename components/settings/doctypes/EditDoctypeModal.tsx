@@ -10,7 +10,7 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
-import { doctypeKeysMatcher, useMatchMutate } from 'hooks'
+import { doctypeKeysMatcher, useAuth, useMatchMutate } from 'hooks'
 import { SubmitHandler } from 'react-hook-form'
 import { doctypeUpdateSchema } from 'schema/doctypeSchema'
 import { deleteDoctype, updateDoctype } from 'services/doctypes'
@@ -24,6 +24,7 @@ export const EditDoctypeModal = ({ doctype }: { doctype: DocType }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const toast = useToast()
   const matchMutate = useMatchMutate()
+  const { user } = useAuth()
 
   const onSubmit: SubmitHandler<EditDoctypeForm> = async (data) => {
     try {
@@ -63,11 +64,13 @@ export const EditDoctypeModal = ({ doctype }: { doctype: DocType }) => {
           </ModalBody>
 
           <ModalFooter>
-            <DeleteButton
-              confirmBody="¿Está seguro de eliminar este tipo de documento?"
-              onDelete={onDelete}
-              mr="auto"
-            />
+            {user?.permissions.includes('DELETE_DOCTYPE') && (
+              <DeleteButton
+                confirmBody="¿Está seguro de eliminar este tipo de documento?"
+                onDelete={onDelete}
+                mr="auto"
+              />
+            )}
 
             <CancelButton mr={3} onClick={onClose} />
 

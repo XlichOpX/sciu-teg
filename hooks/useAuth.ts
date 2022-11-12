@@ -1,13 +1,9 @@
-import { useRouter } from 'next/router'
+import { AuthContext } from 'contexts/AuthContext'
+import { useContext } from 'react'
 
 export const useAuth = () => {
-  const router = useRouter()
+  const authContext = useContext(AuthContext)
+  if (!authContext) throw new Error('useAuth must be used inside an AuthProvider')
 
-  /** Does a fetch to '/api/auth/logout' and then redirects to '/' */
-  const logout = async () => {
-    await fetch('/api/auth/logout')
-    router.push('/auth/login')
-  }
-
-  return { logout }
+  return authContext
 }

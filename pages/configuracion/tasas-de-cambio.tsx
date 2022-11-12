@@ -2,18 +2,27 @@ import { Alert, Divider } from '@chakra-ui/react'
 import { FullyCenteredSpinner, Pagination } from 'components/app'
 import { SettingsLayout } from 'components/settings'
 import { ConversionList, CreateConversionModal } from 'components/settings/conversions'
-import { useConversions } from 'hooks'
+import { useAuth, useConversions } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
 const ConversionsSettings: NextPageWithLayout = () => {
   const { conversions, error, page, pages, setPage, isLoading } = useConversions({
     itemsPerPage: 21
   })
+
+  const { user } = useAuth()
+  if (user && !user.permissions.includes('READ_CONVERSION')) {
+    return <Alert status="error">No tiene permiso para ver las tasas de cambio</Alert>
+  }
+
   return (
     <>
-      <CreateConversionModal />
-
-      <Divider my={4} />
+      {user?.permissions.includes('CREATE_CONVERSION') && (
+        <>
+          <CreateConversionModal />
+          <Divider my={4} />
+        </>
+      )}
 
       {error && (
         <Alert status="error" mb={4}>

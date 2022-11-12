@@ -23,7 +23,7 @@ import {
   FullyCenteredSpinner,
   SaveButton
 } from 'components/app'
-import { useMatchMutate, userKeysMatcher, useRoles, useUserStatus } from 'hooks'
+import { useAuth, useMatchMutate, userKeysMatcher, useRoles, useUserStatus } from 'hooks'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { userUpdateSchema } from 'schema/userSchema'
 import { deleteUser, updateUser } from 'services/users'
@@ -36,6 +36,7 @@ export const EditUserModal = ({ user }: { user: UserEssencials }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const { selectOptions } = useRoles()
   const { userStatus } = useUserStatus()
+  const { user: currentUser } = useAuth()
   const toast = useToast()
   const matchMutate = useMatchMutate()
 
@@ -133,11 +134,13 @@ export const EditUserModal = ({ user }: { user: UserEssencials }) => {
           </ModalBody>
 
           <ModalFooter>
-            <DeleteButton
-              confirmBody="¿Está seguro de eliminar este usuario?"
-              onDelete={onDelete}
-              mr="auto"
-            />
+            {currentUser?.permissions.includes('DELETE_USER') && currentUser.id !== user.id && (
+              <DeleteButton
+                confirmBody="¿Está seguro de eliminar este usuario?"
+                onDelete={onDelete}
+                mr="auto"
+              />
+            )}
 
             <CancelButton mr={3} onClick={onClose} />
 
