@@ -3,25 +3,28 @@ import { metaPaymentDataSchema } from './paymentMethodSchema'
 
 // Schema from validate create Receipt.
 /**
-  body:{
-    amount: number,
-    billings: number[] | undefined,
-    charges: {
-      amount: number
-      paymentMethod: {
-        id: number,
-        metaPayment: { [x:string]: string } | undefined,
-        conversion: number
+body: {
+  amount: number
+  billings: number
+  charges: {
+    amount: number
+    paymentMethod: {
+      id: number
+      metaPayment:{
+        name: string
+        value: string
+        fieldType: string | date
       }
-    }[],
-    products: {
-      id: number,
-      quantity: number
-    } | undefined,
-    person: number
+      conversion: number
+    }
   }
+  products: {
+    id: number
+    quantity: number
+  }
+  person: number
+}
  **/
-
 export const receiptProductSchema = z.object({
   id: z.number().positive().int(),
   quantity: z.number().positive().int()

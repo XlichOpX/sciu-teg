@@ -1,5 +1,5 @@
 export const permss = [
-  'ADDRESS',
+  'CREATE_ADDRESS',
   'READ_ADDRESS',
   'EDIT_ADDRESS',
   'DELETE_ADDRESS',
