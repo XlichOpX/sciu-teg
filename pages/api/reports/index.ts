@@ -55,6 +55,10 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         pm."name",
         c2."name",
 	      c4."symbol"
+      order by
+        "amount" desc,
+        "category" desc,
+        "paymentMethod" desc
       `
 
     switch (report) {
