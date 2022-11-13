@@ -4,7 +4,6 @@ import { receiptWithAll } from 'prisma/queries'
 import { CreateReceiptInput } from 'types/receipt'
 
 export const insertReceipt = async (body: CreateReceiptInput) => {
-  //@ts-ignore
   const result = (await prisma.$transaction(async (tc) => {
     //validate
     if (
