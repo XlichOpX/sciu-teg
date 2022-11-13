@@ -170,3 +170,5 @@ export const userWithAll = Prisma.validator<Prisma.UserArgs>()({
     username: true
   }
 })
+
+export const reportArqueo = Prisma.validator<Prisma.ChargeArgs>()({})

@@ -1,5 +1,97 @@
-export {}
+import { withIronSessionApiRoute } from 'iron-session/next'
+import { ironOptions } from 'lib/ironSession'
+import prisma from 'lib/prisma'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiRequestQuery } from 'next/dist/server/api-utils'
+import { canUserDo } from 'utils/checkPermissions'
 
+export default withIronSessionApiRoute(handle, ironOptions)
+
+async function handle(req: NextApiRequest, res: NextApiResponse) {
+  const { method, session, query } = req
+  if (!(method === 'GET')) return res.json({ error: 'method not allowed' })
+  if (!canUserDo(session, 'READ_REPORT')) return res.status(403).send(`Can't read this.`)
+
+  const { report, paymentMethod } = query
+  // queryString like: reports?report=arqByPayMethod&start=MM/DD/YYYY&end=MM/DD/YYYY&paymentMethod=ID&paymentMethod=ID2...
+  switch (report) {
+    case 'arqByPayMethod':
+      const { endDate, startDate } = intervalDates(query)
+      const paymentMethodArr = Array.isArray(paymentMethod)
+        ? paymentMethod.map((e) => Number(e))
+        : paymentMethod
+        ? [Number(paymentMethod)]
+        : (paymentMethod as undefined)
+      // const result = await prisma.charge.findMany({
+      //   select: {
+      //     id: true,
+      //     paymentMethod: {
+      //       select: {
+      //         name: true,
+      //         id: true,
+      //         currency: { select: { name: true, id: true, symbol: true } },
+      //         metaPayment: true
+      //       }
+      //     },
+      //     amount: true,
+      //     conversion: { select: { dolar: true, euro: true } },
+      //     receipt: {
+      //       select: {
+      //         chargedProducts: {
+      //           select: {
+      //             product: { select: { category: { select: { name: true, id: true } } } },
+      //             price: true
+      //           }
+      //         }
+      //       }
+      //     }
+      //   },
+      //   where,
+      //   ...routePaginate(query)
+      // })
+      console.log({ endDate, startDate })
+      const result = await prisma.charge.groupBy({
+        by: ['paymentMethodId'],
+        where: {
+          paymentMethodId: { in: paymentMethodArr },
+          receipt: { AND: [{ createdAt: { gte: startDate } }, { createdAt: { lte: endDate } }] }
+        },
+        _sum: { amount: true },
+        _count: {
+          _all: true
+        }
+      })
+
+      const response = await Promise.all(
+        result.map(async (e) => {
+          const pm = await prisma.paymentMethod.findFirst({
+            select: { name: true },
+            where: { id: e.paymentMethodId }
+          })
+          if (pm) return { name: pm.name, ...e }
+        })
+      )
+      // const count = await prisma.charge.count({ where })
+
+      res.json({
+        result: response
+      })
+      break
+    default:
+      res.json({ error: `not report found` })
+      break
+  }
+}
+
+function intervalDates({ start, end }: NextApiRequestQuery) {
+  const startDate: string | undefined = Array.isArray(start) ? start[0] : start
+  const endDate: string | undefined = Array.isArray(end) ? end[0] : end
+
+  return {
+    startDate: startDate ? new Date(startDate) : undefined,
+    endDate: endDate ? new Date(endDate) : undefined
+  }
+}
 /**
  import { Prisma } from '@prisma/client'
  const tables = Prisma.dmmf.datamodel.models
