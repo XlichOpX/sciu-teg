@@ -19,7 +19,7 @@ const StudentDetail: NextPageWithLayout = () => {
   const router = useRouter()
   const docNumber = router.query.docNum as string
 
-  const { data, error, isLoading, mutate } = useBillings(docNumber)
+  const { data, errorMsg, isLoading, mutate } = useBillings(docNumber)
 
   const billingsFormHook = useForm<ReceivablesFormData>({
     defaultValues: { billings: [] }
@@ -32,9 +32,9 @@ const StudentDetail: NextPageWithLayout = () => {
     <>
       <Head>{docNumber && <title>{`Estudiantes | ${docNumber}`}</title>}</Head>
 
-      {error && (
+      {errorMsg && (
         <Alert mb={4} status="error">
-          {error.message}
+          {errorMsg}
         </Alert>
       )}
 
