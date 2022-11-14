@@ -14,7 +14,7 @@ model Person {
   middleName     String?   @db.VarChar(20)
   firstLastName  String    @db.VarChar(20)
   secondLastName String?   @db.VarChar(20)
-  docNumber      String    @unique @db.VarChar(12)
+  docNumber      String    @db.VarChar(12)
   docTypeId      Int
   addressId      Int
   regDate        DateTime  @default(now())
@@ -28,6 +28,8 @@ model Person {
   receipts       Receipt[]
   student        Student?
   user           User?
+
+  @@unique([docNumber, docTypeId])
 }
 
 model Student {
