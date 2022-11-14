@@ -1,4 +1,5 @@
 import { Box, Button, Container, Link, useDisclosure } from '@chakra-ui/react'
+import { useAuth } from 'hooks'
 import NextLink from 'next/link'
 import { FaGraduationCap, FaReceipt } from 'react-icons/fa'
 import { IoIosPeople, IoMdAnalytics } from 'react-icons/io'
@@ -10,37 +11,48 @@ const links = [
   {
     href: '/estudiantes',
     text: 'Estudiantes',
-    icon: <FaGraduationCap />
+    icon: <FaGraduationCap />,
+    permission: 'CREATE_BILLING'
   },
   {
     href: '/comunidad',
     text: 'Comunidad',
-    icon: <IoIosPeople />
+    icon: <IoIosPeople />,
+    permission: 'READ_CLIENT'
   },
   {
     href: '/recibos',
     text: 'Recibos',
-    icon: <FaReceipt />
+    icon: <FaReceipt />,
+    permission: 'READ_RECEIPT'
   },
   {
     href: '/productos',
     text: 'Productos',
-    icon: <MdInventory />
+    icon: <MdInventory />,
+    permission: 'READ_PRODUCT'
   },
   {
     href: '/informes',
     text: 'Informes',
-    icon: <IoMdAnalytics />
+    icon: <IoMdAnalytics />,
+    permission: 'READ_REPORT'
   },
   {
     href: '/configuracion/general',
     title: 'Configuración',
-    text: <MdSettings />
+    text: <MdSettings />,
+    permission: 'READ_PARAMETER'
   }
 ]
 
 export const Navbar = () => {
   const { getButtonProps, getDisclosureProps, isOpen, onClose } = useDisclosure()
+  const { user } = useAuth()
+
+  if (!user) return null
+
+  const filteredLinks = links.filter((l) => user.permissions.includes(l.permission))
 
   return (
     <Box
@@ -78,7 +90,7 @@ export const Navbar = () => {
 
         {/* Desktop menu */}
         <Box as="ul" display={['none', null, 'flex']} gap="2" listStyleType="none">
-          {links.map(({ href, text, title, icon }) => (
+          {filteredLinks.map(({ href, text, title, icon }) => (
             <li key={href}>
               <NextLink href={href} passHref>
                 <Button as="a" variant="ghost" title={title} leftIcon={icon}>
@@ -101,7 +113,7 @@ export const Navbar = () => {
         flexDirection="column"
         {...getDisclosureProps()}
       >
-        {links.map(({ href, text, title, icon }) => (
+        {filteredLinks.map(({ href, text, title, icon }) => (
           <li key={href}>
             <NextLink href={href} passHref>
               <Button
