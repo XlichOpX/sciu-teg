@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data } = useSWR('/api/auth/user', getUser)
   const router = useRouter()
 
-  /** Does a fetch to '/api/auth/logout' and then redirects to '/' */
+  /** Does a fetch to '/api/auth/logout' and then redirects to '/auth/login' */
   const logout = useCallback(async () => {
     await fetch('/api/auth/logout')
     router.push('/auth/login')

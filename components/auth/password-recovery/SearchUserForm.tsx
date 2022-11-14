@@ -8,6 +8,7 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { HttpError } from 'lib/http-error'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { getRecoveryCookie, getUserSecret, GetUserSecretResponse } from 'services/auth'
 import { z } from 'zod'
@@ -19,7 +20,13 @@ const searchUserFormSchema = z.object({
 type SearchUserFormData = z.infer<typeof searchUserFormSchema>
 type SearchUserFormAfterSubmit = (data: GetUserSecretResponse) => void
 
-export const SearchUserForm = ({ afterSubmit }: { afterSubmit: SearchUserFormAfterSubmit }) => {
+export const SearchUserForm = ({
+  afterSubmit,
+  disabled
+}: {
+  afterSubmit: SearchUserFormAfterSubmit
+  disabled: boolean
+}) => {
   const toast = useToast()
 
   const {
@@ -38,10 +45,13 @@ export const SearchUserForm = ({ afterSubmit }: { afterSubmit: SearchUserFormAft
       afterSubmit(userRecovery)
       toast({ status: 'success', description: `Usuario "${data.username}" encontrado` })
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof HttpError) {
         toast({
           status: 'error',
-          description: 'Ocurrió un error al obtener las preguntas del usuario'
+          description:
+            error.statusCode === 404
+              ? 'Usuario no encontrado'
+              : 'Ocurrió un error al obtener las preguntas del usuario'
         })
       }
     }
@@ -49,14 +59,20 @@ export const SearchUserForm = ({ afterSubmit }: { afterSubmit: SearchUserFormAft
 
   return (
     <Box as="form" w="full" onSubmit={handleSubmit(onSubmit)}>
-      <FormControl mb={4} id="username" isInvalid={!!errors.username}>
+      <FormControl mb={4} id="username" isInvalid={!!errors.username} isReadOnly={disabled}>
         <FormLabel>Usuario</FormLabel>
         <Input {...register('username')} />
         <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
       </FormControl>
 
-      <Button colorScheme="blue" width="full" type="submit" isLoading={isSubmitting}>
-        Buscar usuario
+      <Button
+        colorScheme="blue"
+        width="full"
+        type="submit"
+        isLoading={isSubmitting}
+        disabled={disabled}
+      >
+        Recuperar acceso
       </Button>
     </Box>
   )

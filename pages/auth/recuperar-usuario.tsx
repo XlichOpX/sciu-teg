@@ -42,7 +42,9 @@ const UserRecovery: NextPageWithLayout = () => {
         </Heading>
         <Divider />
 
-        {!canChangePassword && <SearchUserForm afterSubmit={(data) => setUserRecovery(data)} />}
+        {!canChangePassword && (
+          <SearchUserForm disabled={!!userRecovery} afterSubmit={(data) => setUserRecovery(data)} />
+        )}
 
         {userRecovery && !canChangePassword && (
           <SecretsForm
