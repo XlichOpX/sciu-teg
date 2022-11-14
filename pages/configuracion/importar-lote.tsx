@@ -1,19 +1,6 @@
-import {
-  Button,
-  chakra,
-  Divider,
-  Flex,
-  FormLabel,
-  Heading,
-  Input,
-  Stack,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Tr
-} from '@chakra-ui/react'
+import { Button, chakra, Divider, Flex, FormLabel, Heading, Input, Stack } from '@chakra-ui/react'
 import { SaveButton } from 'components/app'
+import { CreatedReceiptsModal, Preview } from 'components/batch-imports'
 import { SettingsLayout } from 'components/settings'
 import { ExampleSheetModal } from 'components/settings/charges-batch-import'
 import { HttpError } from 'lib/http-error'
@@ -22,8 +9,8 @@ import React, { useRef, useState } from 'react'
 import { BsCheckCircleFill, BsPlusLg, BsXCircleFill } from 'react-icons/bs'
 import { sheetSchema } from 'schema/batchImportSchema'
 import { uploadChargesBatch } from 'services/batchImports'
+import { ReceiptWithPerson } from 'types/receipt'
 import { encodeFile } from 'utils/encodeFile'
-import { parseCellContent } from 'utils/parseCellContent'
 import { read, utils } from 'xlsx'
 import { z } from 'zod'
 
@@ -33,6 +20,7 @@ const BatchImport: NextPageWithLayout = () => {
   const [errors, setErrors] = useState<{ formatted: FormattedErrors; flattened: string[] }>()
   const [fileName, setFileName] = useState<string>()
   const [sheet, setSheet] = useState<{ headings: unknown[]; data: unknown[][] }>()
+  const [createdReceipts, setCreatedReceipts] = useState<ReceiptWithPerson[]>()
   const encodedFile = useRef<string>()
   const isFileValid = !errors && fileName
 
@@ -86,11 +74,19 @@ const BatchImport: NextPageWithLayout = () => {
     setErrors(undefined)
   }
 
+  const reset = () => {
+    setErrors(undefined)
+    setFileName(undefined)
+    setSheet(undefined)
+    encodedFile.current = undefined
+  }
+
   const handleSubmit = async () => {
     if (!encodedFile.current) return
     try {
       const receipts = await uploadChargesBatch(encodedFile.current)
-      alert(JSON.stringify(receipts))
+      setCreatedReceipts(receipts)
+      reset()
     } catch (error) {
       if (error instanceof HttpError) {
         alert(error.message)
@@ -121,10 +117,7 @@ const BatchImport: NextPageWithLayout = () => {
           onChange={handleChange}
           onClick={(e) => {
             ;(e.target as HTMLInputElement).value = ''
-            setErrors(undefined)
-            setFileName(undefined)
-            setSheet(undefined)
-            encodedFile.current = undefined
+            reset()
           }}
           display="none"
         />
@@ -160,46 +153,13 @@ const BatchImport: NextPageWithLayout = () => {
         </>
       )}
 
-      {sheet && (
-        <>
-          <Heading size="lg">Previsualización</Heading>
-          <TableContainer>
-            <Table>
-              <Tbody>
-                <Tr>
-                  <Td></Td>
-                  {Array.from({ length: 10 }).map((_, i) => (
-                    <Td key={i} textAlign="center">
-                      {utils.encode_col(i)}
-                    </Td>
-                  ))}
-                </Tr>
-                <Tr>
-                  <Td>1</Td>
-                  {sheet.headings.map((h, i) => (
-                    <Td key={i} bgColor={errors?.formatted.headings?.[i] ? 'red.200' : undefined}>
-                      {parseCellContent(h)}
-                    </Td>
-                  ))}
-                </Tr>
-                {sheet.data.map((row, i) => (
-                  <Tr key={i}>
-                    <Td>{i + 2}</Td>
-                    {row.map((cell, j) => (
-                      <Td
-                        key={j}
-                        bgColor={errors?.formatted.data?.[i]?.[j] ? 'red.200' : undefined}
-                      >
-                        {parseCellContent(cell)}
-                      </Td>
-                    ))}
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </>
-      )}
+      {sheet && <Preview sheet={sheet} errors={errors?.formatted} />}
+
+      <CreatedReceiptsModal
+        isOpen={!!createdReceipts}
+        receipts={createdReceipts}
+        onClose={() => setCreatedReceipts(undefined)}
+      />
     </Stack>
   )
 }

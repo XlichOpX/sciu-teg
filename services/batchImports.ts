@@ -1,5 +1,5 @@
-import { Receipt } from '@prisma/client'
 import { fetch } from 'lib/fetch'
+import { ReceiptWithAll } from 'types/receipt'
 
 /**
  * Sube un archivo de excel para generar cobros en lote
@@ -10,7 +10,7 @@ export const uploadChargesBatch = async (file: string) => {
   const response = (await fetch('/api/lotStudents', {
     method: 'POST',
     body: file
-  })) as { receiptArr: Receipt[] }
+  })) as ReceiptWithAll[]
 
-  return response.receiptArr
+  return response
 }
