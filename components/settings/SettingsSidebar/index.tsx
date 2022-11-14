@@ -3,7 +3,7 @@ import { useAuth } from 'hooks'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { BsCreditCardFill, BsFileSpreadsheetFill, BsGearFill, BsPersonFill } from 'react-icons/bs'
-import { FaCoins, FaExchangeAlt, FaGraduationCap, FaIdCardAlt, FaRedhat } from 'react-icons/fa'
+import { FaCoins, FaExchangeAlt, FaIdCardAlt, FaRedhat } from 'react-icons/fa'
 import { MdCategory } from 'react-icons/md'
 
 const links = [
@@ -54,12 +54,6 @@ const links = [
     text: 'Tipos de documento',
     icon: <FaIdCardAlt />,
     permission: 'READ_DOCTYPE'
-  },
-  {
-    href: '/configuracion/carreras',
-    text: 'Carreras',
-    icon: <FaGraduationCap />,
-    permission: 'READ_CAREER'
   },
   {
     href: '/configuracion/importar-lote',
