@@ -12,7 +12,7 @@ export const useClient = (docNum?: string) => {
 
   let error = originalError
   if (!isLoading && !data?.result[0]) {
-    error = new HttpError('Cliente no encontrado', 404)
+    error = new HttpError({ message: 'Cliente no encontrado', statusCode: 404 })
   }
 
   return {
@@ -20,7 +20,7 @@ export const useClient = (docNum?: string) => {
     error,
     errorMsg: error
       ? error.statusCode === 404
-        ? 'Cliente no encontrado'
+        ? error.message
         : 'Ocurrió un problema al buscar el cliente'
       : undefined,
     isLoading: !data && !error
