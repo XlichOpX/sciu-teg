@@ -1,10 +1,10 @@
 import { z } from 'zod'
 
 /** Intenta convertir el input a string antes de validarlo como tal */
-export const castToString = z.preprocess(
-  (arg) => (typeof arg !== 'undefined' ? String(arg) : arg),
-  z.string()
-)
+export const castToString = z.preprocess((arg) => {
+  if (arg != null && typeof arg !== 'string') return String(arg)
+  return arg
+}, z.string())
 
 export const headingSchema = z.tuple([
   z.literal('cedula'),
