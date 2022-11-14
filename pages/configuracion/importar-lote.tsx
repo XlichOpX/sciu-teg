@@ -16,10 +16,12 @@ import {
 import { SaveButton } from 'components/app'
 import { SettingsLayout } from 'components/settings'
 import { ExampleSheetModal } from 'components/settings/charges-batch-import'
+import { HttpError } from 'lib/http-error'
 import { NextPageWithLayout } from 'pages/_app'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { BsCheckCircleFill, BsPlusLg, BsXCircleFill } from 'react-icons/bs'
 import { sheetSchema } from 'schema/batchImportSchema'
+import { uploadChargesBatch } from 'services/batchImports'
 import { encodeFile } from 'utils/encodeFile'
 import { parseCellContent } from 'utils/parseCellContent'
 import { read, utils } from 'xlsx'
@@ -31,14 +33,15 @@ const BatchImport: NextPageWithLayout = () => {
   const [errors, setErrors] = useState<{ formatted: FormattedErrors; flattened: string[] }>()
   const [fileName, setFileName] = useState<string>()
   const [sheet, setSheet] = useState<{ headings: unknown[]; data: unknown[][] }>()
+  const encodedFile = useRef<string>()
   const isFileValid = !errors && fileName
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = async (evt) => {
     const file = evt.target.files?.[0]
     if (!file) return
 
-    const encodedFile = await encodeFile(file)
-    const workbook = read(encodedFile, { type: 'base64', cellDates: true })
+    encodedFile.current = await encodeFile(file)
+    const workbook = read(encodedFile.current, { type: 'base64', cellDates: true })
     const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
 
     /** Array of arrays */
@@ -81,7 +84,18 @@ const BatchImport: NextPageWithLayout = () => {
     }
 
     setErrors(undefined)
-    console.log({ data: validation.data })
+  }
+
+  const handleSubmit = async () => {
+    if (!encodedFile.current) return
+    try {
+      const receipts = await uploadChargesBatch(encodedFile.current)
+      alert(JSON.stringify(receipts))
+    } catch (error) {
+      if (error instanceof HttpError) {
+        alert(error.message)
+      }
+    }
   }
 
   return (
@@ -110,6 +124,7 @@ const BatchImport: NextPageWithLayout = () => {
             setErrors(undefined)
             setFileName(undefined)
             setSheet(undefined)
+            encodedFile.current = undefined
           }}
           display="none"
         />
@@ -141,7 +156,7 @@ const BatchImport: NextPageWithLayout = () => {
             <p>El documento cumple con el formato predefinido</p>
             <BsCheckCircleFill />
           </Flex>
-          <SaveButton>Subir lote de cobros</SaveButton>
+          <SaveButton onClick={handleSubmit}>Subir lote de cobros</SaveButton>
         </>
       )}
 
