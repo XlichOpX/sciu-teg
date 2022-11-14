@@ -176,20 +176,18 @@ model Charge {
   conversionId    Int
   createdAt       DateTime      @default(now())
   updatedAt       DateTime?     @updatedAt
-  conversion      Conversion    @relation(fields: [conversionId], references: [id])
   paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
   receipt         Receipt       @relation(fields: [receiptId], references: [id])
 }
 
 model PaymentMethod {
-  id          Int       @id @default(autoincrement())
-  name        String    @db.VarChar(26)
-  description String    @db.VarChar(64)
-  currencyId  Int
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(26)
+  description String     @db.VarChar(64)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime?  @updatedAt
   metaPayment Json?
-  currency    Currency  @relation(fields: [currencyId], references: [id])
+  currencies  Currency[]
   charges     Charge[]
 }
 
@@ -200,15 +198,16 @@ model Currency {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime?       @updatedAt
   paymentMethods PaymentMethod[]
+  conversions    Conversion[]
 }
 
 model Conversion {
-  id        Int       @id @default(autoincrement())
-  date      DateTime  @default(now())
-  dolar     Float
-  euro      Float
-  updatedAt DateTime? @updatedAt
-  charges   Charge[]
+  id         Int       @id @default(autoincrement())
+  date       DateTime  @default(now())
+  value      Float
+  updatedAt  DateTime? @updatedAt
+  currencyId Int
+  currency   Currency  @relation(fields: [currencyId], references: [id])
 }
 
 model Parameters {
