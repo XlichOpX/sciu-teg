@@ -8,7 +8,7 @@ export const ClientInfo = ({ client }: { client: ClientWithPersonAndOccupation }
     <>
       <Flex alignItems="center" justifyContent="space-between">
         <Text>
-          {fullName} / {client.person.docNumber}
+          {fullName} / {client.person.docType.type}-{client.person.docNumber}
         </Text>
         <ViewReceiptsModal fullName={fullName} personDocNum={client.person.docNumber} />
       </Flex>
