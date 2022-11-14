@@ -115,6 +115,7 @@ export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
               isMulti
               options={selectOptions}
               closeMenuOnSelect={false}
+              noOptionsMessage={({ inputValue }) => `Sin resultados para "${inputValue}"`}
               {...field}
             />
             <FormErrorMessage>{errors.roles?.message}</FormErrorMessage>

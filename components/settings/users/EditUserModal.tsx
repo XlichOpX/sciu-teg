@@ -124,6 +124,7 @@ export const EditUserModal = ({ user }: { user: UserEssencials }) => {
                         isMulti
                         options={selectOptions}
                         placeholder="Seleccionar roles..."
+                        noOptionsMessage={({ inputValue }) => `Sin resultados para "${inputValue}"`}
                       />
                       <FormErrorMessage>{errors.roles?.message}</FormErrorMessage>
                     </FormControl>

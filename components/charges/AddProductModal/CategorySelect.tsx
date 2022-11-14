@@ -26,6 +26,7 @@ export const CategorySelect = ({
       placeholder="Buscar categoría"
       noOptionsMessage={({ inputValue }) => `Sin resultados para "${inputValue}"`}
       isLoading={isLoading}
+      loadingMessage={() => 'Cargando...'}
     />
   )
 }

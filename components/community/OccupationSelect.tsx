@@ -56,6 +56,14 @@ export const OccupationSelect = forwardRef<any, OccupationSelectProps>(
         value={value}
         onChange={handleChange}
         ref={ref}
+        loadingMessage={() => 'Cargando...'}
+        noOptionsMessage={({ inputValue }) =>
+          inputValue === ''
+            ? 'Escriba para buscar ocupaciones'
+            : `Sin resultados para "${inputValue}"`
+        }
+        formatCreateLabel={(inputValue) => `Crear ocupación "${inputValue}"`}
+        placeholder="Seleccionar ocupación"
         {...props}
       />
     )

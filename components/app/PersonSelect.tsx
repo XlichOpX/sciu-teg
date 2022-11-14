@@ -35,6 +35,7 @@ export const PersonSelect = ({
             }}
             isLoading={isLoading}
             placeholder="Buscar persona..."
+            noOptionsMessage={(obj) => `Sin resultados para "${obj.inputValue}"`}
           />
           <FormErrorMessage>{errors.personId?.message}</FormErrorMessage>
         </FormControl>

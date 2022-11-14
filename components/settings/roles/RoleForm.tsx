@@ -63,6 +63,7 @@ export const RoleForm = ({
               options={selectOptions}
               placeholder="Permisos"
               closeMenuOnSelect={false}
+              noOptionsMessage={() => 'Sin resultados'}
             />
             <FormErrorMessage>{error && error.message}</FormErrorMessage>
           </FormControl>

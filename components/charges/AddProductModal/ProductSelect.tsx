@@ -40,6 +40,7 @@ export const ProductSelect = ({ categoryId, onChange, value }: ProductSelectProp
         debouncedSetSearch(nv)
       }}
       isLoading={isLoading}
+      loadingMessage={() => 'Cargando...'}
       filterOption={() => true}
     />
   )
