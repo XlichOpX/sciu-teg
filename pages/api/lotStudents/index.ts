@@ -139,7 +139,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       res.json(receiptArr)
     } catch (error) {
       if (error instanceof Error) {
-        res.send({ error: error.message })
+        res.send(error.message)
       } else {
         res.send(error)
       }
