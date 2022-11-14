@@ -1,5 +1,6 @@
 import { useToast } from '@chakra-ui/react'
 import { Category } from '@prisma/client'
+import { HttpError } from 'lib/http-error'
 import { useMemo, useState } from 'react'
 import {
   createCategory as createCategorySv,
@@ -11,7 +12,7 @@ import { CategoryInput } from 'types/category'
 
 export const useCategories = () => {
   const [search, setSearch] = useState('')
-  const { data, error, mutate } = useSWR<Category[], Error>('/api/category')
+  const { data, error, mutate } = useSWR<Category[], HttpError>('/api/category')
   const toast = useToast()
 
   const createCategory = async (data: CategoryInput) => {
@@ -51,6 +52,11 @@ export const useCategories = () => {
     updateCategory,
     deleteCategory,
     search,
-    setSearch
+    setSearch,
+    errorMsg: error
+      ? error.statusCode === 403
+        ? 'No tiene permiso para leer las categorías'
+        : 'Error al obtener las categorías'
+      : undefined
   }
 }

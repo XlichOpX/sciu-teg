@@ -10,7 +10,6 @@ import {
   SimpleGrid,
   VStack
 } from '@chakra-ui/react'
-import { FullyCenteredSpinner } from 'components/app'
 import { useCategories } from 'hooks'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -28,7 +27,7 @@ interface Props {
 const defaultStockValue = 15
 
 export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Props) => {
-  const { categories } = useCategories()
+  const { categories, errorMsg } = useCategories()
 
   const {
     handleSubmit,
@@ -41,8 +40,6 @@ export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Pro
 
   const [hasStock, setHasStock] = useState((getValues('stock') ?? -1) >= 0)
 
-  if (!categories) return <FullyCenteredSpinner />
-
   return (
     <VStack gap={3} as="form" onSubmit={handleSubmit(onSubmit)} {...props} noValidate>
       <FormControl isInvalid={!!errors.name} isRequired>
@@ -54,7 +51,8 @@ export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Pro
       <FormControl isInvalid={!!errors.categoryId} isRequired>
         <FormLabel>Categoría</FormLabel>
         <Select {...register('categoryId', { valueAsNumber: true })}>
-          {categories.map((c) => (
+          {errorMsg && <option disabled>{errorMsg}</option>}
+          {categories?.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>
