@@ -136,10 +136,13 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         receiptArr.push(receipt)
       }
       // Una vez iterado todos los grupos de recibos se devuelve un arreglo con toda la información de estos al frontend
-      res.json({ receiptArr })
+      res.json(receiptArr)
     } catch (error) {
-      console.error(error)
-      res.send({ error })
+      if (error instanceof Error) {
+        res.send(error.message)
+      } else {
+        res.send(error)
+      }
     }
   } else {
     res.setHeader('Allow', ['POST'])
