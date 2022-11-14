@@ -11,13 +11,9 @@ import { NextPageWithLayout } from 'pages/_app'
 const CommunityDetail: NextPageWithLayout = () => {
   const router = useRouter()
   const docNumber = router.query.docNum as string
-  const { client, error, isLoading } = useClient(docNumber)
+  const { client, errorMsg, error, isLoading } = useClient(docNumber)
 
-  const personNotFound = error?.statusCode === 404
-
-  const errorMsg = personNotFound
-    ? `No se encontró ninguna persona con el documento de identidad: ${docNumber}.`
-    : error?.message
+  const clientNotFound = error?.statusCode === 404
 
   const { products, isEmpty, addProduct, removeProduct, resetProducts } = useReceivables()
 
@@ -25,13 +21,13 @@ const CommunityDetail: NextPageWithLayout = () => {
     <>
       <Head>{docNumber && <title>{`Comunidad | ${docNumber}`}</title>}</Head>
 
-      {error && (
+      {errorMsg && (
         <Alert mb={4} status="error">
           {errorMsg}
         </Alert>
       )}
 
-      {personNotFound && <CreateClientModal />}
+      {clientNotFound && <CreateClientModal />}
 
       {isLoading && <FullyCenteredSpinner />}
 
