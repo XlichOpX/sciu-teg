@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import { BsCreditCardFill, BsFileSpreadsheetFill, BsGearFill, BsPersonFill } from 'react-icons/bs'
 import { FaCoins, FaExchangeAlt, FaGraduationCap, FaIdCardAlt, FaRedhat } from 'react-icons/fa'
 import { MdCategory } from 'react-icons/md'
-import { SettingsSidebarSkeleton } from './SettingsSidebarSkeleton'
 
 const links = [
   {
@@ -80,7 +79,7 @@ export const SettingsSidebar = () => {
   const { asPath } = useRouter()
 
   const { user } = useAuth()
-  if (!user) return <SettingsSidebarSkeleton />
+  if (!user) return null
 
   const filteredLinks = links.filter((l) => user.permissions.includes(l.permission))
 
