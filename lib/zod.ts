@@ -10,6 +10,8 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
           return { message: 'Debe ser un número' }
         case 'integer':
           return { message: 'Debe ser un número entero' }
+        case 'date':
+          return { message: 'Debe ser una fecha' }
       }
       break
 
