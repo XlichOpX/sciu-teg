@@ -1,12 +1,17 @@
-import { Button, chakra, Divider, Flex, FormLabel, Heading, Input, Stack } from '@chakra-ui/react'
+import { Divider, Flex, Heading, Stack } from '@chakra-ui/react'
 import { SaveButton } from 'components/app'
-import { CreatedReceiptsModal, Preview } from 'components/batch-imports'
+import {
+  CreatedReceiptsModal,
+  DocErrorList,
+  FileInput,
+  Preview,
+  ValidFileFeedback
+} from 'components/batch-imports'
 import { SettingsLayout } from 'components/settings'
 import { ExampleSheetModal } from 'components/settings/charges-batch-import'
 import { HttpError } from 'lib/http-error'
 import { NextPageWithLayout } from 'pages/_app'
 import React, { useRef, useState } from 'react'
-import { BsCheckCircleFill, BsPlusLg, BsXCircleFill } from 'react-icons/bs'
 import { sheetSchema } from 'schema/batchImportSchema'
 import { uploadChargesBatch } from 'services/batchImports'
 import { ReceiptWithPerson } from 'types/receipt'
@@ -89,7 +94,7 @@ const BatchImport: NextPageWithLayout = () => {
       reset()
     } catch (error) {
       if (error instanceof HttpError) {
-        alert(error.message)
+        alert('Ocurrió un error al procesar el documento: ' + error.message)
       }
     }
   }
@@ -101,54 +106,15 @@ const BatchImport: NextPageWithLayout = () => {
         <ExampleSheetModal />
       </Flex>
 
-      <FormLabel _hover={{ cursor: 'pointer' }}>
-        <chakra.div mb={3}>Archivo de Excel</chakra.div>
-
-        <Flex gap={3} alignItems="center">
-          <Button as="span" leftIcon={<BsPlusLg />} variant="outline">
-            Seleccionar archivo
-          </Button>
-          <p>{fileName}</p>
-        </Flex>
-
-        <Input
-          type="file"
-          accept=".xlsx,.xls"
-          onChange={handleChange}
-          onClick={(e) => {
-            ;(e.target as HTMLInputElement).value = ''
-            reset()
-          }}
-          display="none"
-        />
-      </FormLabel>
+      <FileInput fileName={fileName} onChange={handleChange} onClick={reset} />
 
       {fileName && <Divider />}
 
-      {errors && (
-        <Stack as="ul" listStyleType="none">
-          {errors.flattened.map((e, i) => (
-            <chakra.li key={i} _dark={{ color: 'red.300' }} _light={{ color: 'red.400' }}>
-              <Flex alignItems="center" gap={2}>
-                <BsXCircleFill />
-                <p>{e}</p>
-              </Flex>
-            </chakra.li>
-          ))}
-        </Stack>
-      )}
+      {errors && <DocErrorList errors={errors.flattened} />}
 
       {isFileValid && (
         <>
-          <Flex
-            gap={2}
-            alignItems="center"
-            _dark={{ color: 'green.300' }}
-            _light={{ color: 'green' }}
-          >
-            <p>El documento cumple con el formato predefinido</p>
-            <BsCheckCircleFill />
-          </Flex>
+          <ValidFileFeedback />
           <SaveButton onClick={handleSubmit}>Subir lote de cobros</SaveButton>
         </>
       )}
