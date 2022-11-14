@@ -1,4 +1,4 @@
-import { Button, Divider, Flex } from '@chakra-ui/react'
+import { Alert, Button, Divider, Flex } from '@chakra-ui/react'
 import { useAuth } from 'hooks'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -82,29 +82,30 @@ export const SettingsSidebar = () => {
   const { user } = useAuth()
   if (!user) return <SettingsSidebarSkeleton />
 
+  const filteredLinks = links.filter((l) => user.permissions.includes(l.permission))
+
   return (
     <>
       <Flex as="ul" direction="column" gap={4} listStyleType="none">
-        {links.map((li) => {
-          if (user.permissions.includes(li.permission)) {
-            return (
-              <li key={li.href}>
-                <Link href={li.href} passHref>
-                  <Button
-                    as="a"
-                    w="full"
-                    variant={asPath === li.href ? 'solid' : 'ghost'}
-                    justifyContent="flex-start"
-                    gap={4}
-                    pointerEvents={asPath === li.href ? 'none' : undefined}
-                  >
-                    {li.icon} {li.text}
-                  </Button>
-                </Link>
-              </li>
-            )
-          }
-        })}
+        {filteredLinks.map((li) => (
+          <li key={li.href}>
+            <Link href={li.href} passHref>
+              <Button
+                as="a"
+                w="full"
+                variant={asPath === li.href ? 'solid' : 'ghost'}
+                justifyContent="flex-start"
+                gap={4}
+                pointerEvents={asPath === li.href ? 'none' : undefined}
+              >
+                {li.icon} {li.text}
+              </Button>
+            </Link>
+          </li>
+        ))}
+        {filteredLinks.length === 0 && (
+          <Alert status="error">No permiso para acceder a ninguna configuración</Alert>
+        )}
       </Flex>
       <Divider mt={4} display={['block', 'none']} />
     </>
