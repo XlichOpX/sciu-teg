@@ -25,16 +25,16 @@ export const ConversionItem = ({ conversion }: { conversion: Conversion }) => {
 
         <p>
           <Text as="span" fontWeight="bold">
-            Dólar:
+            Moneda:
           </Text>{' '}
-          {conversion.dolar.toFixed(2)}
+          {conversion.currencyId}
         </p>
 
         <p>
           <Text as="span" fontWeight="bold">
-            Euro:
+            Valor:
           </Text>{' '}
-          {conversion.euro.toFixed(2)}
+          {conversion.value.toFixed(2)}
         </p>
       </VStack>
     </SimpleBox>

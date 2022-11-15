@@ -13,9 +13,7 @@ export const PaymentMethodItem = ({
 
   return (
     <SimpleBox as="li" display="flex" justifyContent="space-between">
-      <Text fontWeight="bold">
-        {paymentMethod.name} - {paymentMethod.currency.symbol}
-      </Text>
+      <Text fontWeight="bold">{paymentMethod.name}</Text>
       {user?.permissions.includes('EDIT_PAYMENTMETHOD') && (
         <EditPaymentMethodModal paymentMethod={paymentMethod} />
       )}

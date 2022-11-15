@@ -1,13 +1,21 @@
-import { FormControl, FormErrorMessage, FormLabel, Input, SimpleGrid } from '@chakra-ui/react'
+import {
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Select,
+  SimpleGrid
+} from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useCurrencies } from 'hooks'
 import { ComponentPropsWithoutRef } from 'react'
 import type { SubmitHandler } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const validationSchema = z.object({
-  dolar: z.number().positive(),
-  euro: z.number().positive()
+  currencyId: z.number().positive().int(),
+  value: z.number().positive()
 })
 
 export const ConversionForm = ({ onSubmit, defaultValues, ...props }: ConversionFormProps) => {
@@ -17,27 +25,34 @@ export const ConversionForm = ({ onSubmit, defaultValues, ...props }: Conversion
     formState: { errors }
   } = useForm<FormInput>({ resolver: zodResolver(validationSchema), defaultValues })
 
+  const { currencies } = useCurrencies()
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} {...props} noValidate>
       <SimpleGrid columns={2} gap={4}>
-        <FormControl isInvalid={!!errors.dolar} isRequired>
-          <FormLabel>Dólar</FormLabel>
-          <Input
-            type="number"
-            {...register('dolar', { valueAsNumber: true })}
-            placeholder="Precio del dólar"
-          />
-          <FormErrorMessage>{errors.dolar?.message}</FormErrorMessage>
+        <FormControl isInvalid={!!errors.currencyId} isRequired>
+          <FormLabel>Moneda</FormLabel>
+          <Select
+            {...register('currencyId', { valueAsNumber: true })}
+            placeholder="Seleccione una moneda"
+          >
+            {currencies?.map((c) => (
+              <option value={c.id} key={c.id}>
+                {c.name} - {c.symbol}
+              </option>
+            ))}
+          </Select>
+          <FormErrorMessage>{errors.currencyId?.message}</FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={!!errors.euro} isRequired>
-          <FormLabel>Euro</FormLabel>
+        <FormControl isInvalid={!!errors.value} isRequired>
+          <FormLabel>Valor</FormLabel>
           <Input
             type="number"
-            {...register('euro', { valueAsNumber: true })}
-            placeholder="Precio del euro"
+            {...register('value', { valueAsNumber: true })}
+            placeholder="Valor por $1"
           />
-          <FormErrorMessage>{errors.euro?.message}</FormErrorMessage>
+          <FormErrorMessage>{errors.value?.message}</FormErrorMessage>
         </FormControl>
       </SimpleGrid>
     </form>

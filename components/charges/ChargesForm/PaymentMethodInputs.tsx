@@ -53,7 +53,7 @@ export const PaymentMethodInputs = ({
           <Select {...register(`charges.${chargeIndex}.paymentMethod.id`, { valueAsNumber: true })}>
             {paymentMethods?.map((pm) => (
               <option key={pm.id} value={pm.id}>
-                {pm.currency.symbol} - {pm.name}
+                {pm.name}
               </option>
             ))}
           </Select>
