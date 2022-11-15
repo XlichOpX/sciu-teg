@@ -96,12 +96,12 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           const gt = date.set('h', 0).set('m', 0).set('s', 0).set('ms', 0).toDate()
           const lt = date.set('h', 23).set('m', 59).set('s', 59).set('ms', 999).toDate()
           const conversion = await prisma.conversion.findFirstOrThrow({
-            select: { id: true, dolar: true },
+            select: { id: true, value: true },
             where: { date: { lt, gt } },
             orderBy: { date: 'desc' }
           })
           // Convertimos en bolívares el valor del producto para validar que está dentro del monto pasado en el excel
-          const amountConv = amount * conversion.dolar
+          const amountConv = amount * conversion.value
 
           if (amountConv > row.amount)
             throw new Error(` the value: ${amountConv} is greater than ${row.amount} validate.`)

@@ -3,7 +3,7 @@ import { encrypt, secretCrypt } from 'lib/crypter'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { userEssencials } from 'prisma/queries'
+import { userEssentials } from 'prisma/queries'
 import { canUserDo } from 'utils/checkPermissions'
 
 // GET|POST /api/user
@@ -22,7 +22,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos TODOS los usuarios
       try {
         const users = await prisma.user.findMany({
-          ...userEssencials
+          ...userEssentials
         })
 
         if (!users) return res.status(404).end(`Users not found`)

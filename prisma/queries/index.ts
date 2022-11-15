@@ -27,16 +27,18 @@ export const receiptWithPerson = Prisma.validator<Prisma.ReceiptArgs>()({
   }
 })
 
-export const chargeWithPaymentMethodAndConversion = Prisma.validator<Prisma.ChargeArgs>()({
-  include: { paymentMethod: true, conversion: { select: { euro: true, dolar: true } } }
+export const chargeWithPaymentMethodAndCurrencies = Prisma.validator<Prisma.ChargeArgs>()({
+  include: {
+    paymentMethod: { select: { currencies: { select: { id: true, symbol: true, name: true } } } }
+  }
 })
 
 export const clientWithPersonAndOccupation = Prisma.validator<Prisma.ClientArgs>()({
   include: { person: { include: { docType: { select: { type: true } } } }, occupation: true }
 })
 
-export const paymentMethodWithConversion = Prisma.validator<Prisma.PaymentMethodArgs>()({
-  include: { currency: { select: { name: true, symbol: true } } }
+export const paymentMethodWithCurrencies = Prisma.validator<Prisma.PaymentMethodArgs>()({
+  include: { currencies: { select: { id: true, name: true, symbol: true } } }
 })
 
 export const personWithAllData = Prisma.validator<Prisma.PersonArgs>()({
@@ -65,11 +67,10 @@ export const receiptWithAll = Prisma.validator<Prisma.ReceiptArgs>()({
     charges: {
       select: {
         amount: true,
-        conversion: { select: { dolar: true, euro: true } },
         id: true,
         paymentMethod: {
           select: {
-            currency: { select: { name: true, symbol: true } },
+            currencies: { select: { name: true, symbol: true } },
             name: true,
             id: true
           }
@@ -130,7 +131,7 @@ export const billing = Prisma.validator<Prisma.BillingArgs>()({
   }
 })
 
-export const userEssencials = Prisma.validator<Prisma.UserArgs>()({
+export const userEssentials = Prisma.validator<Prisma.UserArgs>()({
   select: {
     id: true,
     status: true,

@@ -159,7 +159,7 @@ const Receipts: NextPage = () => {
               <Tr key={c.id}>
                 <Td colSpan={3} pl={6}>
                   <Text fontWeight="bold">
-                    {c.paymentMethod.name} - {c.paymentMethod.currency.symbol}
+                    {/* {c.paymentMethod.name} - {c.paymentMethod.currency.symbol} */}
                   </Text>
                   <Box as="ul" listStyleType="none" pl={4}>
                     {Array.isArray(c.metaPayment) &&

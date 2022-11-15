@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { fetch } from 'lib/fetch'
-import { UserCreateInput, UserEssencials, UserUpdateInput } from 'types/user'
+import { UserCreateInput, UserEssentials, UserUpdateInput } from 'types/user'
 
 /** Toma los datos como vienen del form y los pasa a la forma que necesita prisma */
 const parseCreateUserFormData = ({
@@ -72,7 +72,7 @@ export const updateUser = async (userId: number, data: UserUpdateInput) => {
   return (await fetch(`/api/user/${userId}`, {
     method: 'PUT',
     body: parseUpdateUserFormData(data)
-  })) as UserEssencials
+  })) as UserEssentials
 }
 
 export const deleteUser = async (userId: number) => {

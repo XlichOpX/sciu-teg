@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { UserEssencials } from 'types/user'
+import { UserEssentials } from 'types/user'
 
 export const useUsers = () => {
   const [search, setSearch] = useState('')
-  const { data, error } = useSWR<UserEssencials[], Error>('/api/user')
+  const { data, error } = useSWR<UserEssentials[], Error>('/api/user')
 
   const users = useMemo(
     () => data?.filter((u) => u.username.toLowerCase().includes(search)),

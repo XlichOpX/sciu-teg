@@ -16,7 +16,7 @@ interface Option extends OptionBase {
 }
 
 const getOption = (occupation: Occupation) => ({
-  label: occupation.ocupation,
+  label: occupation.occupation,
   value: occupation.id
 })
 

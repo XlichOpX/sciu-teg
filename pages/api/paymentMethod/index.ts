@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { paymentMethodWithConversion } from 'prisma/queries'
+import { paymentMethodWithCurrencies } from 'prisma/queries'
 import { canUserDo } from 'utils/checkPermissions'
 
 // GET|POST /api/paymentMethod
@@ -17,7 +17,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos TODOS los métodos de pago
       try {
         const paymentMethod = await prisma.paymentMethod.findMany({
-          ...paymentMethodWithConversion
+          ...paymentMethodWithCurrencies
         })
 
         if (!paymentMethod) return res.status(404).end(`PaymentMethods not found`)
@@ -35,7 +35,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       try {
         const result = await prisma.paymentMethod.create({
           data: { ...body },
-          ...paymentMethodWithConversion
+          ...paymentMethodWithCurrencies
         })
         res.status(201).send(result)
       } catch (error) {

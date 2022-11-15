@@ -26,9 +26,10 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos a UN método de pago
       try {
         const paymentMethod = await prisma.paymentMethod.findFirst({
-          include: { currency: true },
+          select: { currencies: true },
           where: { id: Number(id) }
         })
+
         if (!paymentMethod) res.status(404).end(`PaymentMethod not found`)
         res.status(200).send(paymentMethod)
       } catch (error) {

@@ -27,12 +27,12 @@ import { useAuth, useMatchMutate, userKeysMatcher, useRoles, useUserStatus } fro
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { userUpdateSchema } from 'schema/userSchema'
 import { deleteUser, updateUser } from 'services/users'
-import { UserEssencials } from 'types/user'
+import { UserEssentials } from 'types/user'
 import { z } from 'zod'
 
 type EditUserForm = z.infer<typeof userUpdateSchema>
 
-export const EditUserModal = ({ user }: { user: UserEssencials }) => {
+export const EditUserModal = ({ user }: { user: UserEssentials }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const { selectOptions } = useRoles()
   const { userStatus } = useUserStatus()
