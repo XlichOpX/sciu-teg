@@ -53,22 +53,23 @@ const CATEGORIES = [
 ]
 
 // Parámetros para manejar la cantidad de datos a generar
-const totalOcupations = 30
+const totalOccupations = 30
 const totalStudents = 100
 const totalClients = 100
 const totalConversions = 10
-const receiptsPerPerson = 5
+const receiptsPerPerson = 2
 const productsPerReceipt = 6
 const chargesPerReceipt = 3
 
 async function main() {
-  await createCurrenciesAndPaymentMethods()
+  await createPaymentMethods()
+  await createCurrencies()
   await createDocTypes()
+  const docTypeIds = (await prisma.docType.findMany()).map((d) => d.id)
   await createOccupations()
   await createCareers()
   await createStudentStatus()
 
-  const docTypeIds = (await prisma.docType.findMany()).map((d) => d.id)
   await createStudents(docTypeIds)
   await createClients(docTypeIds)
 
@@ -76,12 +77,13 @@ async function main() {
   await createConversions()
   await createReceipts()
 
-  await createDummyUser(docTypeIds)
+  await createRoles()
   await createParameters()
   await createPermissions()
-  await createRoles()
 
   await createSemester()
+
+  await createDummyUser()
 }
 
 main()
@@ -122,13 +124,13 @@ async function createParameters() {
   })
 }
 
-async function createDummyUser(docTypeIds: number[]) {
+async function createDummyUser() {
   await prisma.user.create({
     data: {
       username: 'admin',
       password: encrypt('password')[1],
       person: {
-        create: genPerson(docTypeIds)
+        connect: { id: 1 }
       },
       status: {
         create: {
@@ -145,7 +147,8 @@ async function createDummyUser(docTypeIds: number[]) {
           questionThree: 'hola',
           answerThree: 'chao'
         }
-      }
+      },
+      roles: { connect: { id: 1 } }
     }
   })
 }
@@ -205,10 +208,12 @@ async function createReceipts() {
 }
 
 async function createConversions() {
+  const currencies = await (await prisma.currency.findMany()).map((e) => e.id)
+
   await prisma.conversion.createMany({
     data: Array.from({ length: totalConversions }).map(() => ({
-      dolar: faker.datatype.number({ min: 6, max: 9, precision: 0.0001 }),
-      euro: faker.datatype.number({ min: 6, max: 9, precision: 0.0001 })
+      value: faker.datatype.number({ min: 0, max: 10, precision: 0.0001 }),
+      currencyId: getRandomValueFromArray(currencies)
     }))
   })
 }
@@ -263,8 +268,8 @@ async function createCareers() {
 
 async function createOccupations() {
   return await prisma.occupation.createMany({
-    data: Array.from({ length: totalOcupations }).map(() => ({
-      ocupation: faker.name.jobTitle()
+    data: Array.from({ length: totalOccupations }).map(() => ({
+      occupation: faker.name.jobTitle()
     }))
   })
 }
@@ -274,22 +279,24 @@ async function createDocTypes() {
     data: DOCUMENT_TYPES.map((type) => ({ type }))
   })
 }
+async function createPaymentMethods() {
+  return await Promise.all(
+    PAYMENT_METHODS.map(async (pm) => {
+      return await prisma.paymentMethod.create({
+        data: { name: pm, description: pm },
+        select: { id: true }
+      })
+    })
+  )
+}
 
-async function createCurrenciesAndPaymentMethods() {
+async function createCurrencies() {
   return await Promise.all(
     CURRENCIES.map((c) =>
       prisma.currency.create({
         data: {
           name: c.name,
-          symbol: c.symbol,
-          paymentMethods: {
-            createMany: {
-              data: PAYMENT_METHODS.map((pm) => ({
-                name: pm,
-                description: faker.lorem.sentence(3)
-              }))
-            }
-          }
+          symbol: c.symbol
         }
       })
     )
@@ -298,11 +305,14 @@ async function createCurrenciesAndPaymentMethods() {
 
 async function createRoles() {
   return await prisma.role.createMany({
-    data: Array.from({ length: 6 }).map(() => ({
-      name: faker.name.jobType(),
-      description: faker.lorem.sentence(4),
-      level: faker.datatype.number(5)
-    }))
+    data: [
+      { name: 'Administrador', description: 'Dios', level: 999 },
+      ...Array.from({ length: 6 }).map(() => ({
+        name: faker.name.jobType(),
+        description: faker.lorem.sentence(4),
+        level: faker.datatype.number(5)
+      }))
+    ]
   })
 }
 

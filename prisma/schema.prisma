@@ -59,11 +59,11 @@ model Client {
 }
 
 model Occupation {
-  id        Int       @id @default(autoincrement())
-  ocupation String    @db.VarChar(40)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
-  clients   Client[]
+  id         Int       @id @default(autoincrement())
+  occupation String    @db.VarChar(40)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
+  clients    Client[]
 }
 
 model StudentStatus {
