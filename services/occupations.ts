@@ -8,6 +8,6 @@ export const getOccupations = async (search: string) => {
 export const createOccupation = async (occupation: string) => {
   return (await fetch('/api/occupation', {
     method: 'POST',
-    body: { ocupation: occupation }
+    body: { occupation }
   })) as Occupation
 }
