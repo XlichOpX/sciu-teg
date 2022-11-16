@@ -38,8 +38,33 @@ export const clientWithPersonAndOccupation = Prisma.validator<Prisma.ClientArgs>
 })
 
 export const paymentMethodWithCurrencies = Prisma.validator<Prisma.PaymentMethodArgs>()({
-  include: { currencies: { select: { id: true, name: true, symbol: true } } }
+  select: {
+    createdAt: true,
+    currencies: true,
+    description: true,
+    id: true,
+    metaPayment: true,
+    name: true,
+    updatedAt: true
+  }
 })
+
+export const paymentMethodWithCurrenciesWithoutDetails =
+  Prisma.validator<Prisma.PaymentMethodArgs>()({
+    select: {
+      currencies: {
+        select: {
+          id: true,
+          name: true,
+          symbol: true
+        }
+      },
+      description: true,
+      id: true,
+      metaPayment: true,
+      name: true
+    }
+  })
 
 export const personWithAllData = Prisma.validator<Prisma.PersonArgs>()({
   include: {

@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
-export const metaPaymentTypeSchema = z.union([z.literal('string'), z.literal('date')])
+const metaPaymentTypeSchema = z.union([z.literal('string'), z.literal('date')])
 
-export const metaPaymentDefSchema = z.object({
+const metaPaymentDefSchema = z.object({
   name: z.string().min(1).max(32),
   fieldType: metaPaymentTypeSchema
 })
@@ -19,3 +19,16 @@ export const paymentMethodInputSchema = z.object({
   currencyId: z.number().int().positive(),
   metaPayment: metaPaymentDefSchema.array().nullish()
 })
+
+export const paymentMethodCreateSchema = z.object({
+  name: z.string().min(1).max(26),
+  description: z.string().min(1).max(64),
+  currencies: z
+    .object({
+      id: z.number().int().positive()
+    })
+    .array(),
+  metaPayment: metaPaymentDefSchema.array()
+})
+
+export const paymentMethodUpdateSchema = paymentMethodCreateSchema.partial()
