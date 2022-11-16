@@ -2,6 +2,8 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { currencyUpdateSchema } from 'schema/currencySchema'
+import validateBody from 'utils/bodyValidate'
 import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
@@ -46,9 +48,13 @@ async function currencyHandler(req: NextApiRequest, res: NextApiResponse) {
           where: { id: Number(id) }
         })
         if (!currency) res.status(404).end(`Currency not found`)
+
+        //Validate body
+        const validBody = validateBody(body, currencyUpdateSchema)
+
         const updateCurrency = await prisma.currency.update({
           data: {
-            ...body
+            ...validBody.data
           },
           where: {
             id: Number(id)

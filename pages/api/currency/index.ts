@@ -2,6 +2,8 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { currencyCreateSchema } from 'schema/currencySchema'
+import validateBody from 'utils/bodyValidate'
 import { canUserDo } from 'utils/checkPermissions'
 
 export default withIronSessionApiRoute(handle, ironOptions)
@@ -24,8 +26,11 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       if (!(await canUserDo(session, 'CREATE_CURRENCY')))
         return res.status(403).send(`Can't create this.`)
       try {
+        //Validate body
+        const validBody = validateBody(body, currencyCreateSchema)
+
         const result = await prisma.currency.create({
-          data: { ...body }
+          data: { ...validBody.data }
         })
         res.status(201).json(result)
       } catch (error) {
