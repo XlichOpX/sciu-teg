@@ -51,8 +51,7 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
         if (!paymentMethod) res.status(404).end(`PaymentMethod not found`)
         // Validate Body
         const validBody = paymentMethodUpdateSchema.safeParse(body)
-        if (!validBody.success)
-          return res.status(403).end({ error: 'the request invalid', request: body })
+        if (!validBody.success) return res.status(400)
 
         const { currencies } = validBody.data
 

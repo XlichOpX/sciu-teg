@@ -39,8 +39,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       try {
         // Validate Body
         const validBody = paymentMethodCreateSchema.safeParse(body)
-        if (!validBody.success)
-          return res.status(403).end({ error: 'the request invalid', request: body })
+        if (!validBody.success) return res.status(400).send(`Invalid Request`)
 
         const { currencies } = validBody.data
         const result = await prisma.paymentMethod.create({
