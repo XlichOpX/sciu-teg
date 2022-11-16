@@ -58,7 +58,7 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
         const updatePaymentMethod = await prisma.paymentMethod.update({
           data: {
             ...validBody.data,
-            currencies: { connect: currencies }
+            currencies: { set: currencies }
           },
           where: {
             id: Number(id)
