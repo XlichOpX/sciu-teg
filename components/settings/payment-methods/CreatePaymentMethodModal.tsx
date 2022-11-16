@@ -13,18 +13,20 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
 import { paymentMethodKeysMatcher, useMatchMutate } from 'hooks'
 import { useForm } from 'react-hook-form'
-import { paymentMethodInputSchema } from 'schema/paymentMethodSchema'
+import { paymentMethodCreateSchema } from 'schema/paymentMethodSchema'
 import { createPaymentMethod } from 'services/paymentMethods'
-import { PaymentMethodInput } from 'types/paymentMethod'
+import { PaymentMethodCreateInput } from 'types/paymentMethod'
 import { PaymentMethodForm, PaymentMethodFormSubmitHandler } from './PaymentMethodForm'
 
 export const CreatePaymentMethodModal = () => {
   const { onOpen, isOpen, onClose } = useDisclosure()
   const toast = useToast()
   const matchMutate = useMatchMutate()
-  const formHook = useForm<PaymentMethodInput>({ resolver: zodResolver(paymentMethodInputSchema) })
+  const formHook = useForm<PaymentMethodCreateInput>({
+    resolver: zodResolver(paymentMethodCreateSchema)
+  })
 
-  const onSubmit: PaymentMethodFormSubmitHandler = async (data: PaymentMethodInput) => {
+  const onSubmit: PaymentMethodFormSubmitHandler = async (data: PaymentMethodCreateInput) => {
     try {
       await createPaymentMethod(data)
       await matchMutate(paymentMethodKeysMatcher)
