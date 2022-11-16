@@ -201,7 +201,7 @@ export const reportArqueo = Prisma.validator<Prisma.ChargeArgs>()({})
 
 export const conversionWithCurrency = Prisma.validator<Prisma.ConversionArgs>()({
   select: {
-    currency: { select: { name: true, symbol: true } },
+    currency: { select: { id: true, name: true, symbol: true } },
     id: true,
     date: true,
     value: true
