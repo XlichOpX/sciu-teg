@@ -1,13 +1,13 @@
 import { Text } from '@chakra-ui/react'
 import { SimpleBox } from 'components/app'
 import { useAuth } from 'hooks'
-import { PaymentMethodWithConversion } from 'types/paymentMethod'
+import { PaymentMethodWithCurrencies } from 'types/paymentMethod'
 import { EditPaymentMethodModal } from './EditPaymentMethodModal'
 
 export const PaymentMethodItem = ({
   paymentMethod
 }: {
-  paymentMethod: PaymentMethodWithConversion
+  paymentMethod: PaymentMethodWithCurrencies
 }) => {
   const { user } = useAuth()
 

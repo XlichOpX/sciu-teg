@@ -46,3 +46,16 @@ export const receiptCreateSchemaInput = z.object({
   products: receiptProductSchema.array().nullish(),
   person: z.number().positive().int()
 })
+
+export const frontChargesInput = z.object({
+  charges: z
+    .object({
+      amount: z.number({ invalid_type_error: 'Monto requerido' }).positive(),
+      paymentMethod: z.object({
+        id: z.number().positive(),
+        currencyId: z.number().positive(),
+        metaPayment: metaPaymentDataSchema.array().optional()
+      })
+    })
+    .array()
+})

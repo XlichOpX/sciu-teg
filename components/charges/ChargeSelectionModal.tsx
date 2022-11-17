@@ -21,11 +21,12 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { CancelButton, SaveButton } from 'components/app'
-import { SubmitHandler } from 'react-hook-form'
+// import { SubmitHandler } from 'react-hook-form'
 import { BsWalletFill } from 'react-icons/bs'
-import { createReceipt } from 'services/receipts'
+// import { createReceipt } from 'services/receipts'
 import { BillingComparatorArgs } from 'types/billing'
-import { ChargesForm, ChargesFormData } from './ChargesForm'
+import { round } from 'utils/round'
+import { ChargesForm /*, ChargesFormData */ } from './ChargesForm'
 import { ProductReceivable } from './ReceivablesForm'
 
 interface ChargeSelectionModalProps extends ButtonProps {
@@ -48,24 +49,25 @@ export const ChargeSelectionModal = ({
   let totalAmount = 0
   totalAmount += billings?.reduce((ac, sb) => ac + sb.amount, 0) ?? 0
   totalAmount += products.reduce((ac, p) => ac + p.price * p.quantity, 0)
+  totalAmount = round(totalAmount)
 
-  const onRecordCharge: SubmitHandler<ChargesFormData> = async (data) => {
-    try {
-      const receipt = await createReceipt({
-        ...data,
-        billings: billings?.map((sb) => sb.id) ?? [],
-        products: products.map((p) => ({ id: p.id, quantity: p.quantity })),
-        amount: totalAmount,
-        person: personId
-      })
-      onRecord()
-      onClose()
-      toast({ status: 'success', description: 'Cobro registrado' })
-      window.open(window.location.origin + `/recibos/${receipt.id}`)
-    } catch {
-      toast({ status: 'error', description: 'Ocurrió un error al registrar el cobro' })
-    }
-  }
+  // const onRecordCharge: SubmitHandler<ChargesFormData> = async (data) => {
+  //   try {
+  //     const receipt = await createReceipt({
+  //       ...data,
+  //       billings: billings?.map((sb) => sb.id) ?? [],
+  //       products: products.map((p) => ({ id: p.id, quantity: p.quantity })),
+  //       amount: totalAmount,
+  //       person: personId
+  //     })
+  //     onRecord()
+  //     onClose()
+  //     toast({ status: 'success', description: 'Cobro registrado' })
+  //     window.open(window.location.origin + `/recibos/${receipt.id}`)
+  //   } catch {
+  //     toast({ status: 'error', description: 'Ocurrió un error al registrar el cobro' })
+  //   }
+  // }
 
   return (
     <>
@@ -128,7 +130,14 @@ export const ChargeSelectionModal = ({
 
             <Divider mb={3} />
 
-            <ChargesForm id="ChargesForm" maxAmount={totalAmount} onSubmit={onRecordCharge} />
+            <ChargesForm
+              id="ChargesForm"
+              maxAmount={totalAmount}
+              onSubmit={(data) => {
+                console.log({ data })
+                alert(JSON.stringify(data, null, 2))
+              }}
+            />
           </ModalBody>
 
           <ModalFooter>

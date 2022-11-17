@@ -3,12 +3,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FullyCenteredSpinner } from 'components/app'
 import { InputArrayHeader } from 'components/app/InputArrayHeader'
 import { useConversions, usePaymentMethods } from 'hooks'
+import { round } from 'lodash'
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
-import { receiptCreateSchemaInput } from 'schema/receiptSchema'
+import { frontChargesInput } from 'schema/receiptSchema'
 import { z } from 'zod'
 import { PaymentMethodInputs } from './PaymentMethodInputs'
 
-export const chargesFormSchema = receiptCreateSchemaInput.pick({ charges: true })
+export const chargesFormSchema = frontChargesInput
 export type ChargesFormData = z.infer<typeof chargesFormSchema>
 
 export const ChargesForm = ({
@@ -54,7 +55,7 @@ export const ChargesForm = ({
   const { fields, append, remove } = useFieldArray({ control, name: 'charges' })
   const charges = watch('charges')
   const totalAmount = charges.reduce((ac, c) => ac + c.amount, 0)
-  const amountDiff = totalAmount - maxAmount
+  const amountDiff = round(totalAmount - maxAmount, 4)
 
   if (!latestConversion || !paymentMethods) return <FullyCenteredSpinner />
 
@@ -66,7 +67,7 @@ export const ChargesForm = ({
           append({
             amount: 1,
             paymentMethod: {
-              conversion: latestConversion.id,
+              currencyId: paymentMethods[0].currencies[0].id,
               id: paymentMethods[0].id
             }
           })
@@ -75,12 +76,21 @@ export const ChargesForm = ({
         fieldsLength={fields.length}
       />
 
-      <form id={id} onSubmit={handleSubmit(onSubmit)} noValidate>
+      <form
+        id={id}
+        onSubmit={handleSubmit(onSubmit, (errors) => console.log({ errors }))}
+        noValidate
+      >
         <FormControl as={Stack} gap={1} isInvalid={!!errors.charges}>
           {fields.map((f, i) => (
-            <PaymentMethodInputs key={f.id} chargeIndex={i} formHook={formHook} />
+            <PaymentMethodInputs
+              key={f.id}
+              chargeIndex={i}
+              formHook={formHook}
+              differenceWithTotal={maxAmount - totalAmount}
+            />
           ))}
-          {amountDiff && (
+          {amountDiff !== 0 && (
             <FormHelperText textAlign="center" color="red.300">
               Diferencia: $ {amountDiff}
             </FormHelperText>

@@ -2,23 +2,27 @@ import {
   Divider,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   Input,
   InputGroup,
   InputLeftElement,
   Select,
   SimpleGrid
 } from '@chakra-ui/react'
-import { useConversions, usePaymentMethods } from 'hooks'
+import { useLatestConversions, usePaymentMethods } from 'hooks'
 import { Fragment, useEffect } from 'react'
 import { UseFormReturn } from 'react-hook-form'
+import { round } from 'utils/round'
 import { ChargesFormData } from '.'
 
 export const PaymentMethodInputs = ({
   formHook,
-  chargeIndex
+  chargeIndex,
+  differenceWithTotal
 }: {
   formHook: UseFormReturn<ChargesFormData>
   chargeIndex: number
+  differenceWithTotal: number
 }) => {
   const {
     register,
@@ -28,10 +32,15 @@ export const PaymentMethodInputs = ({
   } = formHook
 
   const { paymentMethods } = usePaymentMethods()
-  const { latestConversion } = useConversions()
+  const { latestConversions } = useLatestConversions()
 
   const currentMethodId = watch(`charges.${chargeIndex}.paymentMethod.id`)
   const currentMethod = paymentMethods?.find((pm) => pm.id === currentMethodId)
+
+  const currentCurrencyId = watch(`charges.${chargeIndex}.paymentMethod.currencyId`)
+  const currentCurrency = currentMethod?.currencies?.find((c) => c.id === currentCurrencyId)
+
+  const currentAmount = watch(`charges.${chargeIndex}.amount`)
 
   useEffect(() => {
     setValue(
@@ -42,9 +51,20 @@ export const PaymentMethodInputs = ({
         fieldType
       }))
     )
+
+    if (currentMethod) {
+      setValue(`charges.${chargeIndex}.paymentMethod.currencyId`, currentMethod.currencies[0].id)
+    }
   }, [currentMethod, setValue, chargeIndex])
 
-  if (!paymentMethods || !latestConversion) return null
+  useEffect(() => {
+    setValue(`charges.${chargeIndex}.amount`, 0)
+  }, [currentCurrency, setValue, chargeIndex])
+
+  if (!paymentMethods || !latestConversions) return null
+
+  const conversion = latestConversions.find((lc) => lc.currency.id === currentCurrency?.id)
+  const diff = conversion ? round(differenceWithTotal * conversion.value) : 0
 
   return (
     <>
@@ -59,19 +79,44 @@ export const PaymentMethodInputs = ({
           </Select>
         </FormControl>
 
+        <FormControl>
+          <Select
+            {...register(`charges.${chargeIndex}.paymentMethod.currencyId`, {
+              valueAsNumber: true
+            })}
+          >
+            {currentMethod?.currencies.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name} - {c.symbol}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
+
         <FormControl isInvalid={!!(errors.charges && errors.charges[chargeIndex]?.amount)}>
           <InputGroup>
             <InputLeftElement pointerEvents="none" color="gray.300">
-              $
+              {currentCurrency?.symbol}
             </InputLeftElement>
             <Input
               type="number"
+              onFocus={(e) => e.currentTarget.select()}
               {...register(`charges.${chargeIndex}.amount`, {
-                valueAsNumber: true
+                setValueAs: (value) => {
+                  if (!currentCurrency) return +value
+                  if (!conversion) return +value
+                  return round(+value / conversion.value)
+                }
               })}
               placeholder="Monto"
             />
           </InputGroup>
+          <FormHelperText>Apróx. ${currentAmount.toFixed(4)}</FormHelperText>
+          {diff !== 0 && (
+            <FormHelperText>
+              Dif. {currentCurrency?.symbol} {diff.toFixed(4)}
+            </FormHelperText>
+          )}
           <FormErrorMessage>
             {errors.charges && errors.charges[chargeIndex]?.amount?.message}
           </FormErrorMessage>
@@ -109,12 +154,6 @@ export const PaymentMethodInputs = ({
             />
           </Fragment>
         ))}
-
-        <input
-          hidden
-          defaultValue={latestConversion.id}
-          {...register(`charges.${chargeIndex}.paymentMethod.conversion`, { valueAsNumber: true })}
-        />
       </SimpleGrid>
       <Divider my={2} />
     </>

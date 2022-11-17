@@ -15,13 +15,13 @@ import { paymentMethodKeysMatcher, useAuth, useMatchMutate } from 'hooks'
 import { useForm } from 'react-hook-form'
 import { paymentMethodUpdateSchema } from 'schema/paymentMethodSchema'
 import { deletePaymentMethod, updatePaymentMethod } from 'services/paymentMethods'
-import { PaymentMethodCreateInput, PaymentMethodWithConversion } from 'types/paymentMethod'
+import { PaymentMethodCreateInput, PaymentMethodWithCurrencies } from 'types/paymentMethod'
 import { PaymentMethodForm, PaymentMethodFormSubmitHandler } from './PaymentMethodForm'
 
 export const EditPaymentMethodModal = ({
   paymentMethod
 }: {
-  paymentMethod: PaymentMethodWithConversion
+  paymentMethod: PaymentMethodWithCurrencies
 }) => {
   const formHook = useForm<PaymentMethodCreateInput>({
     resolver: zodResolver(paymentMethodUpdateSchema),
