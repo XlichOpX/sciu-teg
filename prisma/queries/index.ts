@@ -11,6 +11,23 @@ export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
   }
 })
 
+export const categoryWithRelationalProducts = Prisma.validator<Prisma.CategoryArgs>()({
+  select: {
+    _count: true,
+    description: true,
+    id: true,
+    name: true,
+    products: {
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        stock: true
+      }
+    }
+  }
+})
+
 export const receiptWithPerson = Prisma.validator<Prisma.ReceiptArgs>()({
   select: {
     amount: true,
