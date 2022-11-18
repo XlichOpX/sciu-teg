@@ -23,7 +23,7 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, CreateButton } from 'components/app'
-import { useProducts } from 'hooks'
+import { useProductsByCategory } from 'hooks/useProductsByCategory'
 import { useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { receiptProductSchema } from 'schema/receiptSchema'
@@ -45,8 +45,8 @@ interface AddProductModalProps extends Omit<ButtonProps, 'onSubmit'> {
 
 export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { products } = useProducts({ itemsPerPage: 50 })
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
+  const { products } = useProductsByCategory({ categoryId: selectedCategoryId })
 
   const {
     handleSubmit,

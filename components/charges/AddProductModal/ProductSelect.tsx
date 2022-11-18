@@ -1,7 +1,6 @@
 import { Select } from 'chakra-react-select'
-import { useProducts } from 'hooks'
-import debounce from 'just-debounce'
-import { useEffect, useMemo, useState } from 'react'
+import { useProductsByCategory } from 'hooks/useProductsByCategory'
+import { useEffect } from 'react'
 
 interface ProductSelectProps {
   categoryId?: number
@@ -10,38 +9,24 @@ interface ProductSelectProps {
 }
 
 export const ProductSelect = ({ categoryId, onChange, value }: ProductSelectProps) => {
-  const { products, setSearch, isLoading } = useProducts({ itemsPerPage: 15, savePage: false })
-
-  const filteredProducts = useMemo(
-    () => products?.filter((p) => p.categoryId === categoryId),
-    [categoryId, products]
-  )
+  const { products, isLoading } = useProductsByCategory({ categoryId })
 
   useEffect(() => {
-    if (!filteredProducts || !filteredProducts[0]) return
-    onChange(filteredProducts[0].id)
-  }, [onChange, filteredProducts])
-
-  const [inputValue, setInputValue] = useState('')
-  const debouncedSetSearch = useMemo(() => debounce(setSearch, 300), [setSearch])
+    if (!products || !products[0]) return
+    onChange(products[0].id)
+  }, [onChange, products])
 
   return (
     <Select
-      options={filteredProducts}
+      options={products}
       getOptionLabel={(opt) => opt.name}
       getOptionValue={(opt) => opt.id.toString()}
       onChange={(value) => onChange(value?.id)}
-      value={filteredProducts?.find((p) => p.id === value)}
+      value={products?.find((p) => p.id === value)}
       placeholder="Buscar producto"
       noOptionsMessage={({ inputValue }) => `Sin resultados para "${inputValue}"`}
-      inputValue={inputValue}
-      onInputChange={(nv) => {
-        setInputValue(nv)
-        debouncedSetSearch(nv)
-      }}
       isLoading={isLoading}
       loadingMessage={() => 'Cargando...'}
-      filterOption={() => true}
     />
   )
 }
