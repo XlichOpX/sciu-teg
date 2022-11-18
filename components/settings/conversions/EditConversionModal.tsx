@@ -9,18 +9,18 @@ import {
   useDisclosure,
   useToast
 } from '@chakra-ui/react'
-import { Conversion } from '@prisma/client'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
 import { conversionKeysMatcher, useAuth, useMatchMutate } from 'hooks'
 import { useState } from 'react'
 import { deleteConversion, updateConversion } from 'services/conversions'
+import { ConversionWithCurrency } from 'types/conversion'
 import { ConversionForm, ConversionFormSubmitHandler } from './ConversionForm'
 
 export const EditConversionModal = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   conversion: { id, date, ...defaultValues }
 }: {
-  conversion: Conversion
+  conversion: ConversionWithCurrency
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { isOpen, onClose, onOpen } = useDisclosure()
@@ -70,7 +70,7 @@ export const EditConversionModal = ({
             <ConversionForm
               id="EditConversionForm"
               onSubmit={onUpdate}
-              defaultValues={defaultValues}
+              defaultValues={{ value: defaultValues.value, currencyId: defaultValues.currency.id }}
             />
           </ModalBody>
 
