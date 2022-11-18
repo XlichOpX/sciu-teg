@@ -23,6 +23,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
         //obtenemos TODAS las conversiones
         const result = await prisma.conversion.findMany({
+          ...conversionWithCurrency,
           ...routePaginate(query),
           where,
           orderBy: {
