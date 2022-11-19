@@ -52,7 +52,7 @@ async function conversionHandler(req: NextApiRequest, res: NextApiResponse) {
         if (dayjs(conversion.date).add(30, 'minutes') < dayjs())
           return res.status(404).end(`Can't Conversion update`)
 
-        const validBody = validateBody(body, conversionUpdateSchema)
+        const validBody = await validateBody(body, conversionUpdateSchema)
 
         const updateConversion = await prisma.conversion.update({
           data: {

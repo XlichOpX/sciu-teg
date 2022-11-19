@@ -37,7 +37,7 @@ async function handle(
         return res.status(403).send(`Can't create this.`)
       //creamos UN recibo
       try {
-        const validBody = validateBody(body, receiptCreateSchemaInput)
+        const validBody = await validateBody(body, receiptCreateSchemaInput)
         const result = await insertReceipt(validBody.data)
         res.json(result)
       } catch (error) {

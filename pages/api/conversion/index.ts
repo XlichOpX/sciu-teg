@@ -44,7 +44,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't create this.`)
       try {
         //validate body
-        const validBody = validateBody(body, conversionCreateSchema)
+        const validBody = await validateBody(body, conversionCreateSchema)
         //creamos UNA conversión
         const result = await prisma.conversion.create({
           data: { ...validBody.data },

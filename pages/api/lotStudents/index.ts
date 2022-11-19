@@ -21,7 +21,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   if (method === 'POST') {
     console.log({ body })
     try {
-      const { data } = validateBody(body, sheetSchema)
+      const { data } = await validateBody(body, sheetSchema)
       // // obtenemos los datos en un formate manejable.
 
       // const { dataCell } = handleBody(body)
@@ -175,9 +175,9 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       res.json(receiptArr)
     } catch (error) {
       if (error instanceof Error) {
-        res.send(error.message)
+        res.status(400).send(error.message)
       } else {
-        res.send(error)
+        res.status(400).send(error)
       }
     }
   } else {

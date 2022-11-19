@@ -50,7 +50,7 @@ async function currencyHandler(req: NextApiRequest, res: NextApiResponse) {
         if (!currency) res.status(404).end(`Currency not found`)
 
         //Validate body
-        const validBody = validateBody(body, currencyUpdateSchema)
+        const validBody = await validateBody(body, currencyUpdateSchema)
 
         const updateCurrency = await prisma.currency.update({
           data: {
