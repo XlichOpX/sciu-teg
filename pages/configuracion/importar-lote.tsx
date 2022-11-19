@@ -86,6 +86,7 @@ const BatchImport: NextPageWithLayout = () => {
     setErrors(undefined)
     setFileName(undefined)
     setSheet(undefined)
+    setValidSheet(undefined)
     encodedFile.current = undefined
   }
 
