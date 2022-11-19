@@ -1,3 +1,4 @@
+import { getCurrencies } from 'services/currencies'
 import { z } from 'zod'
 
 /** Intenta convertir el input a string antes de validarlo como tal */
@@ -45,7 +46,23 @@ export const dataSchema = z
     z.number().positive().int(),
     // Cobro
     z.string(),
-    z.string().or(z.number()),
+    z.string().refine(
+      async (value) => {
+        const lcValue = value.toLocaleLowerCase()
+
+        let currencies
+        if (typeof window === 'undefined') {
+          return false
+        } else {
+          currencies = await getCurrencies()
+        }
+
+        return currencies.find(
+          (c) => c.name.toLowerCase() === lcValue || c.symbol.toLowerCase() === lcValue
+        )
+      },
+      (value) => ({ message: `No existe la moneda ${value}` })
+    ),
     z.number().positive(),
     castToString,
     castToDate
