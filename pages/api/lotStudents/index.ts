@@ -35,10 +35,11 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         // iteramos, por cada agrupación por identificación
 
         //se obtiene el estudiante para saber el ID de la persona y si es un estudiante válido
-        const student = await prisma.student.findFirstOrThrow({
+        const student = await prisma.student.findFirst({
           select: { personId: true },
           where: { person: { docNumber: { equals: docNum } } }
         })
+        if (!student) throw new Error(`no student ${docNum} found`)
         // llamar a Billings para 'preparar' posibles cobros/retardos
 
         // preparamos las propiedades del recibo
@@ -94,13 +95,14 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           }
 
           //Cobros
-          const paymentMethod = await prisma.paymentMethod.findFirstOrThrow({
+          const paymentMethod = await prisma.paymentMethod.findFirst({
             select: {
               id: true,
               metaPayment: true
             },
             where: { name: stringSearch(row.metodo_de_pago) }
           })
+          if (!paymentMethod) throw new Error(`No PaymentMethod ${row.metodo_de_pago} found`)
 
           const metaPayment = (paymentMethod.metaPayment as MetaPaymentDef[])?.map(
             (metaPayment: MetaPaymentDef) => {
@@ -114,12 +116,13 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
           const date = dayjs(row.fecha)
           const lte = date.set('h', 23).set('m', 59).set('s', 59).set('ms', 999).toDate()
-          const conversion = await prisma.conversion.findFirstOrThrow({
+          const conversion = await prisma.conversion.findFirst({
             // dolar, euro, libra, bolivares, etc...
             select: { id: true, value: true },
             where: { date: { lte }, id: row.moneda },
             orderBy: { date: 'desc' }
           })
+          if (!conversion) throw new Error(`no conversion for currency ${row.moneda} found`)
           // Convertimos en bolívares el valor del producto para validar que está dentro del monto pasado en el excel
           const amountConv = amount * conversion.value
 
