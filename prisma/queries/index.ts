@@ -109,6 +109,7 @@ export const receiptWithAll = Prisma.validator<Prisma.ReceiptArgs>()({
     charges: {
       select: {
         amount: true,
+        currency: { select: { id: true, name: true, symbol: true } },
         id: true,
         paymentMethod: {
           select: {

@@ -67,11 +67,11 @@ export const insertReceipt = async (body: CreateReceiptInput) => {
 
     // Preparamos los datos de los cargos a crear/subir con el recibo :D
     const chargesData: Prisma.ChargeCreateManyReceiptInput[] = body.charges.map((charge) => {
-      const { amount, paymentMethod } = charge
-      const { conversion, id, metaPayment } = paymentMethod
+      const { amount, paymentMethod, currencyId } = charge
+      const { id, metaPayment } = paymentMethod
       return {
         amount,
-        conversionId: conversion,
+        currencyId,
         paymentMethodId: id,
         metaPayment
       } as Prisma.ChargeCreateManyReceiptInput

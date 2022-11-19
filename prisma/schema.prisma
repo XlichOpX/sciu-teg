@@ -173,11 +173,12 @@ model Charge {
   metaPayment     Json?
   amount          Float
   receiptId       Int
-  conversionId    Int
+  currencyId      Int
   createdAt       DateTime      @default(now())
   updatedAt       DateTime?     @updatedAt
   paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
   receipt         Receipt       @relation(fields: [receiptId], references: [id])
+  currency        Currency      @relation(fields: [currencyId], references: [id])
 }
 
 model PaymentMethod {
@@ -199,6 +200,7 @@ model Currency {
   updatedAt      DateTime?       @updatedAt
   paymentMethods PaymentMethod[]
   conversions    Conversion[]
+  charge         Charge[]
 }
 
 model Conversion {

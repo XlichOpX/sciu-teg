@@ -38,9 +38,9 @@ export const receiptCreateSchemaInput = z.object({
       amount: z.number({ invalid_type_error: 'Monto requerido' }).positive(),
       paymentMethod: z.object({
         id: z.number().positive(),
-        metaPayment: metaPaymentDataSchema.array().nullish(),
-        conversion: z.number().positive()
-      })
+        metaPayment: metaPaymentDataSchema.array().nullish()
+      }),
+      currencyId: z.number().positive()
     })
     .array(),
   products: receiptProductSchema.array().nullish(),

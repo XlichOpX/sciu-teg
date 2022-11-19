@@ -53,13 +53,13 @@ const CATEGORIES = [
 ]
 
 // Parámetros para manejar la cantidad de datos a generar
-const totalOccupations = 30
-const totalStudents = 100
-const totalClients = 100
-const totalConversions = 10
+const totalOccupations = 5
+const totalStudents = 5
+const totalClients = 5
+const totalConversions = 4
 const receiptsPerPerson = 2
-const productsPerReceipt = 6
-const chargesPerReceipt = 3
+const productsPerReceipt = 2
+const chargesPerReceipt = 1
 
 async function main() {
   await createPaymentMethods()
@@ -157,7 +157,7 @@ async function createReceipts() {
   const persons = await prisma.person.findMany()
   const products = await prisma.product.findMany()
   const paymentMethodIds = (await prisma.paymentMethod.findMany()).map((pm) => pm.id)
-  const conversionIds = (await prisma.conversion.findMany()).map((c) => c.id)
+  const currencyId = (await prisma.currency.findMany()).map((c) => c.id)
 
   const receipts = Promise.all(
     persons
@@ -181,6 +181,7 @@ async function createReceipts() {
 
           return prisma.receipt.create({
             data: {
+              amount: totalAmount,
               personId: p.id,
               chargedProducts: {
                 createMany: {
@@ -193,7 +194,7 @@ async function createReceipts() {
                     amount: totalAmount / totalCharges,
                     paymentMethodId: getRandomValueFromArray(paymentMethodIds),
                     createdAt: faker.date.recent(),
-                    conversionId: getRandomValueFromArray(conversionIds)
+                    currencyId: getRandomValueFromArray(currencyId)
                   }))
                 }
               }
