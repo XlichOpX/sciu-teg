@@ -37,12 +37,6 @@ export const RoleForm = ({
           <Input {...register('name')} />
           <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
         </FormControl>
-
-        <FormControl isInvalid={!!errors.level} isRequired>
-          <FormLabel>Nivel</FormLabel>
-          <Input type="number" {...register('level', { valueAsNumber: true })} />
-          <FormErrorMessage>{errors.level?.message}</FormErrorMessage>
-        </FormControl>
       </SimpleGrid>
 
       <FormControl isInvalid={!!errors.description} isRequired>
@@ -76,7 +70,6 @@ export const RoleForm = ({
 const validationSchema = z.object({
   name: z.string().min(1).max(30),
   description: z.string().min(1).max(64),
-  level: z.number().int().nonnegative(),
   permissions: z.array(
     z.object({
       value: z.number().int().positive(),

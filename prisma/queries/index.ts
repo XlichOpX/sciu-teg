@@ -163,14 +163,14 @@ export const studentWithPersonCareerAndStatus = Prisma.validator<Prisma.StudentA
 
 export const billing = Prisma.validator<Prisma.BillingArgs>()({
   select: {
+    amount: true,
+    createdAt: true,
+    dateToPay: true,
     id: true,
     isCharged: true,
     product: true,
     productName: true,
-    amount: true,
-    semester: true,
-    createAt: true,
-    dateToPay: true
+    semester: true
   }
 })
 

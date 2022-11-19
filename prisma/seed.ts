@@ -292,26 +292,18 @@ async function createPaymentMethods() {
 }
 
 async function createCurrencies() {
-  return await Promise.all(
-    CURRENCIES.map((c) =>
-      prisma.currency.create({
-        data: {
-          name: c.name,
-          symbol: c.symbol
-        }
-      })
-    )
-  )
+  await prisma.currency.createMany({
+    data: CURRENCIES
+  })
 }
 
 async function createRoles() {
   return await prisma.role.createMany({
     data: [
-      { name: 'Administrador', description: 'Dios', level: 999 },
+      { name: 'adm', description: 'Dios' },
       ...Array.from({ length: 6 }).map(() => ({
         name: faker.name.jobType(),
-        description: faker.lorem.sentence(4),
-        level: faker.datatype.number(5)
+        description: faker.lorem.sentence(4)
       }))
     ]
   })
