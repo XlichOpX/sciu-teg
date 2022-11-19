@@ -148,6 +148,7 @@ export const Sidebar = () => {
                   options={categories}
                   getOptionLabel={(o) => o.name}
                   getOptionValue={(o) => o.id.toString()}
+                  closeMenuOnSelect={false}
                 />
               )}
             />
