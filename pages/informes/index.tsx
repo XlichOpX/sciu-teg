@@ -14,7 +14,7 @@ const Reports: NextPageWithLayout = () => {
       <Heading as="h1">Informes</Heading>
       <Divider my={4} />
 
-      <SidebarLayout sidebar={<Sidebar />}>
+      <SidebarLayout sidebar={<Sidebar />} sidebarWidth="30%">
         <Text>Solicite un informe...</Text>
       </SidebarLayout>
     </>
