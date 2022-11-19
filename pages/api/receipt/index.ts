@@ -76,7 +76,7 @@ const getReceipts = async (
 
   const count = await prisma.receipt.count({ where })
   //obtenemos TODOS los recibos
-  // Recibos con información escencial de la persona
+  // Recibos con información esencial de la persona
   const result = await prisma.receipt.findMany({
     ...receiptWithPerson,
     ...routePaginate(query),

@@ -6,14 +6,26 @@ export const castToString = z.preprocess((arg) => {
   return arg
 }, z.string())
 
+/** Intenta convertir el input a Date antes de validarlo como tal */
+export const castToDate = z.preprocess((arg) => {
+  if (arg != null && typeof arg === 'string') return new Date(arg)
+  return arg
+}, z.date())
+
 export const headingSchema = z.tuple([
+  // Estudiante
   z.literal('cedula'),
+  // Producto
+  // Mensualidad
   z.literal('semestre'),
   z.literal('mensualidad'),
   z.literal('producto'),
   z.literal('precio'),
+  // Artículo
   z.literal('cantidad'),
+  // Cobro
   z.literal('metodo_de_pago'),
+  z.literal('moneda'),
   z.literal('monto_cobrado'),
   z.literal('referencia'),
   z.literal('fecha')
@@ -21,16 +33,22 @@ export const headingSchema = z.tuple([
 
 export const dataSchema = z
   .tuple([
+    // Estudiante
     castToString,
+    // Producto
+    // Mensualidad
     castToString.nullable(),
     z.string().nullable(),
     z.string(),
     z.number().positive(),
+    // Artículo
     z.number().positive().int(),
+    // Cobro
     z.string(),
+    z.string().or(z.number()),
     z.number().positive(),
     castToString,
-    z.date()
+    castToDate
   ])
   .array()
 

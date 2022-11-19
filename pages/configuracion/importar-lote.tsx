@@ -15,16 +15,14 @@ import React, { useRef, useState } from 'react'
 import { sheetSchema } from 'schema/batchImportSchema'
 import { uploadChargesBatch } from 'services/batchImports'
 import { ReceiptWithPerson } from 'types/receipt'
+import { FormattedErrors, Sheet } from 'types/utils'
 import { encodeFile } from 'utils/encodeFile'
 import { read, utils } from 'xlsx'
-import { z } from 'zod'
-
-type FormattedErrors = z.inferFormattedError<typeof sheetSchema>
 
 const BatchImport: NextPageWithLayout = () => {
   const [errors, setErrors] = useState<{ formatted: FormattedErrors; flattened: string[] }>()
   const [fileName, setFileName] = useState<string>()
-  const [sheet, setSheet] = useState<{ headings: unknown[]; data: unknown[][] }>()
+  const [sheet, setSheet] = useState<Sheet>()
   const [createdReceipts, setCreatedReceipts] = useState<ReceiptWithPerson[]>()
   const encodedFile = useRef<string>()
   const isFileValid = !errors && fileName
@@ -87,9 +85,9 @@ const BatchImport: NextPageWithLayout = () => {
   }
 
   const handleSubmit = async () => {
-    if (!encodedFile.current) return
+    if (!sheet) return
     try {
-      const receipts = await uploadChargesBatch(encodedFile.current)
+      const receipts = await uploadChargesBatch(sheet)
       setCreatedReceipts(receipts)
       reset()
     } catch (error) {
