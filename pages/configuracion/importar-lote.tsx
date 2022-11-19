@@ -1,4 +1,4 @@
-import { Divider, Flex, Heading, Stack } from '@chakra-ui/react'
+import { Divider, Flex, Heading, Stack, useToast } from '@chakra-ui/react'
 import { FullyCenteredSpinner, SaveButton } from 'components/app'
 import {
   CreatedReceiptsModal,
@@ -27,6 +27,7 @@ const BatchImport: NextPageWithLayout = () => {
   const [validSheet, setValidSheet] = useState<SheetData>()
   const [createdReceipts, setCreatedReceipts] = useState<ReceiptWithPerson[]>()
   const encodedFile = useRef<string>()
+  const toast = useToast()
 
   const { currencies } = useCurrencies()
   if (!currencies) return <FullyCenteredSpinner />
@@ -98,7 +99,12 @@ const BatchImport: NextPageWithLayout = () => {
       reset()
     } catch (error) {
       if (error instanceof HttpError) {
-        alert('Ocurrió un error al procesar el documento: ' + error.message)
+        toast({
+          status: 'error',
+          description: 'Ocurrió un error al procesar el documento: ' + error.message,
+          duration: null,
+          isClosable: true
+        })
       }
     }
   }
