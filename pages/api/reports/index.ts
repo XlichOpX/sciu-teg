@@ -1,11 +1,9 @@
-import { Prisma } from '@prisma/client'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
-import _ from 'lodash'
+// import _ from 'lodash'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextApiRequestQuery } from 'next/dist/server/api-utils'
-import { BasicReport } from 'types/report'
 import { canUserDo } from 'utils/checkPermissions'
 
 export default withIronSessionApiRoute(handle, ironOptions)
@@ -21,56 +19,106 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   const paymentMethodArr: number[] = await setPaymentMethod(paymentMethod)
   const categoryArr: number[] = await setCategories(category)
   try {
-    const basicReport = await prisma.$queryRaw<BasicReport[]>`select
-        (pm."name" || ' ' || c4.symbol) as "paymentMethod",
-        c2."name" as "category",
-        sum(ps."price") as "amount",
-        sum(ps.price * c3.dolar) "dolarAmount",
-        sum(ps.price * c3.euro) "euroAmount"
-      from
-        "Charge" c
-      join "ProductSale" ps on
-        ps."receiptId" = c."receiptId"
-      join "Product" p on
-        p.id = ps."productId"
-      join "Category" c2 on
-        c2.id = p."categoryId"
-      join "Conversion" c3 on
-        c3.id = c."conversionId"
-      join "PaymentMethod" pm on
-        pm.id = c."paymentMethodId"
-      join "Currency" c4 on
-        pm."currencyId" = c4.id 
-      where 
-        c."createdAt" >= ${startDate}
-        and
-        c."createdAt" <= ${endDate}
-        and
-        c2.id in (${Prisma.join(categoryArr)})
-        and
-        pm.id in (${Prisma.join(paymentMethodArr)})
-      group by
-        pm.id,
-        c2.id ,
-        pm."name",
-        c2."name",
-	      c4."symbol"
-      order by
-        "amount" desc,
-        "category" desc,
-        "paymentMethod" desc
-      `
+    const basicReport = await prisma.charge.findMany({
+      select: {
+        id: true,
+        paymentMethod: { select: { id: true, name: true } },
+        amount: true,
+        currency: { select: { id: true, name: true, symbol: true } },
+        receipt: {
+          select: {
+            chargedProducts: {
+              select: {
+                product: { select: { category: { select: { id: true, name: true } } } },
+                price: true
+              }
+            }
+          }
+        }
+      },
+      where: {
+        createdAt: { lte: startDate, gte: endDate },
+        receipt: { chargedProducts: { some: { product: { categoryId: { in: categoryArr } } } } },
+        paymentMethodId: { in: paymentMethodArr }
+      },
+      orderBy: {
+        amount: 'desc'
+      }
+    })
 
+    const composeReport = basicReport.map((charge) => {
+      const { paymentMethod, receipt, id, currency, amount } = charge
+      const { chargedProducts } = receipt
+      const category = chargedProducts.map((charProd) => {
+        const {
+          price,
+          product: { category }
+        } = charProd
+        return { price, ...category }
+      })
+
+      return {
+        amount,
+        id,
+        currency,
+        paymentMethod,
+        category
+      }
+    })
+
+    // res.json(basicReport)
     switch (report) {
       case 'arqByPayMethod':
-        const byPayment = _.groupBy(basicReport, 'paymentMethod')
-        res.json({
-          result: byPayment
+        const byPayment: {
+          amount: number
+          paymentMethod: string
+          id: number
+          currency: { id: number; name: string; symbol: string }
+        }[] = []
+
+        composeReport.forEach((charge) => {
+          const { amount, currency, paymentMethod } = charge
+          const index = byPayment.findIndex(
+            (charge) => charge.id === paymentMethod.id && charge.currency.id === currency.id
+          )
+          if (index !== -1) byPayment[index].amount += amount
+          else
+            byPayment.push({
+              amount,
+              paymentMethod: paymentMethod.name,
+              id: paymentMethod.id,
+              currency
+            })
         })
+
+        res.json(byPayment)
         break
       case 'arqByCategory':
-        const byCategory = _.groupBy(basicReport, 'category')
-        res.json({ result: byCategory })
+        // for do :'v
+        // const byCategory: {
+        //   amount: number
+        //   category: string
+        //   id: number
+        //   currency: { id: number; name: string; symbol: string }
+        // }[] = []
+
+        // composeReport.forEach((charge) => {
+        //   const { amount, currency, paymentMethod, category } = charge
+
+        //   const index = byPayment.findIndex(
+        //     (charge) => charge.id === paymentMethod.id && charge.currency.id === currency.id
+        //   )
+        //   if (index !== -1) byPayment[index].amount += amount
+        //   else
+        //     byPayment.push({
+        //       amount,
+        //       paymentMethod: paymentMethod.name,
+        //       id: paymentMethod.id,
+        //       currency
+        //     })
+        // })
+
+        // res.json({ result: byCategory })
         break
       default:
         res.json({ error: `not report found` })
