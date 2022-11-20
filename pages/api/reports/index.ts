@@ -34,10 +34,11 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
               }
             }
           }
-        }
+        },
+        createdAt: true
       },
       where: {
-        createdAt: { lte: startDate, gte: endDate },
+        createdAt: { gte: startDate, lte: endDate },
         receipt: { chargedProducts: { some: { product: { categoryId: { in: categoryArr } } } } },
         paymentMethodId: { in: paymentMethodArr }
       },
@@ -47,7 +48,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
     })
 
     const composeReport = basicReport.map((charge) => {
-      const { paymentMethod, receipt, id, currency, amount } = charge
+      const { paymentMethod, receipt, id, currency, amount, createdAt } = charge
       const { chargedProducts } = receipt
       const category = chargedProducts.map((charProd) => {
         const {
@@ -62,7 +63,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         id,
         currency,
         paymentMethod,
-        category
+        category,
+        createdAt
       }
     })
 
@@ -74,10 +76,11 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           paymentMethod: string
           id: number
           currency: { id: number; name: string; symbol: string }
+          createdAt: Date
         }[] = []
 
         composeReport.forEach((charge) => {
-          const { amount, currency, paymentMethod } = charge
+          const { amount, currency, paymentMethod, createdAt } = charge
           const index = byPayment.findIndex(
             (charge) => charge.id === paymentMethod.id && charge.currency.id === currency.id
           )
@@ -87,7 +90,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
               amount,
               paymentMethod: paymentMethod.name,
               id: paymentMethod.id,
-              currency
+              currency,
+              createdAt
             })
         })
 
@@ -147,6 +151,7 @@ async function setCategories(category: string[] | string | undefined) {
     return categories.map((cat) => cat.id)
   }
 }
+
 async function setPaymentMethod(paymentMethod: string[] | string | undefined) {
   if (paymentMethod) {
     return Array.isArray(paymentMethod)
