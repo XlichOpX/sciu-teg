@@ -18,6 +18,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   const paymentMethodArr: number[] = await setPaymentMethod(paymentMethod)
   const categoryArr: number[] = await setCategories(category)
   try {
+    console.log(categoryArr)
     const basicReport = await prisma.charge.findMany({
       select: {
         id: true,
@@ -37,15 +38,21 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         createdAt: true
       },
       where: {
-        createdAt: { gte: startDate, lte: endDate },
-        receipt: { chargedProducts: { some: { product: { categoryId: { in: categoryArr } } } } },
-        paymentMethodId: { in: paymentMethodArr }
+        AND: [
+          { createdAt: { gte: startDate, lte: endDate } },
+          {
+            receipt: {
+              chargedProducts: { some: { product: { categoryId: { in: categoryArr } } } }
+            }
+          },
+          { paymentMethodId: { in: paymentMethodArr } }
+        ]
       },
       orderBy: {
         amount: 'desc'
       }
     })
-
+    console.log(JSON.stringify(basicReport, null, 2))
     const composeReport = basicReport.map((charge) => {
       const { paymentMethod, receipt, id, currency, amount, createdAt } = charge
       const { chargedProducts } = receipt
@@ -80,6 +87,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
         composeReport.forEach((charge) => {
           const { amount, currency, paymentMethod, createdAt } = charge
+          if (!paymentMethodArr.includes(paymentMethod.id)) return
           const index = byPayment.findIndex(
             (charge) => charge.id === paymentMethod.id && charge.currency.id === currency.id
           )
@@ -108,6 +116,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         composeReport.forEach((charge) => {
           const { amount, currency, category } = charge
           category.forEach((cat) => {
+            if (!categoryArr.includes(cat.id)) return
             const index = byCategory.findIndex(
               (charge) => charge.id === cat.id && charge.currency.id === currency.id
             )
