@@ -18,7 +18,6 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   const paymentMethodArr: number[] = await setPaymentMethod(paymentMethod)
   const categoryArr: number[] = await setCategories(category)
   try {
-    console.log(categoryArr)
     const basicReport = await prisma.charge.findMany({
       select: {
         id: true,
@@ -52,7 +51,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         amount: 'desc'
       }
     })
-    console.log(JSON.stringify(basicReport, null, 2))
+
     const composeReport = basicReport.map((charge) => {
       const { paymentMethod, receipt, id, currency, amount, createdAt } = charge
       const { chargedProducts } = receipt
