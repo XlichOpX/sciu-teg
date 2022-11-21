@@ -3,7 +3,7 @@ import { FullyCenteredSpinner, SimpleBox } from 'components/app'
 import { usePaymentMethods } from 'hooks'
 import { Controller, useFormContext } from 'react-hook-form'
 import { z } from 'zod'
-import { ReportType } from './Sidebar'
+import { ReportType } from './reportTypes'
 
 export const ArqByPayMethodFilters = () => {
   const { paymentMethods } = usePaymentMethods()

@@ -4,7 +4,7 @@ import { SimpleBox } from 'components/app'
 import { useCategories } from 'hooks'
 import { Controller, useFormContext } from 'react-hook-form'
 import { z } from 'zod'
-import { ReportType } from './Sidebar'
+import { ReportType } from './reportTypes'
 
 export const ArqByCategoryFilters = () => {
   const { categories } = useCategories()

@@ -3,11 +3,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { SimpleBox } from 'components/app'
 import dayjs from 'dayjs'
 import { useForm } from 'react-hook-form'
-import { getReport } from 'services/reports'
 import { z } from 'zod'
-import { ArqByCategoryFilters } from './ArqByCategoryFilters'
-import { ArqByPayMethodFilters } from './ArqByPayMethodFilters'
 import { FiltersForm } from './FiltersForm'
+import { ReportTypeKey, reportTypes } from './reportTypes'
 
 const formId = 'ReportFiltersForm'
 
@@ -17,26 +15,19 @@ const reportDelimitationSchema = z.object({
   endDate: z.string()
 })
 
-const reportTypes = {
-  arqByCategory: {
-    label: 'Arqueo por categoría',
-    schema: z.object({ category: z.number().array() }),
-    defaultValues: { category: [] },
-    filters: ArqByCategoryFilters
-  },
-  arqByPayMethod: {
-    label: 'Arqueo por método de pago',
-    schema: z.object({ paymentMethod: z.number().array() }),
-    defaultValues: { paymentMethod: [] },
-    filters: ArqByPayMethodFilters
-  }
-}
-
-export type ReportType = typeof reportTypes
-export type ReportTypeKey = keyof typeof reportTypes
 type ReportDelimitation = z.infer<typeof reportDelimitationSchema>
 
-export const Sidebar = () => {
+export const Sidebar = ({
+  onSubmit
+}: {
+  onSubmit: ({
+    filters,
+    reportType
+  }: {
+    filters: Record<string, unknown[]>
+    reportType: ReportTypeKey
+  }) => void
+}) => {
   const { register, watch } = useForm<ReportDelimitation>({
     resolver: zodResolver(reportDelimitationSchema),
     defaultValues: {
@@ -90,16 +81,7 @@ export const Sidebar = () => {
         key={reportType}
         schema={currentReportType.schema}
         defaultValues={currentReportType.defaultValues}
-        onSubmit={async (data) => {
-          const report = await getReport({
-            reportType: reportType as ReportTypeKey,
-            start: startDate,
-            end: endDate,
-            filters: data
-          })
-
-          console.log({ report })
-        }}
+        onSubmit={(filters) => onSubmit({ filters, reportType: reportType as ReportTypeKey })}
         filters={currentReportType.filters}
         id={formId}
       />
