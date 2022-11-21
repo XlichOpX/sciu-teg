@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { SimpleBox } from 'components/app'
 import dayjs from 'dayjs'
 import { useForm } from 'react-hook-form'
+import { getReport } from 'services/reports'
 import { z } from 'zod'
 import { ArqByCategoryFilters } from './ArqByCategoryFilters'
 import { ArqByPayMethodFilters } from './ArqByPayMethodFilters'
@@ -19,19 +20,20 @@ const reportDelimitationSchema = z.object({
 const reportTypes = {
   arqByCategory: {
     label: 'Arqueo por categoría',
-    schema: z.object({ categories: z.number().array() }),
-    defaultValues: { categories: [] },
+    schema: z.object({ category: z.number().array() }),
+    defaultValues: { category: [] },
     filters: ArqByCategoryFilters
   },
   arqByPayMethod: {
     label: 'Arqueo por método de pago',
-    schema: z.object({ paymentMethods: z.number().array() }),
-    defaultValues: { paymentMethods: [] },
+    schema: z.object({ paymentMethod: z.number().array() }),
+    defaultValues: { paymentMethod: [] },
     filters: ArqByPayMethodFilters
   }
 }
 
-type ReportType = keyof typeof reportTypes
+export type ReportType = typeof reportTypes
+export type ReportTypeKey = keyof typeof reportTypes
 type ReportDelimitation = z.infer<typeof reportDelimitationSchema>
 
 export const Sidebar = () => {
@@ -44,9 +46,9 @@ export const Sidebar = () => {
     }
   })
 
-  const values = watch()
+  const { reportType, startDate, endDate } = watch()
 
-  const currentReportType = reportTypes[values.reportType as ReportType]
+  const currentReportType = reportTypes[reportType as ReportTypeKey]
 
   return (
     <VStack align="stretch">
@@ -57,7 +59,7 @@ export const Sidebar = () => {
             <Select {...register('reportType')}>
               {Object.keys(reportTypes).map((rt) => (
                 <option value={rt} key={rt}>
-                  {reportTypes[rt as ReportType].label}
+                  {reportTypes[rt as ReportTypeKey].label}
                 </option>
               ))}
             </Select>
@@ -65,7 +67,7 @@ export const Sidebar = () => {
 
           <FormControl>
             <FormLabel>Fecha de inicio</FormLabel>
-            <Input {...register('startDate')} type="date" max={values.endDate} />
+            <Input {...register('startDate')} type="date" max={endDate} />
           </FormControl>
 
           <FormControl>
@@ -73,7 +75,7 @@ export const Sidebar = () => {
             <Input
               {...register('endDate')}
               type="date"
-              min={values.startDate}
+              min={startDate}
               max={dayjs().format('YYYY-MM-DD')}
             />
           </FormControl>
@@ -85,10 +87,19 @@ export const Sidebar = () => {
       </SimpleBox>
 
       <FiltersForm
-        key={values.reportType}
+        key={reportType}
         schema={currentReportType.schema}
         defaultValues={currentReportType.defaultValues}
-        onSubmit={(data) => console.log(data)}
+        onSubmit={async (data) => {
+          const report = await getReport({
+            reportType: reportType as ReportTypeKey,
+            start: startDate,
+            end: endDate,
+            filters: data
+          })
+
+          console.log({ report })
+        }}
         filters={currentReportType.filters}
         id={formId}
       />

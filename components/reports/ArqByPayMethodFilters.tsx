@@ -2,10 +2,12 @@ import { Checkbox, FormControl, FormLabel, VStack } from '@chakra-ui/react'
 import { FullyCenteredSpinner, SimpleBox } from 'components/app'
 import { usePaymentMethods } from 'hooks'
 import { Controller, useFormContext } from 'react-hook-form'
+import { z } from 'zod'
+import { ReportType } from './Sidebar'
 
 export const ArqByPayMethodFilters = () => {
   const { paymentMethods } = usePaymentMethods()
-  const { control } = useFormContext()
+  const { control } = useFormContext<z.infer<ReportType['arqByPayMethod']['schema']>>()
 
   return (
     <SimpleBox>
@@ -14,7 +16,7 @@ export const ArqByPayMethodFilters = () => {
         {paymentMethods ? (
           <VStack align="flex-start">
             <Controller
-              name="paymentMethods"
+              name="paymentMethod"
               control={control}
               render={({ field }) => (
                 <>

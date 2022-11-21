@@ -3,17 +3,19 @@ import { Select as RSelect } from 'chakra-react-select'
 import { SimpleBox } from 'components/app'
 import { useCategories } from 'hooks'
 import { Controller, useFormContext } from 'react-hook-form'
+import { z } from 'zod'
+import { ReportType } from './Sidebar'
 
 export const ArqByCategoryFilters = () => {
   const { categories } = useCategories()
-  const { control } = useFormContext()
+  const { control } = useFormContext<z.infer<ReportType['arqByCategory']['schema']>>()
 
   return (
     <SimpleBox>
       <FormControl>
         <FormLabel>Categorías</FormLabel>
         <Controller
-          name="categories"
+          name="category"
           control={control}
           render={({ field }) => (
             <RSelect
