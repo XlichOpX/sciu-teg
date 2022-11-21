@@ -12,3 +12,5 @@ export type CategoryReport = {
   id: number
   currency: { id: number; name: string; symbol: string }
 }
+
+export type Report = PaymentMethodReport[] | CategoryReport[]

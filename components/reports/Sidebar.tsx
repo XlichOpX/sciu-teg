@@ -22,10 +22,14 @@ export const Sidebar = ({
 }: {
   onSubmit: ({
     filters,
-    reportType
+    reportType,
+    start,
+    end
   }: {
     filters: Record<string, unknown[]>
     reportType: ReportTypeKey
+    start: string
+    end: string
   }) => void
 }) => {
   const { register, watch } = useForm<ReportDelimitation>({
@@ -81,7 +85,14 @@ export const Sidebar = ({
         key={reportType}
         schema={currentReportType.schema}
         defaultValues={currentReportType.defaultValues}
-        onSubmit={(filters) => onSubmit({ filters, reportType: reportType as ReportTypeKey })}
+        onSubmit={(filters) =>
+          onSubmit({
+            filters,
+            reportType: reportType as ReportTypeKey,
+            start: startDate,
+            end: endDate
+          })
+        }
         filters={currentReportType.filters}
         id={formId}
       />
