@@ -3,6 +3,8 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextApiRequestQuery } from 'next/dist/server/api-utils'
+import { CategoryReport } from 'types/category'
+import { PaymentMethodReport } from 'types/paymentMethod'
 import { canUserDo } from 'utils/checkPermissions'
 
 export default withIronSessionApiRoute(handle, ironOptions)
@@ -76,13 +78,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
     // res.json(basicReport)
     switch (report) {
       case 'arqByPayMethod':
-        const byPayment: {
-          amount: number
-          paymentMethod: string
-          id: number
-          currency: { id: number; name: string; symbol: string }
-          createdAt: Date
-        }[] = []
+        const byPayment: PaymentMethodReport[] = []
 
         composeReport.forEach((charge) => {
           const { amount, currency, paymentMethod, createdAt } = charge
@@ -105,12 +101,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         break
       case 'arqByCategory':
         // for do :'v
-        const byCategory: {
-          amount: number
-          category: string
-          id: number
-          currency: { id: number; name: string; symbol: string }
-        }[] = []
+        const byCategory: CategoryReport[] = []
 
         composeReport.forEach((charge) => {
           const { amount, currency, category } = charge
