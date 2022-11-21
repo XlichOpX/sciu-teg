@@ -3,8 +3,7 @@ import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextApiRequestQuery } from 'next/dist/server/api-utils'
-import { CategoryReport } from 'types/category'
-import { PaymentMethodReport } from 'types/paymentMethod'
+import { CategoryReport, PaymentMethodReport } from 'types/report'
 import { canUserDo } from 'utils/checkPermissions'
 
 export default withIronSessionApiRoute(handle, ironOptions)

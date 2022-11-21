@@ -17,11 +17,3 @@ export type PaymentMethodWithCurrencies = Omit<
 
 export type MetaPaymentDef = z.infer<typeof metaPaymentDefSchema>
 export type MetaPaymentData = z.infer<typeof metaPaymentDataSchema>
-
-export type PaymentMethodReport = {
-  amount: number
-  paymentMethod: string
-  id: number
-  currency: { id: number; name: string; symbol: string }
-  createdAt: Date
-}
