@@ -2,6 +2,7 @@ import { Category, Currency, PaymentMethod } from '@prisma/client'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
+import _ from 'lodash'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextApiRequestQuery } from 'next/dist/server/api-utils'
 import { CategoryReport, PaymentMethodReport, ProductReport } from 'types/report'
@@ -85,7 +86,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
             })
         })
 
-        res.json(byPayment)
+        res.json(_.groupBy(byPayment, 'paymentMethod'))
         break
 
       case 'arqByCategory':
@@ -111,7 +112,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           })
         })
 
-        res.json({ result: byCategory })
+        res.json(_.groupBy(byCategory, 'category'))
 
         break
 

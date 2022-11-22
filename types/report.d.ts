@@ -5,6 +5,7 @@ export type PaymentMethodReport = {
   currency: { id: number; name: string; symbol: string }
   createdAt: Date
 }
+export type GroupedPaymentMethodReport = __.Dictionary<PaymentMethodReport[]>
 
 export type CategoryReport = {
   amount: number
@@ -12,6 +13,8 @@ export type CategoryReport = {
   id: number
   currency: { id: number; name: string; symbol: string }
 }
+
+export type GroupedCategoryReport = __.Dictionary<CategoryReport[]>
 
 export type Report = PaymentMethodReport[] | CategoryReport[] | ProductReport[]
 
