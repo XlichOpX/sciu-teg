@@ -2,6 +2,7 @@ import { z, ZodTypeAny } from 'zod'
 import { ArqByCategoryFilters } from './ArqByCategoryFilters'
 import { ArqByCategoryReport } from './ArqByCategoryReport'
 import { ArqByPayMethodFilters } from './ArqByPayMethodFilters'
+import { ArqByPayMethodReport } from './ArqByPayMethodReport'
 
 type ReportTypeDef = {
   label: string
@@ -23,7 +24,8 @@ export const reportTypes: Record<string, ReportTypeDef> = {
     label: 'Arqueo por método de pago',
     schema: z.object({ paymentMethod: z.number().array() }),
     defaultValues: { paymentMethod: [] },
-    filters: ArqByPayMethodFilters
+    filters: ArqByPayMethodFilters,
+    component: ArqByPayMethodReport
   }
 }
 

@@ -1,6 +1,6 @@
 import { ReportTypeKey } from 'components/reports/reportTypes'
 import { fetch } from 'lib/fetch'
-import { GroupedCategoryReport, PaymentMethodReport } from 'types/report'
+import { GroupedCategoryReport, GroupedPaymentMethodReport } from 'types/report'
 
 export const getReport = async ({
   reportType,
@@ -27,7 +27,7 @@ export const getReport = async ({
     case 'arqByPayMethod':
       return (await fetch(
         `/api/reports?report=arqByPayMethod&start=${start}&end=${end}${filtersParams}`
-      )) as PaymentMethodReport[]
+      )) as GroupedPaymentMethodReport
     default:
       throw new Error('Reporte no soportado')
   }
