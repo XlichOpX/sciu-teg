@@ -5,4 +5,14 @@ const config: ThemeConfig = {
   useSystemColorMode: true
 }
 
-export const theme = extendTheme({ config })
+const Table = {
+  variants: {
+    simple: {
+      th: {
+        color: 'inherit'
+      }
+    }
+  }
+}
+
+export const theme = extendTheme({ config, components: { Table } })

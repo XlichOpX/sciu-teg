@@ -1,6 +1,5 @@
 import {
   Box,
-  chakra,
   Container,
   Divider,
   Flex,
@@ -13,6 +12,7 @@ import {
   Td,
   Text,
   Tfoot,
+  Th,
   Thead,
   Tr
 } from '@chakra-ui/react'
@@ -33,7 +33,7 @@ export const ReceiptDetail = ({
   return (
     <Container
       maxW="container.lg"
-      sx={{ '@media print': { backgroundColor: 'white', color: 'black' } }}
+      sx={{ '@media print': { color: 'black', borderColor: 'black' } }}
       py={4}
     >
       <Head>
@@ -105,20 +105,20 @@ export const ReceiptDetail = ({
         <span>N° {receipt.id}</span>
       </HStack>
 
-      <Divider my={4} />
+      <Divider mt={4} />
 
       <TableContainer mb={4}>
         <Table>
           <Thead>
             <Tr>
-              <chakra.th pl={0} textAlign="left">
+              <Th pl={0} textAlign="left">
                 Concepto
-              </chakra.th>
-              <chakra.th>Precio</chakra.th>
-              <chakra.th>Cantidad</chakra.th>
-              <chakra.th textAlign="right" pr={0}>
+              </Th>
+              <Th textAlign="center">Precio</Th>
+              <Th textAlign="center">Cantidad</Th>
+              <Th textAlign="right" pr={0}>
                 Total
-              </chakra.th>
+              </Th>
             </Tr>
           </Thead>
 
