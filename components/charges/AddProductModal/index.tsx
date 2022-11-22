@@ -152,7 +152,12 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
                 <FormControl>
                   <FormLabel>Precio</FormLabel>
                   <InputGroup>
-                    <InputLeftElement pointerEvents="none" color="gray.300" zIndex={0}>
+                    <InputLeftElement
+                      pointerEvents="none"
+                      _dark={{ color: 'gray.300' }}
+                      _light={{ color: 'gray.700' }}
+                      zIndex={0}
+                    >
                       $
                     </InputLeftElement>
                     <Input readOnly value={selectedProductPrice * quantity} />

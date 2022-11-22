@@ -3,13 +3,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FullyCenteredSpinner } from 'components/app'
 import { InputArrayHeader } from 'components/app/InputArrayHeader'
 import { useConversions, usePaymentMethods } from 'hooks'
-import { round } from 'lodash'
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
-import { frontChargesInput } from 'schema/receiptSchema'
+import { receiptCreateSchemaInput } from 'schema/receiptSchema'
+import { getDiffLabel } from 'utils/getDiffLabel'
+import { round } from 'utils/round'
 import { z } from 'zod'
 import { PaymentMethodInputs } from './PaymentMethodInputs'
 
-export const chargesFormSchema = frontChargesInput
+export const chargesFormSchema = receiptCreateSchemaInput.pick({ charges: true })
 export type ChargesFormData = z.infer<typeof chargesFormSchema>
 
 export const ChargesForm = ({
@@ -55,7 +56,7 @@ export const ChargesForm = ({
   const { fields, append, remove } = useFieldArray({ control, name: 'charges' })
   const charges = watch('charges')
   const totalAmount = charges.reduce((ac, c) => ac + c.amount, 0)
-  const amountDiff = round(totalAmount - maxAmount, 4)
+  const amountDiff = round(totalAmount - maxAmount)
 
   if (!latestConversion || !paymentMethods) return <FullyCenteredSpinner />
 
@@ -66,8 +67,8 @@ export const ChargesForm = ({
         onAdd={() =>
           append({
             amount: 1,
+            currencyId: paymentMethods[0].currencies[0].id,
             paymentMethod: {
-              currencyId: paymentMethods[0].currencies[0].id,
               id: paymentMethods[0].id
             }
           })
@@ -87,12 +88,12 @@ export const ChargesForm = ({
               key={f.id}
               chargeIndex={i}
               formHook={formHook}
-              differenceWithTotal={maxAmount - totalAmount}
+              differenceWithTotal={totalAmount - maxAmount}
             />
           ))}
           {amountDiff !== 0 && (
-            <FormHelperText textAlign="center" color="red.300">
-              Diferencia: $ {amountDiff}
+            <FormHelperText textAlign="center" color="red.300" fontSize="md" fontWeight="bold">
+              {getDiffLabel(amountDiff)}: $ {Math.abs(round(amountDiff))}
             </FormHelperText>
           )}
         </FormControl>
