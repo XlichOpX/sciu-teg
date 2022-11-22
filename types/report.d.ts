@@ -13,4 +13,13 @@ export type CategoryReport = {
   currency: { id: number; name: string; symbol: string }
 }
 
-export type Report = PaymentMethodReport[] | CategoryReport[]
+export type Report = PaymentMethodReport[] | CategoryReport[] | ProductReport[]
+
+export type ProductReport = {
+  id: number
+  name: string
+  category: Pick<Category, 'id' | 'name'>
+  amount: number
+  createdAt: Date
+  quantity: number
+}
