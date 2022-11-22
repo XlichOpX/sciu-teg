@@ -1,13 +1,23 @@
-import { z } from 'zod'
+import { z, ZodTypeAny } from 'zod'
 import { ArqByCategoryFilters } from './ArqByCategoryFilters'
+import { ArqByCategoryReport } from './ArqByCategoryReport'
 import { ArqByPayMethodFilters } from './ArqByPayMethodFilters'
 
-export const reportTypes = {
+type ReportTypeDef = {
+  label: string
+  schema?: ZodTypeAny
+  defaultValues?: Record<string, unknown>
+  filters?: () => JSX.Element
+  component?: ({ data }: { data: any }) => JSX.Element
+}
+
+export const reportTypes: Record<string, ReportTypeDef> = {
   arqByCategory: {
     label: 'Arqueo por categoría',
     schema: z.object({ category: z.number().array() }),
     defaultValues: { category: [] },
-    filters: ArqByCategoryFilters
+    filters: ArqByCategoryFilters,
+    component: ArqByCategoryReport
   },
   arqByPayMethod: {
     label: 'Arqueo por método de pago',
