@@ -28,5 +28,7 @@ export const getReport = async ({
       return (await fetch(
         `/api/reports?report=arqByPayMethod&start=${start}&end=${end}${filtersParams}`
       )) as PaymentMethodReport[]
+    default:
+      throw new Error('Reporte no soportado')
   }
 }
