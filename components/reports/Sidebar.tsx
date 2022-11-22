@@ -1,4 +1,4 @@
-import { Button, FormControl, FormLabel, Input, Select, VStack } from '@chakra-ui/react'
+import { Button, FormControl, FormLabel, Input, Select, StackProps, VStack } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SimpleBox } from 'components/app'
 import dayjs from 'dayjs'
@@ -17,9 +17,7 @@ const reportDelimitationSchema = z.object({
 
 type ReportDelimitation = z.infer<typeof reportDelimitationSchema>
 
-export const Sidebar = ({
-  onSubmit
-}: {
+export interface ReportsSidebarProps extends Omit<StackProps, 'onSubmit'> {
   onSubmit: ({
     filters,
     reportType,
@@ -31,7 +29,9 @@ export const Sidebar = ({
     start: string
     end: string
   }) => void
-}) => {
+}
+
+export const Sidebar = ({ onSubmit, ...props }: ReportsSidebarProps) => {
   const { register, watch } = useForm<ReportDelimitation>({
     resolver: zodResolver(reportDelimitationSchema),
     defaultValues: {
@@ -46,7 +46,7 @@ export const Sidebar = ({
   const currentReportType = reportTypes[reportType as ReportTypeKey]
 
   return (
-    <VStack align="stretch">
+    <VStack align="stretch" {...props}>
       <SimpleBox>
         <VStack>
           <FormControl>

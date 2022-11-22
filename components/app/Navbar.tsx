@@ -4,6 +4,7 @@ import NextLink from 'next/link'
 import { FaGraduationCap, FaReceipt } from 'react-icons/fa'
 import { IoIosPeople, IoMdAnalytics } from 'react-icons/io'
 import { MdInventory, MdMenu, MdSettings } from 'react-icons/md'
+import { hideOnPrint } from 'utils/hideOnPrint'
 import { Logo } from './Logo'
 import { LogoutButton } from './LogoutButton'
 
@@ -64,6 +65,7 @@ export const Navbar = () => {
       backdropFilter="auto"
       backdropBlur="12px"
       shadow="md"
+      sx={{ ...hideOnPrint }}
     >
       <Container
         maxW="container.xl"

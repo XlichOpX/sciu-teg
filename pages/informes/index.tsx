@@ -7,6 +7,7 @@ import { NextPageWithLayout } from 'pages/_app'
 import { useState } from 'react'
 import { getReport } from 'services/reports'
 import { Report } from 'types/report'
+import { hideOnPrint } from 'utils/hideOnPrint'
 
 const Reports: NextPageWithLayout = () => {
   const [report, setReport] = useState<{ type: ReportTypeKey; data: Report }>()
@@ -14,16 +15,18 @@ const Reports: NextPageWithLayout = () => {
 
   return (
     <>
+      <Box sx={{ ...hideOnPrint }}>
       <Head>
         <title>Informes</title>
       </Head>
-
       <Heading as="h1">Informes</Heading>
       <Divider my={4} />
+      </Box>
 
       <SidebarLayout
         sidebar={
           <Sidebar
+            sx={{ ...hideOnPrint }}
             onSubmit={async (data) => {
               const report = await getReport(data)
               setReport({ type: data.reportType, data: report })
