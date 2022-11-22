@@ -58,7 +58,7 @@ const Reports: NextPageWithLayout = () => {
         {!report && <Text>Solicite un informe...</Text>}
         {isLoading && <FullyCenteredSpinner />}
 
-        {report && ReportView && !isLoading ? (
+        {report && ReportView && !isLoading && (
           <>
             <VStack mb={3}>
               <Heading size="lg">{reportTypes[report.type].label}</Heading>
@@ -84,9 +84,9 @@ const Reports: NextPageWithLayout = () => {
               Imprimir
             </Button>
           </>
-        ) : (
-          <pre>{JSON.stringify(report, null, 2)}</pre>
         )}
+
+        {report && !ReportView && !isLoading && <pre>{JSON.stringify(report, null, 2)}</pre>}
       </SidebarLayout>
     </>
   )
