@@ -26,6 +26,7 @@ const StudentDetail: NextPageWithLayout = () => {
   })
 
   const selectedBillingsIDs = billingsFormHook.watch('billings')
+  console.log(selectedBillingsIDs)
   const { products, addProduct, removeProduct, resetProducts } = useReceivables()
 
   return (
@@ -48,7 +49,25 @@ const StudentDetail: NextPageWithLayout = () => {
             onProductRemove={removeProduct}
             products={products}
             billings={data.billings}
+            selectedBillings={selectedBillingsIDs}
+            onBillingItemClick={(billingId) => {
+              if (selectedBillingsIDs.includes(billingId)) {
+                billingsFormHook.setValue(
+                  'billings',
+                  selectedBillingsIDs.filter((b) => b !== billingId)
+                )
+              } else {
+                billingsFormHook.setValue('billings', [...selectedBillingsIDs, billingId])
+              }
+            }}
             control={billingsFormHook.control}
+            onChargeClick={() => {
+              billingsFormHook.setValue(
+                'billings',
+                data.billings.map((b) => b.id)
+              )
+              console.log('clic')
+            }}
           />
 
           <Flex justifyContent="space-between" mt={4} gap={4} wrap="wrap">
