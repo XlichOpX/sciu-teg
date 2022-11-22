@@ -27,8 +27,8 @@ const ReceiptPage: NextPage = () => {
       <ReceiptDetail parameters={parameters} receipt={receipt} />
       <Button
         my={3}
-        display="block"
         mx="auto"
+        display="flex"
         colorScheme="blue"
         leftIcon={<BsPrinterFill />}
         onClick={print}

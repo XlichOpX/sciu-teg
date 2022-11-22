@@ -3,6 +3,7 @@ import {
   chakra,
   Container,
   Divider,
+  Flex,
   Heading,
   HStack,
   Stack,
@@ -76,23 +77,26 @@ export const ReceiptDetail = ({
 
       <Divider my={4} />
 
-      <Stack
+      <Flex
         direction={['column', 'row']}
         justify="space-between"
+        alignItems="center"
         sx={{
           '@media print': {
-            flexDirection: 'row'
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }
         }}
       >
-        <Text>
+        <p>
           Persona: {receipt.person.firstName} {receipt.person.firstLastName}
-        </Text>
-        <Text>
+        </p>
+        <p>
           {receipt.person.docType.type}-{receipt.person.docNumber}
-        </Text>
-        <Text>Fecha: {dayjs(receipt.createdAt).format('MM/DD/YYYY h:mm A')}</Text>
-      </Stack>
+        </p>
+        <p>Fecha: {dayjs(receipt.createdAt).format('MM/DD/YYYY h:mm A')}</p>
+      </Flex>
 
       <Divider my={4} />
 
