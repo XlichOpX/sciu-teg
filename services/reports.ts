@@ -29,6 +29,7 @@ export const getReport = async ({
         `/api/reports?report=arqByPayMethod&start=${start}&end=${end}${filtersParams}`
       )) as GroupedPaymentMethodReport
 
+    case 'arqByTotalProductsGraph':
     case 'arqByTotalProducts':
       return (await fetch(
         `/api/reports?report=arqByTotalProducts&start=${start}&end=${end}${filtersParams}`
