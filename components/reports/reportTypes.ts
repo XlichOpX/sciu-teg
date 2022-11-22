@@ -8,8 +8,8 @@ import { SoldProductsReport } from './SoldProductsReport'
 
 type ReportTypeDef = {
   label: string
-  schema?: ZodTypeAny
-  defaultValues?: Record<string, unknown>
+  schema: ZodTypeAny
+  defaultValues: Record<string, unknown>
   filters?: () => JSX.Element
   component?: ({ data }: { data: any }) => JSX.Element
 }
