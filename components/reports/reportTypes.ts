@@ -3,6 +3,7 @@ import { ArqByCategoryFilters } from './ArqByCategoryFilters'
 import { ArqByCategoryReport } from './ArqByCategoryReport'
 import { ArqByPayMethodFilters } from './ArqByPayMethodFilters'
 import { ArqByPayMethodReport } from './ArqByPayMethodReport'
+import { SoldProductsReport } from './SoldProductsReport'
 
 type ReportTypeDef = {
   label: string
@@ -26,6 +27,13 @@ export const reportTypes: Record<string, ReportTypeDef> = {
     defaultValues: { paymentMethod: [] },
     filters: ArqByPayMethodFilters,
     component: ArqByPayMethodReport
+  },
+  arqByTotalProducts: {
+    label: 'Productos vendidos',
+    schema: z.object({ category: z.number().array() }),
+    defaultValues: { category: [] },
+    filters: ArqByCategoryFilters,
+    component: SoldProductsReport
   }
 }
 
