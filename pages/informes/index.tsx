@@ -1,4 +1,5 @@
 import { Alert, Box, Button, Divider, Heading, Text, VStack } from '@chakra-ui/react'
+import { FullyCenteredSpinner } from 'components/app'
 import { BaseLayout, SidebarLayout } from 'components/layouts'
 import { Sidebar } from 'components/reports'
 import { ReportTypeKey, reportTypes } from 'components/reports/reportTypes'
@@ -17,6 +18,8 @@ const Reports: NextPageWithLayout = () => {
     start: string
     end: string
   }>()
+  const [isLoading, setIsLoading] = useState(false)
+
   const ReportView = report ? reportTypes[report.type].component : undefined
 
   const isOneDay = report?.start === report?.end
@@ -34,8 +37,10 @@ const Reports: NextPageWithLayout = () => {
       <SidebarLayout
         sidebar={
           <Sidebar
+            isLoading={isLoading}
             sx={{ ...hideOnPrint }}
             onSubmit={async (data) => {
+              setIsLoading(true)
               const report = await getReport(data)
               const { reportType, start, end } = data
               setReport({
@@ -44,13 +49,16 @@ const Reports: NextPageWithLayout = () => {
                 start: start.replaceAll('-', '/'),
                 end: end.replaceAll('-', '/')
               })
+              setIsLoading(false)
             }}
           />
         }
         sidebarWidth="30%"
       >
         {!report && <Text>Solicite un informe...</Text>}
-        {report && ReportView ? (
+        {isLoading && <FullyCenteredSpinner />}
+
+        {report && ReportView && !isLoading ? (
           <>
             <VStack mb={3}>
               <Heading size="lg">{reportTypes[report.type].label}</Heading>

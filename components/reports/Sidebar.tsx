@@ -29,9 +29,10 @@ export interface ReportsSidebarProps extends Omit<StackProps, 'onSubmit'> {
     start: string
     end: string
   }) => void
+  isLoading: boolean
 }
 
-export const Sidebar = ({ onSubmit, ...props }: ReportsSidebarProps) => {
+export const Sidebar = ({ onSubmit, isLoading, ...props }: ReportsSidebarProps) => {
   const { register, watch } = useForm<ReportDelimitation>({
     resolver: zodResolver(reportDelimitationSchema),
     defaultValues: {
@@ -75,7 +76,7 @@ export const Sidebar = ({ onSubmit, ...props }: ReportsSidebarProps) => {
             />
           </FormControl>
 
-          <Button type="submit" form={formId} w="full" colorScheme="blue">
+          <Button type="submit" form={formId} w="full" colorScheme="blue" isLoading={isLoading}>
             Ver informe
           </Button>
         </VStack>
