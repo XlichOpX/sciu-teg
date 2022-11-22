@@ -1,6 +1,6 @@
 import { ReportTypeKey } from 'components/reports/reportTypes'
 import { fetch } from 'lib/fetch'
-import { CategoryReport, PaymentMethodReport } from 'types/report'
+import { GroupedCategoryReport, PaymentMethodReport } from 'types/report'
 
 export const getReport = async ({
   reportType,
@@ -20,9 +20,9 @@ export const getReport = async ({
 
   switch (reportType) {
     case 'arqByCategory':
-      return (
-        await fetch(`/api/reports?report=arqByCategory&start=${start}&end=${end}${filtersParams}`)
-      ).result as CategoryReport[]
+      return (await fetch(
+        `/api/reports?report=arqByCategory&start=${start}&end=${end}${filtersParams}`
+      )) as GroupedCategoryReport
 
     case 'arqByPayMethod':
       return (await fetch(
