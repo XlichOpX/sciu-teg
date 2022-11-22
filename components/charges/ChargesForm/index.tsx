@@ -5,11 +5,11 @@ import { InputArrayHeader } from 'components/app/InputArrayHeader'
 import { useConversions, usePaymentMethods } from 'hooks'
 import { round } from 'lodash'
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
-import { frontChargesInput } from 'schema/receiptSchema'
+import { receiptCreateSchemaInput } from 'schema/receiptSchema'
 import { z } from 'zod'
 import { PaymentMethodInputs } from './PaymentMethodInputs'
 
-export const chargesFormSchema = frontChargesInput
+export const chargesFormSchema = receiptCreateSchemaInput.pick({ charges: true })
 export type ChargesFormData = z.infer<typeof chargesFormSchema>
 
 export const ChargesForm = ({
@@ -66,8 +66,8 @@ export const ChargesForm = ({
         onAdd={() =>
           append({
             amount: 1,
+            currencyId: paymentMethods[0].currencies[0].id,
             paymentMethod: {
-              currencyId: paymentMethods[0].currencies[0].id,
               id: paymentMethods[0].id
             }
           })

@@ -37,7 +37,7 @@ export const PaymentMethodInputs = ({
   const currentMethodId = watch(`charges.${chargeIndex}.paymentMethod.id`)
   const currentMethod = paymentMethods?.find((pm) => pm.id === currentMethodId)
 
-  const currentCurrencyId = watch(`charges.${chargeIndex}.paymentMethod.currencyId`)
+  const currentCurrencyId = watch(`charges.${chargeIndex}.currencyId`)
   const currentCurrency = currentMethod?.currencies?.find((c) => c.id === currentCurrencyId)
 
   const currentAmount = watch(`charges.${chargeIndex}.amount`)
@@ -53,7 +53,7 @@ export const PaymentMethodInputs = ({
     )
 
     if (currentMethod) {
-      setValue(`charges.${chargeIndex}.paymentMethod.currencyId`, currentMethod.currencies[0].id)
+      setValue(`charges.${chargeIndex}.currencyId`, currentMethod.currencies[0].id)
     }
   }, [currentMethod, setValue, chargeIndex])
 
@@ -81,7 +81,7 @@ export const PaymentMethodInputs = ({
 
         <FormControl>
           <Select
-            {...register(`charges.${chargeIndex}.paymentMethod.currencyId`, {
+            {...register(`charges.${chargeIndex}.currencyId`, {
               valueAsNumber: true
             })}
           >
