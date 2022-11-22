@@ -12,6 +12,7 @@ import {
 import { useLatestConversions, usePaymentMethods } from 'hooks'
 import { Fragment, useEffect } from 'react'
 import { UseFormReturn } from 'react-hook-form'
+import { getDiffLabel } from 'utils/getDiffLabel'
 import { round } from 'utils/round'
 import { ChargesFormData } from '.'
 
@@ -95,7 +96,11 @@ export const PaymentMethodInputs = ({
 
         <FormControl isInvalid={!!(errors.charges && errors.charges[chargeIndex]?.amount)}>
           <InputGroup>
-            <InputLeftElement pointerEvents="none" color="gray.300">
+            <InputLeftElement
+              pointerEvents="none"
+              _dark={{ color: 'gray.300' }}
+              _light={{ color: 'gray.700' }}
+            >
               {currentCurrency?.symbol}
             </InputLeftElement>
             <Input
@@ -111,12 +116,16 @@ export const PaymentMethodInputs = ({
               placeholder="Monto"
             />
           </InputGroup>
-          <FormHelperText>Apróx. ${currentAmount.toFixed(4)}</FormHelperText>
-          {diff !== 0 && (
-            <FormHelperText>
-              Dif. {currentCurrency?.symbol} {diff.toFixed(4)}
-            </FormHelperText>
-          )}
+          <FormHelperText>
+            Apróx. ${round(currentAmount)}
+            {diff !== 0 && (
+              <>
+                {' '}
+                | {getDiffLabel(diff)}: {currentCurrency?.symbol} {round(Math.abs(diff))}
+              </>
+            )}
+          </FormHelperText>
+
           <FormErrorMessage>
             {errors.charges && errors.charges[chargeIndex]?.amount?.message}
           </FormErrorMessage>

@@ -65,7 +65,11 @@ export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Pro
         <FormControl isInvalid={!!errors.price} isRequired>
           <FormLabel>Precio</FormLabel>
           <InputGroup>
-            <InputLeftElement pointerEvents="none" color="gray.300">
+            <InputLeftElement
+              pointerEvents="none"
+              _dark={{ color: 'gray.300' }}
+              _light={{ color: 'gray.700' }}
+            >
               $
             </InputLeftElement>
             <Input type="number" {...register('price', { valueAsNumber: true })} />

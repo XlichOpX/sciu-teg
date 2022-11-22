@@ -3,9 +3,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FullyCenteredSpinner } from 'components/app'
 import { InputArrayHeader } from 'components/app/InputArrayHeader'
 import { useConversions, usePaymentMethods } from 'hooks'
-import { round } from 'lodash'
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { receiptCreateSchemaInput } from 'schema/receiptSchema'
+import { getDiffLabel } from 'utils/getDiffLabel'
+import { round } from 'utils/round'
 import { z } from 'zod'
 import { PaymentMethodInputs } from './PaymentMethodInputs'
 
@@ -55,7 +56,7 @@ export const ChargesForm = ({
   const { fields, append, remove } = useFieldArray({ control, name: 'charges' })
   const charges = watch('charges')
   const totalAmount = charges.reduce((ac, c) => ac + c.amount, 0)
-  const amountDiff = round(totalAmount - maxAmount, 4)
+  const amountDiff = round(totalAmount - maxAmount)
 
   if (!latestConversion || !paymentMethods) return <FullyCenteredSpinner />
 
@@ -87,12 +88,12 @@ export const ChargesForm = ({
               key={f.id}
               chargeIndex={i}
               formHook={formHook}
-              differenceWithTotal={maxAmount - totalAmount}
+              differenceWithTotal={totalAmount - maxAmount}
             />
           ))}
           {amountDiff !== 0 && (
-            <FormHelperText textAlign="center" color="red.300">
-              Diferencia: $ {amountDiff}
+            <FormHelperText textAlign="center" color="red.300" fontSize="md" fontWeight="bold">
+              {getDiffLabel(amountDiff)}: $ {Math.abs(round(amountDiff))}
             </FormHelperText>
           )}
         </FormControl>
