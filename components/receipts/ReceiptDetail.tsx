@@ -7,6 +7,7 @@ import {
   HStack,
   Stack,
   Table,
+  TableCellProps,
   TableContainer,
   Tbody,
   Td,
@@ -20,8 +21,21 @@ import { Parameters } from '@prisma/client'
 import { Logo } from 'components/app'
 import dayjs from 'dayjs'
 import Head from 'next/head'
+import { ComponentProps } from 'react'
 import { MetaPaymentData } from 'types/paymentMethod'
 import { ReceiptWithAll } from 'types/receipt'
+
+const RTd = (props: TableCellProps) => (
+  <Td {...props} sx={{ '@media print': { borderColor: 'black' } }}>
+    {props.children}
+  </Td>
+)
+
+const RTh = (props: ComponentProps<typeof Th>) => (
+  <Th {...props} sx={{ '@media print': { borderColor: 'black' } }}>
+    {props.children}
+  </Th>
+)
 
 export const ReceiptDetail = ({
   parameters,
@@ -33,8 +47,13 @@ export const ReceiptDetail = ({
   return (
     <Container
       maxW="container.lg"
-      sx={{ '@media print': { color: 'black', borderColor: 'black' } }}
       py={4}
+      sx={{
+        '@media print': {
+          color: 'black',
+          borderColor: 'black'
+        }
+      }}
     >
       <Head>
         <title>Recibo {receipt?.id}</title>
@@ -111,42 +130,42 @@ export const ReceiptDetail = ({
         <Table>
           <Thead>
             <Tr>
-              <Th pl={0} textAlign="left">
+              <RTh pl={0} textAlign="left">
                 Concepto
-              </Th>
-              <Th textAlign="center">Precio</Th>
-              <Th textAlign="center">Cantidad</Th>
-              <Th textAlign="right" pr={0}>
+              </RTh>
+              <RTh textAlign="center">Precio</RTh>
+              <RTh textAlign="center">Cantidad</RTh>
+              <RTh textAlign="right" pr={0}>
                 Total
-              </Th>
+              </RTh>
             </Tr>
           </Thead>
 
           <Tbody>
             {receipt.chargedProducts.map((cp) => (
               <Tr key={cp.id}>
-                <Td pl={0}>{cp.billing ? cp.billing.productName : cp.product.name}</Td>
-                <Td textAlign="center">$ {cp.price.toFixed(2)}</Td>
-                <Td textAlign="center">{cp.quantity ?? 1}</Td>
-                <Td pr={0} textAlign="right">
+                <RTd pl={0}>{cp.billing ? cp.billing.productName : cp.product.name}</RTd>
+                <RTd textAlign="center">$ {cp.price.toFixed(2)}</RTd>
+                <RTd textAlign="center">{cp.quantity ?? 1}</RTd>
+                <RTd pr={0} textAlign="right">
                   $ {(cp.price * (cp.quantity ?? 1)).toFixed(2)}
-                </Td>
+                </RTd>
               </Tr>
             ))}
           </Tbody>
 
           <Tfoot>
             <Tr>
-              <Td colSpan={3} pl={0} fontWeight="bold">
+              <RTd colSpan={3} pl={0} fontWeight="bold">
                 TOTAL
-              </Td>
-              <Td fontWeight="bold" pr={0} textAlign="right">
+              </RTd>
+              <RTd fontWeight="bold" pr={0} textAlign="right">
                 $ {receipt.amount.toFixed(2)}
-              </Td>
+              </RTd>
             </Tr>
             {receipt.charges.map((c) => (
               <Tr key={c.id}>
-                <Td colSpan={3} pl={6}>
+                <RTd colSpan={3} pl={6}>
                   <Text fontWeight="bold">
                     {c.paymentMethod.name} - {c.currency.symbol}
                   </Text>
@@ -161,10 +180,10 @@ export const ReceiptDetail = ({
                         </li>
                       ))}
                   </Box>
-                </Td>
-                <Td fontWeight="bold" pr={0} textAlign="right">
+                </RTd>
+                <RTd fontWeight="bold" pr={0} textAlign="right">
                   $ {c.amount.toFixed(2)}
-                </Td>
+                </RTd>
               </Tr>
             ))}
           </Tfoot>
