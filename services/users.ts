@@ -25,8 +25,8 @@ const parseCreateUserFormData = ({
       create: {
         ...rest,
         address: {
-          create: {
-            shortAddress: person.address
+          connect: {
+            id: person.address
           }
         },
         docType: {

@@ -40,12 +40,7 @@ export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
   } = formHook
 
   return (
-    <Stack
-      gap={2}
-      as="form"
-      onSubmit={handleSubmit(onSubmit, (errors) => console.log(errors))}
-      id={id}
-    >
+    <Stack gap={2} as="form" onSubmit={handleSubmit(onSubmit)} id={id} noValidate>
       <FormControl isInvalid={!!errors.username} isRequired>
         <FormLabel>Nombre de usuario</FormLabel>
         <Input {...register('username')} />
