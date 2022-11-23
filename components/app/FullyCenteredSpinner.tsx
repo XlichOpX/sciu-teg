@@ -1,7 +1,7 @@
-import { Flex, Spinner } from '@chakra-ui/react'
+import { Flex, FlexProps, Spinner } from '@chakra-ui/react'
 
-export const FullyCenteredSpinner = () => (
-  <Flex alignItems="center" justifyContent="center" width="full">
+export const FullyCenteredSpinner = (props: FlexProps) => (
+  <Flex alignItems="center" justifyContent="center" width="full" {...props}>
     <Spinner />
   </Flex>
 )

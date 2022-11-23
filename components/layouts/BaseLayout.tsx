@@ -27,7 +27,7 @@ export const BaseLayout = ({ children }: { children: ReactNode }) => {
         </>
       ) : (
         <chakra.div h="100vh" w="100vw">
-          <FullyCenteredSpinner />
+          <FullyCenteredSpinner height="full" />
         </chakra.div>
       )}
     </>
