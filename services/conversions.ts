@@ -10,13 +10,7 @@ export async function updateConversion(id: number, data: Prisma.ConversionUpdate
 }
 
 export async function createConversion(data: CreateConversionInput) {
-  const body: Prisma.ConversionCreateInput = {
-    currency: {
-      connect: { id: data.currencyId }
-    },
-    value: data.value
-  }
-  return await fetch('/api/conversion', { method: 'POST', body })
+  return await fetch('/api/conversion', { method: 'POST', body: data })
 }
 
 export async function deleteConversion(id: number) {
