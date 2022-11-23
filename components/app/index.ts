@@ -1,5 +1,6 @@
 // created from 'create-ts-index'
 
+export * from './AddressSelect'
 export * from './CancelButton'
 export * from './CreateButton'
 export * from './DeleteButton'

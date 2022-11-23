@@ -7,15 +7,16 @@ import {
   Select,
   SimpleGrid
 } from '@chakra-ui/react'
-import { PersonFormData } from 'components/app'
+import { AddressSelect, PersonFormData } from 'components/app'
 import { useDocTypes } from 'hooks'
-import { useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { FullyCenteredSpinner } from './FullyCenteredSpinner'
 
 export const PersonInputs = () => {
   const {
     register,
-    formState: { errors }
+    formState: { errors },
+    control
   } = useFormContext<PersonFormData>()
 
   const { docTypes } = useDocTypes()
@@ -84,7 +85,13 @@ export const PersonInputs = () => {
 
       <FormControl isInvalid={!!errors.address} isRequired>
         <FormLabel>Dirección</FormLabel>
-        <Input {...register('address')} />
+        <Controller
+          name="address"
+          control={control}
+          render={({ field }) => (
+            <AddressSelect onChange={(newVal) => field.onChange(newVal?.value)} />
+          )}
+        />
         <FormErrorMessage>{errors.address?.message}</FormErrorMessage>
       </FormControl>
     </SimpleGrid>

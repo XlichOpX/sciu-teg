@@ -9,7 +9,7 @@ const parseCreateInput = (data: CreateClientInput) => {
       create: {
         ...person,
         docType: { connect: { id: docTypeId } },
-        address: { create: { shortAddress: address } }
+        address: { connect: { id: address } }
       }
     },
     occupation: { connect: { id: occupationId } }

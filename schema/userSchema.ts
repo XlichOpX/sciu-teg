@@ -22,7 +22,7 @@ export const personSchema = z.object({
   secondLastName: z.string().max(20).nullish(),
   docNumber: z.string().min(1).max(12),
   docTypeId: z.number().positive().int(),
-  address: z.string().min(1).max(120),
+  address: z.number().positive().int(),
   email: z.string().email(),
   landline: z.string().min(1).max(24)
 })
