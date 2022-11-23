@@ -22,3 +22,5 @@ export type rowSheet = {
   referencia: string
   fecha: Date
 }
+
+export type APIListing<T> = { count: number; result: T[] }
