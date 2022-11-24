@@ -6,9 +6,13 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay
+  ModalOverlay,
+  useToast
 } from '@chakra-ui/react'
 import { ReceiptList } from 'components/receipts'
+import { useState } from 'react'
+import { BsEnvelope } from 'react-icons/bs'
+import { sendReceiptsByEmail } from 'services/receipts'
 import { ReceiptWithPerson } from 'types/receipt'
 
 export const CreatedReceiptsModal = ({
@@ -20,6 +24,27 @@ export const CreatedReceiptsModal = ({
   isOpen: boolean
   onClose: () => void
 }) => {
+  const [isSending, setIsSending] = useState(false)
+  const toast = useToast()
+
+  const sendByEmail = async () => {
+    if (!receipts) return
+    setIsSending(true)
+    try {
+      await sendReceiptsByEmail(receipts.map((r) => r.id))
+      toast({ status: 'success', description: 'Correos enviados' })
+      onClose()
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          status: 'error',
+          description: 'Ocurrió un error al enviar los correos: ' + error.message
+        })
+      }
+    } finally {
+      setIsSending(true)
+    }
+  }
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -29,9 +54,18 @@ export const CreatedReceiptsModal = ({
 
         <ModalBody>{receipts && <ReceiptList receipts={receipts} />}</ModalBody>
 
-        <ModalFooter justifyContent="center">
-          <Button colorScheme="blue" onClick={onClose}>
+        <ModalFooter justifyContent="space-between">
+          <Button colorScheme="blue" variant="outline" onClick={onClose}>
             Cerrar
+          </Button>
+
+          <Button
+            colorScheme="blue"
+            leftIcon={<BsEnvelope />}
+            onClick={sendByEmail}
+            isLoading={isSending}
+          >
+            Enviar recibos por correo
           </Button>
         </ModalFooter>
       </ModalContent>
