@@ -1,4 +1,5 @@
 import {
+  Alert,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -7,6 +8,7 @@ import {
   SimpleGrid
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { FullyCenteredSpinner } from 'components/app'
 import { useCurrencies } from 'hooks'
 import { ComponentPropsWithoutRef } from 'react'
 import type { SubmitHandler } from 'react-hook-form'
@@ -25,18 +27,18 @@ export const ConversionForm = ({ onSubmit, defaultValues, ...props }: Conversion
     formState: { errors }
   } = useForm<FormInput>({ resolver: zodResolver(validationSchema), defaultValues })
 
-  const { currencies } = useCurrencies()
+  const { currencies, error } = useCurrencies()
+
+  if (error?.statusCode === 403) return <Alert>No tiene permiso para leer monedas</Alert>
+  if (!currencies) return <FullyCenteredSpinner />
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} {...props} noValidate>
       <SimpleGrid columns={2} gap={4}>
         <FormControl isInvalid={!!errors.currencyId} isRequired>
           <FormLabel>Moneda</FormLabel>
-          <Select
-            {...register('currencyId', { valueAsNumber: true })}
-            placeholder="Seleccione una moneda"
-          >
-            {currencies?.map((c) => (
+          <Select {...register('currencyId', { valueAsNumber: true })}>
+            {currencies.map((c) => (
               <option value={c.id} key={c.id}>
                 {c.name} - {c.symbol}
               </option>

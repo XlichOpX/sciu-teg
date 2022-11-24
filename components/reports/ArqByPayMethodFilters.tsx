@@ -1,4 +1,4 @@
-import { Checkbox, FormControl, FormLabel, VStack } from '@chakra-ui/react'
+import { Alert, Checkbox, FormControl, FormLabel, VStack } from '@chakra-ui/react'
 import { FullyCenteredSpinner, SimpleBox } from 'components/app'
 import { usePaymentMethods } from 'hooks'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -6,14 +6,18 @@ import { z } from 'zod'
 import { ReportType } from './reportTypes'
 
 export const ArqByPayMethodFilters = () => {
-  const { paymentMethods } = usePaymentMethods()
+  const { paymentMethods, error, isLoading } = usePaymentMethods()
+  const cantReadPaymentMethods = error?.statusCode === 403
   const { control } = useFormContext<z.infer<ReportType['arqByPayMethod']['schema']>>()
 
   return (
     <SimpleBox>
       <FormControl>
         <FormLabel>Métodos de pago</FormLabel>
-        {paymentMethods ? (
+        {cantReadPaymentMethods && (
+          <Alert status="error">No tiene permiso para leer métodos de pago</Alert>
+        )}
+        {paymentMethods && (
           <VStack align="flex-start">
             <Controller
               name="paymentMethod"
@@ -40,9 +44,8 @@ export const ArqByPayMethodFilters = () => {
               )}
             />
           </VStack>
-        ) : (
-          <FullyCenteredSpinner />
         )}
+        {isLoading && <FullyCenteredSpinner />}
       </FormControl>
     </SimpleBox>
   )

@@ -1,4 +1,5 @@
 import {
+  Alert,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -28,7 +29,7 @@ export const PaymentMethodForm = ({
   formHook: UseFormReturn<PaymentMethodCreateInput>
   resetOnSubmit?: boolean
 }) => {
-  const { currencies } = useCurrencies()
+  const { currencies, error } = useCurrencies()
 
   const {
     handleSubmit,
@@ -39,6 +40,9 @@ export const PaymentMethodForm = ({
   } = formHook
 
   const { fields, append, remove } = useFieldArray({ name: 'metaPayment', control })
+
+  if (error?.statusCode === 403)
+    return <Alert status="error">No tiene permiso para leer monedas</Alert>
 
   if (!currencies) return <FullyCenteredSpinner />
 

@@ -1,11 +1,4 @@
-import {
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  SimpleGrid,
-  VStack
-} from '@chakra-ui/react'
+import { Alert, FormControl, FormErrorMessage, FormLabel, Input, VStack } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Select } from 'chakra-react-select'
 import { usePermissions } from 'hooks'
@@ -21,7 +14,7 @@ export const RoleForm = ({
   onSubmit: RoleFormSubmitHandler
   defaultValues?: FormValues
 }) => {
-  const { selectOptions } = usePermissions()
+  const { selectOptions, error } = usePermissions()
   const {
     register,
     control,
@@ -29,15 +22,23 @@ export const RoleForm = ({
     formState: { errors }
   } = useForm<FormValues>({ resolver: zodResolver(validationSchema), defaultValues })
 
+  if (error?.statusCode === 403)
+    return <Alert status="error">No tiene permiso para leer permisos</Alert>
+
   return (
-    <VStack id={id} as="form" align="stretch" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-      <SimpleGrid columns={[1, 2]} gap={4}>
-        <FormControl isInvalid={!!errors.name} isRequired>
-          <FormLabel>Nombre del rol</FormLabel>
-          <Input {...register('name')} />
-          <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
-        </FormControl>
-      </SimpleGrid>
+    <VStack
+      id={id}
+      as="form"
+      align="stretch"
+      autoComplete="off"
+      onSubmit={handleSubmit(onSubmit)}
+      gap={3}
+    >
+      <FormControl isInvalid={!!errors.name} isRequired>
+        <FormLabel>Nombre del rol</FormLabel>
+        <Input {...register('name')} />
+        <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
+      </FormControl>
 
       <FormControl isInvalid={!!errors.description} isRequired>
         <FormLabel>Descripción</FormLabel>

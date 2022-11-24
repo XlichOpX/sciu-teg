@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { ReportType } from './reportTypes'
 
 export const ArqByCategoryFilters = () => {
-  const { categories } = useCategories()
+  const { categories, errorMsg } = useCategories()
   const { control } = useFormContext<z.infer<ReportType['arqByCategory']['schema']>>()
 
   return (
@@ -22,7 +22,7 @@ export const ArqByCategoryFilters = () => {
               {...field}
               value={categories?.filter((c) => field.value.includes(c.id))}
               onChange={(val) => field.onChange(val.map((c) => c.id))}
-              placeholder="Seleccionar categorías"
+              placeholder={errorMsg ?? 'Seleccionar categorías'}
               isMulti
               options={categories}
               getOptionLabel={(o) => o.name}
