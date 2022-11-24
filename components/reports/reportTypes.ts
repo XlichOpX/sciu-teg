@@ -1,9 +1,9 @@
 import { z, ZodTypeAny } from 'zod'
 import { ArqByCategoryFilters } from './ArqByCategoryFilters'
+import { ArqByCategoryGraph } from './ArqByCategoryGraph'
 import { ArqByCategoryReport } from './ArqByCategoryReport'
 import { ArqByPayMethodFilters } from './ArqByPayMethodFilters'
 import { ArqByPayMethodReport } from './ArqByPayMethodReport'
-import { SoldProductsGraph } from './SoldProductsGraph'
 import { SoldProductsReport } from './SoldProductsReport'
 
 type ReportTypeDef = {
@@ -30,18 +30,18 @@ export const reportTypes: Record<string, ReportTypeDef> = {
     component: ArqByPayMethodReport
   },
   arqByTotalProducts: {
-    label: 'Productos vendidos',
+    label: 'Productos vendidos por categoría',
     schema: z.object({ category: z.number().array() }),
     defaultValues: { category: [] },
     filters: ArqByCategoryFilters,
     component: SoldProductsReport
   },
-  arqByTotalProductsGraph: {
-    label: 'Gráfico de productos vendidos',
+  arqByCategoryGraph: {
+    label: 'Gráfica de recaudos por categoría',
     schema: z.object({ category: z.number().array() }),
     defaultValues: { category: [] },
     filters: ArqByCategoryFilters,
-    component: SoldProductsGraph
+    component: ArqByCategoryGraph
   }
 }
 
