@@ -60,6 +60,12 @@ const links = [
     text: 'Importar lote de cobros',
     icon: <BsFileSpreadsheetFill />,
     permission: 'CREATE_RECEIPT'
+  },
+  {
+    href: '/configuracion/semestres',
+    text: 'Semestres',
+    icon: <BsFileSpreadsheetFill />,
+    permission: 'READ_SEMESTER'
   }
 ]
 
