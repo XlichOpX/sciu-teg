@@ -37,7 +37,18 @@ export const getClient = async (docNum: string) => {
   }
 
   if (person.client) {
-    const client = ((await fetch(`/api/client?keyword=${docNum}`)) as ClientGetResponse).result[0]
-    return client
+    try {
+      const client = ((await fetch(`/api/client?keyword=${docNum}`)) as ClientGetResponse).result[0]
+      return client
+    } catch (error) {
+      if (error instanceof HttpError) {
+        if (error.statusCode === 403) {
+          error.message = 'No tiene permiso para acceder a los clientes'
+          throw error
+        }
+      }
+    }
   }
+
+  throw new HttpError({ statusCode: 400, message: 'Esta persona es un usuario del sistema' })
 }

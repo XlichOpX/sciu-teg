@@ -66,7 +66,7 @@ const Reports: NextPageWithLayout = () => {
               <Divider />
             </VStack>
 
-            {report.data.length !== 0 ? (
+            {report.data.length > 0 || Object.keys(report.data).length > 0 ? (
               <ReportView data={report.data} />
             ) : (
               <Alert>Sin movimientos...</Alert>
