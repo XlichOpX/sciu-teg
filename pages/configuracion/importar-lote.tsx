@@ -1,14 +1,14 @@
 import { Divider, Flex, Heading, Stack, useToast } from '@chakra-ui/react'
 import { FullyCenteredSpinner, SaveButton } from 'components/app'
+import { SettingsLayout } from 'components/settings'
 import {
   CreatedReceiptsModal,
   DocErrorList,
+  ExampleSheetModal,
   FileInput,
   Preview,
   ValidFileFeedback
-} from 'components/batch-imports'
-import { SettingsLayout } from 'components/settings'
-import { ExampleSheetModal } from 'components/settings/charges-batch-import'
+} from 'components/settings/batch-import'
 import { useCurrencies } from 'hooks'
 import { HttpError } from 'lib/http-error'
 import { NextPageWithLayout } from 'pages/_app'
