@@ -46,7 +46,7 @@ export const InstituteDataForm = () => {
         Datos de la Institución
       </Heading>
 
-      <form onSubmit={handleSubmit(onSubmit, (error) => console.log(error))}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <fieldset disabled={!canUserEdit}>
           <VStack align="stretch" gap={4}>
             <SimpleGrid columns={[1, 2]} gap={4}>

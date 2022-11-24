@@ -3,7 +3,6 @@ import { Fragment } from 'react'
 import { GroupedCategoryReport } from 'types/report'
 
 export const ArqByCategoryReport = ({ data }: { data: GroupedCategoryReport }) => {
-  console.log({ data })
   return (
     <>
       <TableContainer>

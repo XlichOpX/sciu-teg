@@ -87,11 +87,7 @@ export const ChargesForm = ({
         fieldsLength={fields.length}
       />
 
-      <form
-        id={id}
-        onSubmit={handleSubmit(onSubmit, (errors) => console.log({ errors }))}
-        noValidate
-      >
+      <form id={id} onSubmit={handleSubmit(onSubmit)} noValidate>
         <FormControl as={Stack} gap={1} isInvalid={!!errors.charges}>
           {fields.map((f, i) => (
             <PaymentMethodInputs

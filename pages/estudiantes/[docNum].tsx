@@ -26,7 +26,6 @@ const StudentDetail: NextPageWithLayout = () => {
   })
 
   const selectedBillingsIDs = billingsFormHook.watch('billings')
-  console.log(selectedBillingsIDs)
   const { products, addProduct, removeProduct, resetProducts } = useReceivables()
 
   return (
@@ -66,7 +65,6 @@ const StudentDetail: NextPageWithLayout = () => {
                 'billings',
                 data.billings.map((b) => b.id)
               )
-              console.log('clic')
             }}
           />
 
