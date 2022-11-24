@@ -2,7 +2,13 @@ import { Alert, Button, Divider, Flex } from '@chakra-ui/react'
 import { useAuth } from 'hooks'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { BsCreditCardFill, BsFileSpreadsheetFill, BsGearFill, BsPersonFill } from 'react-icons/bs'
+import {
+  BsCalendarEvent,
+  BsCreditCardFill,
+  BsFileSpreadsheetFill,
+  BsGearFill,
+  BsPersonFill
+} from 'react-icons/bs'
 import { FaCoins, FaExchangeAlt, FaIdCardAlt, FaRedhat } from 'react-icons/fa'
 import { MdCategory } from 'react-icons/md'
 
@@ -64,7 +70,7 @@ const links = [
   {
     href: '/configuracion/semestres',
     text: 'Semestres',
-    icon: <BsFileSpreadsheetFill />,
+    icon: <BsCalendarEvent />,
     permission: 'READ_SEMESTER'
   }
 ]
