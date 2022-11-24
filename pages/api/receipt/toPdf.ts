@@ -10,6 +10,7 @@ import nodemailer from 'nodemailer'
 import Mail from 'nodemailer/lib/mailer'
 import { receiptWithAll } from 'prisma/queries'
 import { renderToStaticMarkup } from 'react-dom/server'
+import { theme } from 'theme'
 import { ReceiptWithAll } from 'types/receipt'
 import { z } from 'zod'
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
@@ -60,7 +61,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
           }
           await sendMail(mailOption)
         }
-        res.send('All Mail sended')
+        res.json({ message: 'All Mail sended' })
       } catch (error) {
         if (error instanceof Error) {
           res.status(400).send(error.message)
@@ -131,7 +132,7 @@ export async function convertReceiptToPdf(
   const parameters = await prisma.parameters.findFirst()
   if (!parameters) throw Error('parameters not found')
   const html = renderToStaticMarkup(
-    ChakraProvider({ children: ReceiptDetail({ receipt, parameters }) })
+    ChakraProvider({ children: ReceiptDetail({ receipt, parameters }), theme })
   )
   const browser = await chromium.launch({ headless: true })
   const page = await browser.newPage()
