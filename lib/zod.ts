@@ -3,6 +3,9 @@ import { z } from 'zod'
 const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   switch (issue.code) {
     case z.ZodIssueCode.invalid_type:
+      if (issue.received === 'undefined') {
+        return { message: 'Requerido' }
+      }
       switch (issue.expected) {
         case 'string':
           return { message: 'Debe ser una cadena de caractéres' }

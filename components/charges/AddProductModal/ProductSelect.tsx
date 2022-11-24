@@ -23,9 +23,11 @@ export const ProductSelect = ({ categoryId, onChange, value }: ProductSelectProp
       getOptionValue={(opt) => opt.id.toString()}
       onChange={(value) => onChange(value?.id)}
       value={products?.find((p) => p.id === value)}
-      placeholder="Buscar producto"
-      noOptionsMessage={({ inputValue }) => `Sin resultados para "${inputValue}"`}
-      isLoading={isLoading}
+      placeholder={!categoryId ? 'No ha seleccionado ninguna categoría' : 'Buscar producto'}
+      noOptionsMessage={({ inputValue }) =>
+        inputValue ? `Sin resultados para "${inputValue}"` : 'Busque un producto'
+      }
+      isLoading={!!categoryId && isLoading}
       loadingMessage={() => 'Cargando...'}
     />
   )
