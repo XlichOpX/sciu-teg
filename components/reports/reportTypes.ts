@@ -4,6 +4,7 @@ import { ArqByCategoryGraph } from './ArqByCategoryGraph'
 import { ArqByCategoryReport } from './ArqByCategoryReport'
 import { ArqByPayMethodFilters } from './ArqByPayMethodFilters'
 import { ArqByPayMethodReport } from './ArqByPayMethodReport'
+import { SoldProductsGraph } from './SoldProductsGraph'
 import { SoldProductsReport } from './SoldProductsReport'
 
 type ReportTypeDef = {
@@ -42,6 +43,13 @@ export const reportTypes: Record<string, ReportTypeDef> = {
     defaultValues: { category: [] },
     filters: ArqByCategoryFilters,
     component: ArqByCategoryGraph
+  },
+  soldProductsGraph: {
+    label: 'Gráfico de productos vendidos',
+    schema: z.object({ category: z.number().array() }),
+    defaultValues: { category: [] },
+    filters: ArqByCategoryFilters,
+    component: SoldProductsGraph
   }
 }
 
