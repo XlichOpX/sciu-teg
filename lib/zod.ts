@@ -49,6 +49,13 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
           }
       }
       break
+
+    case z.ZodIssueCode.invalid_string:
+      switch (issue.validation) {
+        case 'email':
+          return { message: 'Correo electrónico inválido' }
+      }
+      break
   }
   return { message: ctx.defaultError }
 }
