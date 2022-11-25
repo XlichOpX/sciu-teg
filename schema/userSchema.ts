@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { castEmptyString } from './utils'
 
 /**
  * Schema to validate secret create input
@@ -17,14 +18,15 @@ export const secretSchema = z.object({
  */
 export const personSchema = z.object({
   firstName: z.string().min(1).max(20),
-  middleName: z.string().max(20).nullish(),
+  middleName: castEmptyString(z.string().max(20).optional()),
   firstLastName: z.string().min(1).max(20),
-  secondLastName: z.string().max(20).nullish(),
+  secondLastName: castEmptyString(z.string().max(20).optional()),
   docNumber: z.string().min(1).max(12),
   docTypeId: z.number().positive().int(),
   address: z.number().positive().int(),
   email: z.string().email(),
-  landline: z.string().min(1).max(24)
+  landline: z.string().min(1).max(24),
+  cellphone: castEmptyString(z.string().min(1).max(24).optional())
 })
 
 /**
