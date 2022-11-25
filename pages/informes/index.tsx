@@ -1,4 +1,6 @@
 import { Alert, Box, Button, Divider, Heading, Text, VStack } from '@chakra-ui/react'
+import { Chart } from 'chart.js'
+import autocolors from 'chartjs-plugin-autocolors'
 import { FullyCenteredSpinner } from 'components/app'
 import { BaseLayout, SidebarLayout } from 'components/layouts'
 import { Sidebar } from 'components/reports'
@@ -10,6 +12,8 @@ import { BsPrinterFill } from 'react-icons/bs'
 import { getReport } from 'services/reports'
 import { Report } from 'types/report'
 import { hideOnPrint } from 'utils/hideOnPrint'
+
+Chart.register(autocolors)
 
 const Reports: NextPageWithLayout = () => {
   const [report, setReport] = useState<{

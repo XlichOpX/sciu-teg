@@ -17,6 +17,7 @@
     "@prisma/client": "4.2.1",
     "chakra-react-select": "4.2.2",
     "chart.js": "4.0.1",
+    "chartjs-plugin-autocolors": "0.0.7",
     "crypto-js": "4.1.1",
     "dayjs": "1.11.5",
     "framer-motion": "6.5.1",

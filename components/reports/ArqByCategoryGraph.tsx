@@ -2,7 +2,6 @@ import {
   BarElement,
   CategoryScale,
   Chart as ChartJS,
-  Colors,
   Legend,
   LinearScale,
   Title,
@@ -12,7 +11,7 @@ import { groupBy } from 'lodash'
 import { Bar } from 'react-chartjs-2'
 import { GroupedCategoryReport } from 'types/report'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, Colors)
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 export const ArqByCategoryGraph = ({ data }: { data: GroupedCategoryReport }) => {
   const categories = Object.keys(data)
