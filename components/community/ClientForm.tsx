@@ -13,12 +13,10 @@ export const ClientForm = ({ id, onSubmit }: { id: string; onSubmit: ClientFormS
   const methods = useForm<ClientFormData>({
     resolver: zodResolver(createClientSchema),
     defaultValues: {
-      secondLastName: null,
       docNumber: '',
       email: '',
       firstLastName: '',
       firstName: '',
-      middleName: null,
       landline: ''
     }
   })
