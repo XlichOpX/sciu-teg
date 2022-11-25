@@ -9,7 +9,7 @@ import {
   BsGearFill,
   BsPersonFill
 } from 'react-icons/bs'
-import { FaCoins, FaExchangeAlt, FaIdCardAlt, FaRedhat } from 'react-icons/fa'
+import { FaCoins, FaExchangeAlt, FaIdCardAlt, FaRedhat, FaUserCheck } from 'react-icons/fa'
 import { MdCategory } from 'react-icons/md'
 
 const links = [
@@ -72,6 +72,12 @@ const links = [
     text: 'Semestres',
     icon: <BsCalendarEvent />,
     permission: 'READ_SEMESTER'
+  },
+  {
+    href: '/configuracion/status-de-usuario',
+    text: 'Status de usuario',
+    icon: <FaUserCheck />,
+    permission: 'READ_USERSTATUS'
   }
 ]
 
