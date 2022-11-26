@@ -226,7 +226,7 @@ model Parameters {
 model User {
   id        Int        @id @default(autoincrement())
   personId  Int        @unique
-  username  String     @db.VarChar(32)
+  username  String     @unique @db.VarChar(32)
   password  String     @db.VarChar
   secretId  Int        @unique
   statusId  Int
