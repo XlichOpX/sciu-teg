@@ -1,4 +1,4 @@
-import { Text } from '@chakra-ui/react'
+import { Divider, Text } from '@chakra-ui/react'
 import { Category } from '@prisma/client'
 import { SimpleBox } from 'components/app'
 import { useAuth } from 'hooks'
@@ -23,6 +23,8 @@ export const CategoryItem = ({
         <EditCategoryModal defaultValues={category} onSubmit={onUpdate} onDelete={onDelete} />
       )}
       <Text fontWeight="bold">{category.name}</Text>
+      <Divider my={2} />
+      <Text>{category.description}</Text>
     </SimpleBox>
   )
 }
