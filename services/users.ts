@@ -78,3 +78,5 @@ export const updateUser = async (userId: number, data: UserUpdateInput) => {
 export const deleteUser = async (userId: number) => {
   return await fetch(`/api/user/${userId}`, { method: 'DELETE' })
 }
+
+export const getUserById = async (id: number) => await fetch(`/api/user/${id}`)
