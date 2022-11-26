@@ -1,4 +1,4 @@
-import { chakra, Container } from '@chakra-ui/react'
+import { Alert, chakra, Container } from '@chakra-ui/react'
 import { FullyCenteredSpinner } from 'components/app'
 import { useAuth } from 'hooks'
 import Head from 'next/head'
@@ -6,7 +6,7 @@ import { ReactNode } from 'react'
 import { Navbar } from '../app/Navbar'
 
 export const BaseLayout = ({ children }: { children: ReactNode }) => {
-  const { user } = useAuth()
+  const { user, error } = useAuth()
   return (
     <>
       <Head>
@@ -26,8 +26,13 @@ export const BaseLayout = ({ children }: { children: ReactNode }) => {
           </Container>
         </>
       ) : (
-        <chakra.div h="100vh" w="100vw">
-          <FullyCenteredSpinner height="full" />
+        <chakra.div h="100vh" w="100vw" p={4}>
+          {!error && <FullyCenteredSpinner height="full" />}
+          {error && (
+            <Alert status="error">
+              No se pudo obtener la información de usuario: {error.message}
+            </Alert>
+          )}
         </chakra.div>
       )}
     </>
