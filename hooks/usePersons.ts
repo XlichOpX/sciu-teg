@@ -4,7 +4,7 @@ import { PersonListing } from 'types/person'
 import { usePagination } from './usePagination'
 
 export const usePersons = () => {
-  const { offset, limit } = usePagination({ itemsPerPage: 20 })
+  const { offset, limit } = usePagination({ itemsPerPage: 5 })
   const [search, setSearch] = useState('')
   const { data, error } = useSWR<{ count: number; result: PersonListing[] }, Error>(
     `/api/person?offset=${offset}&limit=${limit}${search ? `&keyword=${search}` : ''}`
