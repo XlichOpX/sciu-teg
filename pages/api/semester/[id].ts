@@ -66,7 +66,7 @@ async function semesterHandler(req: NextApiRequest, res: NextApiResponse) {
       //eliminamos a UN semestre
       try {
         const billing = await prisma.billing.count({ where: { semesterId: Number(id) } })
-        if (billing > 0) res.status(404).end(`Semester relation exists`)
+        if (billing > 0) res.status(409).end(`Semester relation exists`)
 
         const delSemester = await prisma.semester.delete({ where: { id: Number(id) } })
         res.status(202).send(delSemester)

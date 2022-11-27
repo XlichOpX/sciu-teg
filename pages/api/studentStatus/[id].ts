@@ -68,7 +68,7 @@ async function studentStatusHandler(req: NextApiRequest, res: NextApiResponse) {
         const student = await prisma.student.count({
           where: { statusId: Number(id) }
         })
-        if (student > 0) res.status(404).end(`Status ${student} relations exists`)
+        if (student > 0) res.status(409).end(`Status ${student} relations exists`)
 
         const delStatus = await prisma.studentStatus.delete({
           where: { id: Number(id) }
