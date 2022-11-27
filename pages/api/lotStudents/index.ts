@@ -61,7 +61,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           const matchedBillings = await prisma.billing.findMany({
             select: { id: true, amount: true, isCharged: true, productName: true },
             where: {
-              productName: stringSearch(productName),
+              productName: { startsWith: productName, mode: 'insensitive' },
               isCharged: { equals: false },
               student: { personId: student.personId }
             }
