@@ -5,6 +5,7 @@ import { FullyCenteredSpinner } from 'components/app'
 import { BaseLayout, SidebarLayout } from 'components/layouts'
 import { Sidebar } from 'components/reports'
 import { ReportTypeKey, reportTypes } from 'components/reports/reportTypes'
+import { HttpError } from 'lib/http-error'
 import Head from 'next/head'
 import { NextPageWithLayout } from 'pages/_app'
 import { useState } from 'react'
@@ -23,6 +24,7 @@ const Reports: NextPageWithLayout = () => {
     end: string
   }>()
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<HttpError>()
 
   const ReportView = report ? reportTypes[report.type].component : undefined
 
@@ -45,21 +47,36 @@ const Reports: NextPageWithLayout = () => {
             sx={{ ...hideOnPrint }}
             onSubmit={async (data) => {
               setIsLoading(true)
-              const report = await getReport(data)
-              const { reportType, start, end } = data
-              setReport({
-                type: reportType,
-                data: report,
-                start: start.replaceAll('-', '/'),
-                end: end.replaceAll('-', '/')
-              })
-              setIsLoading(false)
+              try {
+                const report = await getReport(data)
+                const { reportType, start, end } = data
+                setReport({
+                  type: reportType,
+                  data: report,
+                  start: start.replaceAll('-', '/'),
+                  end: end.replaceAll('-', '/')
+                })
+                setError(undefined)
+              } catch (error) {
+                if (error instanceof HttpError) {
+                  setError(error)
+                }
+              } finally {
+                setIsLoading(false)
+              }
             }}
           />
         }
         sidebarWidth="30%"
       >
-        {!report && <Text>Solicite un informe...</Text>}
+        {error && (
+          <Alert status="error" mb={3}>
+            {error.statusCode === 403
+              ? 'No tiene permiso para ver informes'
+              : 'Ocurrió un error al obtener el informe'}
+          </Alert>
+        )}
+        {!error && !report && <Text>Solicite un informe...</Text>}
         {isLoading && <FullyCenteredSpinner />}
 
         {report && ReportView && !isLoading && (
