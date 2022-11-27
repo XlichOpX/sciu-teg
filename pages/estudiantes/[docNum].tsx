@@ -48,7 +48,24 @@ const StudentDetail: NextPageWithLayout = () => {
             onProductRemove={removeProduct}
             products={products}
             billings={data.billings}
+            selectedBillings={selectedBillingsIDs}
+            onBillingItemClick={(billingId) => {
+              if (selectedBillingsIDs.includes(billingId)) {
+                billingsFormHook.setValue(
+                  'billings',
+                  selectedBillingsIDs.filter((b) => b !== billingId)
+                )
+              } else {
+                billingsFormHook.setValue('billings', [...selectedBillingsIDs, billingId])
+              }
+            }}
             control={billingsFormHook.control}
+            onChargeClick={() => {
+              billingsFormHook.setValue(
+                'billings',
+                data.billings.map((b) => b.id)
+              )
+            }}
           />
 
           <Flex justifyContent="space-between" mt={4} gap={4} wrap="wrap">

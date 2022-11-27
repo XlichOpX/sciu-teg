@@ -7,6 +7,7 @@ import { NextApiRequestQuery } from 'next/dist/server/api-utils'
 import { receiptWithPerson } from 'prisma/queries'
 import { receiptCreateSchemaInput } from 'schema/receiptSchema'
 import { GetReceiptWithPersonResponse } from 'types/receipt'
+import validateBody from 'utils/bodyValidate'
 import { canUserDo } from 'utils/checkPermissions'
 import { insertReceipt } from 'utils/insertReceipt'
 import { intSearch, routePaginate, stringSearch } from 'utils/routePaginate'
@@ -35,11 +36,8 @@ async function handle(
       if (!(await canUserDo(session, 'CREATE_RECEIPT')))
         return res.status(403).send(`Can't create this.`)
       //creamos UN recibo
-      const validBody = receiptCreateSchemaInput.safeParse(body)
-      if (!validBody.success) {
-        return res.status(403).end(`Error, not all data send`)
-      }
       try {
+        const validBody = await validateBody(body, receiptCreateSchemaInput)
         const result = await insertReceipt(validBody.data)
         res.json(result)
       } catch (error) {
@@ -78,7 +76,7 @@ const getReceipts = async (
 
   const count = await prisma.receipt.count({ where })
   //obtenemos TODOS los recibos
-  // Recibos con información escencial de la persona
+  // Recibos con información esencial de la persona
   const result = await prisma.receipt.findMany({
     ...receiptWithPerson,
     ...routePaginate(query),

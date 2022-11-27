@@ -59,11 +59,11 @@ model Client {
 }
 
 model Occupation {
-  id        Int       @id @default(autoincrement())
-  ocupation String    @db.VarChar(40)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
-  clients   Client[]
+  id         Int       @id @default(autoincrement())
+  occupation String    @unique @db.VarChar(40)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
+  clients    Client[]
 }
 
 model StudentStatus {
@@ -89,7 +89,7 @@ model Semester {
   id          Int          @id @default(autoincrement())
   startDate   DateTime
   endDate     DateTime
-  semester    String       @db.VarChar(30)
+  semester    String       @unique @db.VarChar(30)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime?    @updatedAt
   billings    Billing[]
@@ -98,7 +98,7 @@ model Semester {
 
 model Career {
   id        Int       @id @default(autoincrement())
-  career    String    @db.VarChar(40)
+  career    String    @unique @db.VarChar(40)
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   students  Student[]
@@ -106,7 +106,7 @@ model Career {
 
 model DocType {
   id        Int       @id @default(autoincrement())
-  type      String    @db.VarChar(4)
+  type      String    @unique @db.VarChar(4)
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   persons   Person[]
@@ -114,7 +114,7 @@ model DocType {
 
 model Address {
   id           Int       @id @default(autoincrement())
-  shortAddress String    @db.VarChar(120)
+  shortAddress String    @unique @db.VarChar(120)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime? @updatedAt
   persons      Person[]
@@ -160,7 +160,7 @@ model ProductSale {
 
 model Category {
   id          Int       @id @default(autoincrement())
-  name        String    @db.VarChar(64)
+  name        String    @unique @db.VarChar(64)
   description String    @db.VarChar(128)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
@@ -173,42 +173,43 @@ model Charge {
   metaPayment     Json?
   amount          Float
   receiptId       Int
-  conversionId    Int
+  currencyId      Int
   createdAt       DateTime      @default(now())
   updatedAt       DateTime?     @updatedAt
-  conversion      Conversion    @relation(fields: [conversionId], references: [id])
   paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
   receipt         Receipt       @relation(fields: [receiptId], references: [id])
+  currency        Currency      @relation(fields: [currencyId], references: [id])
 }
 
 model PaymentMethod {
-  id          Int       @id @default(autoincrement())
-  name        String    @db.VarChar(26)
-  description String    @db.VarChar(64)
-  currencyId  Int
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(26)
+  description String     @db.VarChar(64)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime?  @updatedAt
   metaPayment Json?
-  currency    Currency  @relation(fields: [currencyId], references: [id])
+  currencies  Currency[]
   charges     Charge[]
 }
 
 model Currency {
   id             Int             @id @default(autoincrement())
   symbol         String          @db.VarChar(4)
-  name           String          @db.VarChar(32)
+  name           String          @unique @db.VarChar(32)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime?       @updatedAt
   paymentMethods PaymentMethod[]
+  conversions    Conversion[]
+  charge         Charge[]
 }
 
 model Conversion {
-  id        Int       @id @default(autoincrement())
-  date      DateTime  @default(now())
-  dolar     Float
-  euro      Float
-  updatedAt DateTime? @updatedAt
-  charges   Charge[]
+  id         Int       @id @default(autoincrement())
+  date       DateTime  @default(now())
+  value      Float
+  updatedAt  DateTime? @updatedAt
+  currencyId Int
+  currency   Currency  @relation(fields: [currencyId], references: [id])
 }
 
 model Parameters {
@@ -225,7 +226,7 @@ model Parameters {
 model User {
   id        Int        @id @default(autoincrement())
   personId  Int        @unique
-  username  String     @db.VarChar(32)
+  username  String     @unique @db.VarChar(32)
   password  String     @db.VarChar
   secretId  Int        @unique
   statusId  Int
@@ -252,7 +253,7 @@ model Secret {
 
 model UserStatus {
   id          Int       @id @default(autoincrement())
-  status      String    @db.VarChar(30)
+  status      String    @unique @db.VarChar(30)
   description String    @db.VarChar(64)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
@@ -261,8 +262,7 @@ model UserStatus {
 
 model Role {
   id          Int          @id @default(autoincrement())
-  name        String       @db.VarChar(30)
-  level       Int
+  name        String       @unique @db.VarChar(30)
   description String       @db.VarChar(64)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime?    @updatedAt
@@ -272,7 +272,7 @@ model Role {
 
 model Permission {
   id          Int       @id @default(autoincrement())
-  permission  String    @db.VarChar(30)
+  permission  String    @unique @db.VarChar(30)
   description String    @db.VarChar(64)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
@@ -285,7 +285,6 @@ model Billing {
   semesterId  Int
   productId   Int
   isCharged   Boolean       @default(false)
-  createAt    DateTime      @default(now())
   dateToPay   DateTime?
   productName String        @db.VarChar(64)
   amount      Float
@@ -299,7 +298,7 @@ model Billing {
 
 model SecretQuestion {
   id        Int       @id @default(autoincrement())
-  question  String    @db.VarChar(128)
+  question  String    @unique @db.VarChar(128)
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 }

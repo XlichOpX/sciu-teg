@@ -22,7 +22,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos TODAS las ocupaciones de cliente
       try {
         const occupations = await prisma.occupation.findMany({
-          where: { ocupation: stringSearch(keyword) }
+          where: { occupation: stringSearch(keyword) }
         })
 
         if (!occupations) return res.status(404).end(`Occupations not found`)

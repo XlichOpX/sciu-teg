@@ -1,9 +1,11 @@
-import { Conversion } from '@prisma/client'
 import dayjs from 'dayjs'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { conversionWithCurrency } from 'prisma/queries'
+import { conversionUpdateSchema } from 'schema/conversionSchema'
+import validateBody from 'utils/bodyValidate'
 import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
@@ -18,6 +20,7 @@ async function conversionHandler(req: NextApiRequest, res: NextApiResponse) {
     query: { id },
     session
   } = req
+
   if (!(await canUserDo(session, 'READ_CONVERSION')))
     return res.status(403).send(`Can't read this.`)
   const { success } = idValidation.safeParse(id)
@@ -28,6 +31,7 @@ async function conversionHandler(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos a UNA conversión
       try {
         const conversion = await prisma.conversion.findFirst({
+          ...conversionWithCurrency,
           where: { id: Number(id) }
         })
         if (!conversion) res.status(404).end(`Conversion not found`)
@@ -46,15 +50,18 @@ async function conversionHandler(req: NextApiRequest, res: NextApiResponse) {
         const conversion = await prisma.conversion.findFirst({ where: { id: Number(id) } })
         if (!conversion) return res.status(404).end(`Conversion not found`)
         if (dayjs(conversion.date).add(30, 'minutes') < dayjs())
-          res.status(404).end(`Can't Conversion update`)
+          return res.status(404).end(`Can't Conversion update`)
 
-        const updateConversion: Conversion = await prisma.conversion.update({
+        const validBody = await validateBody(body, conversionUpdateSchema)
+
+        const updateConversion = await prisma.conversion.update({
           data: {
-            ...body
+            ...validBody.data
           },
           where: {
             id: Number(id)
-          }
+          },
+          ...conversionWithCurrency
         })
         res.status(201).send(updateConversion)
       } catch (error) {
@@ -73,11 +80,12 @@ async function conversionHandler(req: NextApiRequest, res: NextApiResponse) {
         if (!conversion) return res.status(404).end(`Conversion not found`)
 
         if (dayjs(conversion.date).add(30, 'minutes') < dayjs())
-          res.status(404).end(`Can't Conversion update`)
+          return res.status(404).end(`Can't Conversion delete`)
 
-        const delConversion: Conversion = await prisma.conversion.delete({
+        const delConversion = await prisma.conversion.delete({
           where: { id: Number(id) }
         })
+
         res.status(202).send(delConversion)
       } catch (error) {
         if (error instanceof Error) {

@@ -1,33 +1,36 @@
-import { Divider, Flex, Heading, Stack } from '@chakra-ui/react'
-import { SaveButton } from 'components/app'
+import { Divider, Flex, Heading, Stack, useToast } from '@chakra-ui/react'
+import { FullyCenteredSpinner, SaveButton } from 'components/app'
+import { SettingsLayout } from 'components/settings'
 import {
   CreatedReceiptsModal,
   DocErrorList,
+  ExampleSheetModal,
   FileInput,
   Preview,
   ValidFileFeedback
-} from 'components/batch-imports'
-import { SettingsLayout } from 'components/settings'
-import { ExampleSheetModal } from 'components/settings/charges-batch-import'
+} from 'components/settings/batch-import'
+import { useCurrencies } from 'hooks'
 import { HttpError } from 'lib/http-error'
 import { NextPageWithLayout } from 'pages/_app'
 import React, { useRef, useState } from 'react'
 import { sheetSchema } from 'schema/batchImportSchema'
 import { uploadChargesBatch } from 'services/batchImports'
 import { ReceiptWithPerson } from 'types/receipt'
+import { FormattedErrors, Sheet, SheetData } from 'types/utils'
 import { encodeFile } from 'utils/encodeFile'
 import { read, utils } from 'xlsx'
-import { z } from 'zod'
-
-type FormattedErrors = z.inferFormattedError<typeof sheetSchema>
 
 const BatchImport: NextPageWithLayout = () => {
   const [errors, setErrors] = useState<{ formatted: FormattedErrors; flattened: string[] }>()
   const [fileName, setFileName] = useState<string>()
-  const [sheet, setSheet] = useState<{ headings: unknown[]; data: unknown[][] }>()
+  const [sheet, setSheet] = useState<Sheet>()
+  const [validSheet, setValidSheet] = useState<SheetData>()
   const [createdReceipts, setCreatedReceipts] = useState<ReceiptWithPerson[]>()
   const encodedFile = useRef<string>()
-  const isFileValid = !errors && fileName
+  const toast = useToast()
+
+  const { currencies } = useCurrencies()
+  if (!currencies) return <FullyCenteredSpinner />
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = async (evt) => {
     const file = evt.target.files?.[0]
@@ -50,7 +53,7 @@ const BatchImport: NextPageWithLayout = () => {
     setFileName(file.name)
     setSheet(sheet)
 
-    const validation = sheetSchema.safeParse(sheet)
+    const validation = await sheetSchema.safeParseAsync(sheet)
     if (!validation.success) {
       const formattedErrors = validation.error.format()
       const flatErrors = validation.error.flatten((issue) => {
@@ -76,6 +79,7 @@ const BatchImport: NextPageWithLayout = () => {
       return
     }
 
+    setValidSheet(validation.data)
     setErrors(undefined)
   }
 
@@ -83,18 +87,24 @@ const BatchImport: NextPageWithLayout = () => {
     setErrors(undefined)
     setFileName(undefined)
     setSheet(undefined)
+    setValidSheet(undefined)
     encodedFile.current = undefined
   }
 
   const handleSubmit = async () => {
-    if (!encodedFile.current) return
+    if (!validSheet) return
     try {
-      const receipts = await uploadChargesBatch(encodedFile.current)
+      const receipts = await uploadChargesBatch(validSheet)
       setCreatedReceipts(receipts)
       reset()
     } catch (error) {
       if (error instanceof HttpError) {
-        alert('Ocurrió un error al procesar el documento: ' + error.message)
+        toast({
+          status: 'error',
+          description: 'Ocurrió un error al procesar el documento: ' + error.message,
+          duration: null,
+          isClosable: true
+        })
       }
     }
   }
@@ -112,7 +122,7 @@ const BatchImport: NextPageWithLayout = () => {
 
       {errors && <DocErrorList errors={errors.flattened} />}
 
-      {isFileValid && (
+      {validSheet && (
         <>
           <ValidFileFeedback />
           <SaveButton onClick={handleSubmit}>Subir lote de cobros</SaveButton>

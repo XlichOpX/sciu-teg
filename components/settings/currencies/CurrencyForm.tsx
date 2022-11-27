@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ComponentPropsWithoutRef } from 'react'
 import type { SubmitHandler } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
-import { createCurrencySchema } from 'schema/currencySchema'
+import { currencyCreateSchema } from 'schema/currencySchema'
 import { z } from 'zod'
 
 export const CurrencyForm = ({ onSubmit, defaultValues, ...props }: CurrencyFormProps) => {
@@ -11,7 +11,7 @@ export const CurrencyForm = ({ onSubmit, defaultValues, ...props }: CurrencyForm
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<FormInput>({ resolver: zodResolver(createCurrencySchema), defaultValues })
+  } = useForm<FormInput>({ resolver: zodResolver(currencyCreateSchema), defaultValues })
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} {...props} noValidate>
@@ -32,7 +32,7 @@ export const CurrencyForm = ({ onSubmit, defaultValues, ...props }: CurrencyForm
   )
 }
 
-type FormInput = z.infer<typeof createCurrencySchema>
+type FormInput = z.infer<typeof currencyCreateSchema>
 
 export type CurrencyFormSubmitHandler = SubmitHandler<FormInput>
 

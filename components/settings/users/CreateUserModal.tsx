@@ -34,14 +34,16 @@ import { PersonSelectForm, PersonSelectFormData, personSelectFormSchema } from '
 import { UserForm, UserFormData, userFormSchema, UserFormSubmitHandler } from './UserForm'
 
 export const CreateUserModal = () => {
-  const { isOpen, onClose, onOpen } = useDisclosure()
   const [isNewPerson, setIsNewPerson] = useState(true)
   const [person, setPerson] = useState<number | PersonFormData>()
   const [formStep, setFormStep] = useState(0)
   const toast = useToast()
   const matchMutate = useMatchMutate()
 
-  const userFormHook = useForm<UserFormData>({ resolver: zodResolver(userFormSchema) })
+  const userFormHook = useForm<UserFormData>({
+    resolver: zodResolver(userFormSchema),
+    defaultValues: { roles: [] }
+  })
 
   const personFormHook = useForm<PersonFormData>({
     resolver: zodResolver(personFormSchema),
@@ -55,6 +57,15 @@ export const CreateUserModal = () => {
     mode: 'onChange'
   })
 
+  const reset = () => {
+    userFormHook.reset()
+    personFormHook.reset()
+    personSelectFormHook.reset()
+    setFormStep(0)
+  }
+
+  const { isOpen, onClose, onOpen } = useDisclosure({ onClose: reset })
+
   const onCreate: UserFormSubmitHandler = async (data) => {
     if (!person) return
     try {
@@ -62,6 +73,7 @@ export const CreateUserModal = () => {
       await matchMutate(userKeysMatcher)
       toast({ status: 'success', description: 'Usuario creado con éxito' })
       onClose()
+      reset()
     } catch {
       toast({ status: 'error', description: 'Ocurrió un error al crear el usuario' })
     }

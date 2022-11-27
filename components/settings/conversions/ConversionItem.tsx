@@ -1,11 +1,11 @@
 import { Text, VStack } from '@chakra-ui/react'
-import { Conversion } from '@prisma/client'
 import { SimpleBox } from 'components/app'
 import dayjs from 'dayjs'
 import { useAuth } from 'hooks'
+import { ConversionWithCurrency } from 'types/conversion'
 import { EditConversionModal } from './EditConversionModal'
 
-export const ConversionItem = ({ conversion }: { conversion: Conversion }) => {
+export const ConversionItem = ({ conversion }: { conversion: ConversionWithCurrency }) => {
   const isRecent = dayjs(conversion.date).add(30, 'minute').isAfter(dayjs())
   const { user } = useAuth()
 
@@ -25,16 +25,16 @@ export const ConversionItem = ({ conversion }: { conversion: Conversion }) => {
 
         <p>
           <Text as="span" fontWeight="bold">
-            Dólar:
+            Moneda:
           </Text>{' '}
-          {conversion.dolar.toFixed(2)}
+          {conversion.currency.symbol} - {conversion.currency.name}
         </p>
 
         <p>
           <Text as="span" fontWeight="bold">
-            Euro:
+            Tasa:
           </Text>{' '}
-          {conversion.euro.toFixed(2)}
+          {conversion.currency.symbol} {conversion.value.toFixed(2)} = $1
         </p>
       </VStack>
     </SimpleBox>

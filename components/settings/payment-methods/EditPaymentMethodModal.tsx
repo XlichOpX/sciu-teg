@@ -13,18 +13,18 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
 import { paymentMethodKeysMatcher, useAuth, useMatchMutate } from 'hooks'
 import { useForm } from 'react-hook-form'
-import { paymentMethodInputSchema } from 'schema/paymentMethodSchema'
+import { paymentMethodUpdateSchema } from 'schema/paymentMethodSchema'
 import { deletePaymentMethod, updatePaymentMethod } from 'services/paymentMethods'
-import { PaymentMethodInput, PaymentMethodWithConversion } from 'types/paymentMethod'
+import { PaymentMethodCreateInput, PaymentMethodWithCurrencies } from 'types/paymentMethod'
 import { PaymentMethodForm, PaymentMethodFormSubmitHandler } from './PaymentMethodForm'
 
 export const EditPaymentMethodModal = ({
   paymentMethod
 }: {
-  paymentMethod: PaymentMethodWithConversion
+  paymentMethod: PaymentMethodWithCurrencies
 }) => {
-  const formHook = useForm<PaymentMethodInput>({
-    resolver: zodResolver(paymentMethodInputSchema),
+  const formHook = useForm<PaymentMethodCreateInput>({
+    resolver: zodResolver(paymentMethodUpdateSchema),
     defaultValues: { ...paymentMethod, metaPayment: paymentMethod.metaPayment }
   })
 
@@ -33,7 +33,7 @@ export const EditPaymentMethodModal = ({
   const matchMutate = useMatchMutate()
   const { user } = useAuth()
 
-  const onUpdate: PaymentMethodFormSubmitHandler = async (data: PaymentMethodInput) => {
+  const onUpdate: PaymentMethodFormSubmitHandler = async (data: PaymentMethodCreateInput) => {
     try {
       await updatePaymentMethod(paymentMethod.id, data)
       await matchMutate(paymentMethodKeysMatcher)

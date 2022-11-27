@@ -1,10 +1,11 @@
+import { HttpError } from 'lib/http-error'
 import { useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { PaymentMethodWithConversion } from 'types/paymentMethod'
+import { PaymentMethodWithCurrencies } from 'types/paymentMethod'
 
 export const usePaymentMethods = () => {
   const [search, setSearch] = useState('')
-  const { data, error } = useSWR<PaymentMethodWithConversion[], Error>('/api/paymentMethod')
+  const { data, error } = useSWR<PaymentMethodWithCurrencies[], HttpError>('/api/paymentMethod')
 
   const paymentMethods = useMemo(
     () => data?.filter((pm) => pm.name.toLowerCase().includes(search)),

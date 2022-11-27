@@ -9,7 +9,9 @@ export const CategorySelect = ({
   onChange: (value?: number) => void
   value?: number
 }) => {
-  const { categories, isLoading } = useCategories()
+  const { categories, isLoading, error } = useCategories()
+
+  const cantReadCategories = error?.statusCode === 403
 
   useEffect(() => {
     if (!categories || !categories[0]) return
@@ -23,8 +25,12 @@ export const CategorySelect = ({
       getOptionValue={(opt) => opt.id.toString()}
       onChange={(value) => onChange(value?.id)}
       value={categories?.find((c) => c.id === value)}
-      placeholder="Buscar categoría"
-      noOptionsMessage={({ inputValue }) => `Sin resultados para "${inputValue}"`}
+      placeholder={
+        cantReadCategories ? 'No tiene permiso para leer categorías' : 'Buscar categoría'
+      }
+      noOptionsMessage={({ inputValue }) =>
+        inputValue ? `Sin resultados para "${inputValue}"` : 'Busque una categoría'
+      }
       isLoading={isLoading}
       loadingMessage={() => 'Cargando...'}
     />

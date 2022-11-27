@@ -8,6 +8,7 @@ export const useBillings = (docNumber: string) => {
     { student: StudentWithPersonCareerAndStatus; billings: BillingComparatorArgs[] },
     HttpError
   >(docNumber ? `/api/student/${docNumber}/billing` : null)
+
   return {
     data,
     error,
@@ -16,6 +17,8 @@ export const useBillings = (docNumber: string) => {
     errorMsg: error
       ? error.statusCode === 404
         ? 'Estudiante no encontrado'
+        : error.statusCode === 403
+        ? 'No tiene permiso para ver las deudas de los estudiantes'
         : 'Ocurrió un error al buscar el estudiante'
       : undefined
   }

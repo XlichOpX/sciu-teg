@@ -1,4 +1,5 @@
 import {
+  Alert,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -30,7 +31,9 @@ interface UserFormProps {
 }
 
 export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
-  const { selectOptions } = useRoles()
+  const { selectOptions, error } = useRoles()
+
+  const cantReadRoles = error?.statusCode === 403
 
   const {
     register,
@@ -39,13 +42,10 @@ export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
     formState: { errors }
   } = formHook
 
+  if (cantReadRoles) return <Alert status="error">No tiene permisos para leer roles</Alert>
+
   return (
-    <Stack
-      gap={2}
-      as="form"
-      onSubmit={handleSubmit(onSubmit, (errors) => console.log(errors))}
-      id={id}
-    >
+    <Stack gap={2} as="form" onSubmit={handleSubmit(onSubmit)} id={id} noValidate>
       <FormControl isInvalid={!!errors.username} isRequired>
         <FormLabel>Nombre de usuario</FormLabel>
         <Input {...register('username')} />

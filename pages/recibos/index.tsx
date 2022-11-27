@@ -7,7 +7,9 @@ import Head from 'next/head'
 import { NextPageWithLayout } from '../_app'
 
 const Receipts: NextPageWithLayout = () => {
-  const { receipts, pages, page, setPage, setSearch, isLoading } = useReceipts({ itemsPerPage: 20 })
+  const { receipts, pages, page, setPage, setSearch, isLoading, error } = useReceipts({
+    itemsPerPage: 20
+  })
   return (
     <>
       <Head>
@@ -19,6 +21,7 @@ const Receipts: NextPageWithLayout = () => {
         placeholder="Buscar recibos"
         onChange={({ text }) => setSearch(text)}
       />
+      {error && <Alert status="error">{error.message}</Alert>}
       {isLoading && <FullyCenteredSpinner />}
       {receipts && receipts.length > 0 && <ReceiptList receipts={receipts} />}
       {receipts && receipts.length === 0 && <Alert>No hay recibos...</Alert>}

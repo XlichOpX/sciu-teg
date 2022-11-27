@@ -1,3 +1,4 @@
 // created from 'create-ts-index'
 
-export * from './ReceiptList';
+export * from './ReceiptDetail'
+export * from './ReceiptList'

@@ -79,6 +79,11 @@ export const permss = [
   'EDIT_RECEIPT',
   'DELETE_RECEIPT',
 
+  'CREATE_REPORT',
+  'READ_REPORT',
+  'EDIT_REPORT',
+  'DELETE_REPORT',
+
   'CREATE_ROLE',
   'READ_ROLE',
   'EDIT_ROLE',

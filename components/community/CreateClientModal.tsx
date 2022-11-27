@@ -25,6 +25,7 @@ export const CreateClientModal = () => {
       const newClient = await createClient(data)
       router.push(`/comunidad/${newClient.person.docNumber}`)
       toast({ status: 'success', description: 'Cliente creado' })
+      window.location.pathname = `/comunidad/${newClient.person.docNumber}`
     } catch (error) {
       if (error instanceof HttpError) {
         toast({ status: 'error', description: error.message })

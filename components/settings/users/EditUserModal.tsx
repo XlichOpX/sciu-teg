@@ -1,4 +1,5 @@
 import {
+  Alert,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -27,15 +28,15 @@ import { useAuth, useMatchMutate, userKeysMatcher, useRoles, useUserStatus } fro
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { userUpdateSchema } from 'schema/userSchema'
 import { deleteUser, updateUser } from 'services/users'
-import { UserEssencials } from 'types/user'
+import { UserEssentials } from 'types/user'
 import { z } from 'zod'
 
 type EditUserForm = z.infer<typeof userUpdateSchema>
 
-export const EditUserModal = ({ user }: { user: UserEssencials }) => {
+export const EditUserModal = ({ user }: { user: UserEssentials }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { selectOptions } = useRoles()
-  const { userStatus } = useUserStatus()
+  const { selectOptions, isLoading: loadingRoles, error: roleError } = useRoles()
+  const { userStatus, isLoading: loadingStatus, error: statusError } = useUserStatus()
   const { user: currentUser } = useAuth()
   const toast = useToast()
   const matchMutate = useMatchMutate()
@@ -49,6 +50,8 @@ export const EditUserModal = ({ user }: { user: UserEssencials }) => {
     resolver: zodResolver(userUpdateSchema),
     defaultValues: { roles: user.roles.map((r) => r.id) }
   })
+
+  const canReadVars = roleError?.statusCode !== 403 && statusError?.statusCode !== 403
 
   const onSubmit: SubmitHandler<EditUserForm> = async (data) => {
     try {
@@ -72,7 +75,7 @@ export const EditUserModal = ({ user }: { user: UserEssencials }) => {
     }
   }
 
-  const isLoading = !userStatus || !selectOptions
+  const isLoading = loadingStatus || loadingRoles
 
   return (
     <>
@@ -89,48 +92,57 @@ export const EditUserModal = ({ user }: { user: UserEssencials }) => {
             {isLoading ? (
               <FullyCenteredSpinner />
             ) : (
-              <Stack
-                as="form"
-                onSubmit={handleSubmit(onSubmit)}
-                id="EditUserForm"
-                gap={3}
-                noValidate
-              >
-                <FormControl isInvalid={!!errors.statusId} isRequired>
-                  <FormLabel>Status</FormLabel>
-                  <Select
-                    defaultValue={user.status.id}
-                    {...register('statusId', { valueAsNumber: true })}
+              <>
+                {canReadVars && (
+                  <Stack
+                    as="form"
+                    onSubmit={handleSubmit(onSubmit)}
+                    id="EditUserForm"
+                    gap={3}
+                    noValidate
                   >
-                    {userStatus.map((us) => (
-                      <option key={us.id} value={us.id}>
-                        {us.status}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>{errors.statusId?.message}</FormErrorMessage>
-                </FormControl>
-
-                <Controller
-                  name="roles"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControl isInvalid={!!errors.roles} isRequired>
-                      <FormLabel>Roles</FormLabel>
-                      <RSelect
-                        {...field}
-                        onChange={(newValue) => field.onChange(newValue.map((nv) => nv.value))}
-                        value={selectOptions?.filter((so) => field.value.includes(so.value))}
-                        isMulti
-                        options={selectOptions}
-                        placeholder="Seleccionar roles..."
-                        noOptionsMessage={({ inputValue }) => `Sin resultados para "${inputValue}"`}
-                      />
-                      <FormErrorMessage>{errors.roles?.message}</FormErrorMessage>
+                    <FormControl isInvalid={!!errors.statusId} isRequired>
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        defaultValue={user.status.id}
+                        {...register('statusId', { valueAsNumber: true })}
+                      >
+                        {userStatus?.map((us) => (
+                          <option key={us.id} value={us.id}>
+                            {us.status}
+                          </option>
+                        ))}
+                      </Select>
+                      <FormErrorMessage>{errors.statusId?.message}</FormErrorMessage>
                     </FormControl>
-                  )}
-                />
-              </Stack>
+
+                    <Controller
+                      name="roles"
+                      control={control}
+                      render={({ field }) => (
+                        <FormControl isInvalid={!!errors.roles} isRequired>
+                          <FormLabel>Roles</FormLabel>
+                          <RSelect
+                            {...field}
+                            onChange={(newValue) => field.onChange(newValue.map((nv) => nv.value))}
+                            value={selectOptions?.filter((so) => field.value.includes(so.value))}
+                            isMulti
+                            options={selectOptions}
+                            placeholder="Seleccionar roles..."
+                            noOptionsMessage={({ inputValue }) =>
+                              `Sin resultados para "${inputValue}"`
+                            }
+                          />
+                          <FormErrorMessage>{errors.roles?.message}</FormErrorMessage>
+                        </FormControl>
+                      )}
+                    />
+                  </Stack>
+                )}
+              </>
+            )}
+            {!canReadVars && (
+              <Alert status="error">No tiene permiso para leer roles o status de usuario</Alert>
             )}
           </ModalBody>
 

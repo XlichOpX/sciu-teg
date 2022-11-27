@@ -1,8 +1,10 @@
-import { Conversion } from '@prisma/client'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { conversionWithCurrency } from 'prisma/queries'
+import { conversionCreateSchema } from 'schema/conversionSchema'
+import validateBody from 'utils/bodyValidate'
 import { canUserDo } from 'utils/checkPermissions'
 import { dateTimeSearch, routePaginate } from 'utils/routePaginate'
 
@@ -17,18 +19,17 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
     case 'GET':
       try {
         const { after } = query
-
         const where = { date: dateTimeSearch(after) }
 
         //obtenemos TODAS las conversiones
         const result = await prisma.conversion.findMany({
+          ...conversionWithCurrency,
           ...routePaginate(query),
           where,
           orderBy: {
             date: 'desc'
           }
         })
-
         const count = await prisma.conversion.count({ where })
 
         res.status(200).send({ count, result })
@@ -39,12 +40,15 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       }
       break
     case 'POST':
-      if (!(await canUserDo(session, 'EDIT_CONVERSION')))
-        return res.status(403).send(`Can't edit this.`)
+      if (!(await canUserDo(session, 'CREATE_CONVERSION')))
+        return res.status(403).send(`Can't create this.`)
       try {
+        //validate body
+        const validBody = await validateBody(body, conversionCreateSchema)
         //creamos UNA conversión
-        const result: Conversion = await prisma.conversion.create({
-          data: { ...body }
+        const result = await prisma.conversion.create({
+          data: { ...validBody.data },
+          ...conversionWithCurrency
         })
         res.status(201).send(result)
       } catch (error) {

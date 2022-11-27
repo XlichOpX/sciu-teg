@@ -1,17 +1,19 @@
 import { Prisma } from '@prisma/client'
-import { paymentMethodWithConversion } from 'prisma/queries'
+import { paymentMethodWithCurrenciesWithoutDetails } from 'prisma/queries'
 import {
   metaPaymentDataSchema,
   metaPaymentDefSchema,
-  paymentMethodInputSchema
+  paymentMethodCreateSchema,
+  paymentMethodUpdateSchema
 } from 'schema/paymentMethodSchema'
 import { z } from 'zod'
 
-export type PaymentMethodInput = z.infer<typeof paymentMethodInputSchema>
-export type PaymentMethodWithConversion = Omit<
-  Prisma.PaymentMethodGetPayload<typeof paymentMethodWithConversion>,
+export type PaymentMethodCreateInput = z.infer<typeof paymentMethodCreateSchema>
+export type PaymentMethodUpdateInput = z.infer<typeof paymentMethodUpdateSchema>
+export type PaymentMethodWithCurrencies = Omit<
+  Prisma.PaymentMethodGetPayload<typeof paymentMethodWithCurrenciesWithoutDetails>,
   'metaPayment'
-> & { metaPayment: MetaPaymentDef[] | undefined | null }
+> & { metaPayment: MetaPaymentDef[] | undefined }
 
 export type MetaPaymentDef = z.infer<typeof metaPaymentDefSchema>
 export type MetaPaymentData = z.infer<typeof metaPaymentDataSchema>

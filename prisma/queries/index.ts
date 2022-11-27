@@ -11,6 +11,23 @@ export const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
   }
 })
 
+export const categoryWithRelationalProducts = Prisma.validator<Prisma.CategoryArgs>()({
+  select: {
+    _count: true,
+    description: true,
+    id: true,
+    name: true,
+    products: {
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        stock: true
+      }
+    }
+  }
+})
+
 export const receiptWithPerson = Prisma.validator<Prisma.ReceiptArgs>()({
   select: {
     amount: true,
@@ -27,17 +44,44 @@ export const receiptWithPerson = Prisma.validator<Prisma.ReceiptArgs>()({
   }
 })
 
-export const chargeWithPaymentMethodAndConversion = Prisma.validator<Prisma.ChargeArgs>()({
-  include: { paymentMethod: true, conversion: { select: { euro: true, dolar: true } } }
+export const chargeWithPaymentMethodAndCurrencies = Prisma.validator<Prisma.ChargeArgs>()({
+  include: {
+    paymentMethod: { select: { currencies: { select: { id: true, symbol: true, name: true } } } }
+  }
 })
 
 export const clientWithPersonAndOccupation = Prisma.validator<Prisma.ClientArgs>()({
   include: { person: { include: { docType: { select: { type: true } } } }, occupation: true }
 })
 
-export const paymentMethodWithConversion = Prisma.validator<Prisma.PaymentMethodArgs>()({
-  include: { currency: { select: { name: true, symbol: true } } }
+export const paymentMethodWithCurrencies = Prisma.validator<Prisma.PaymentMethodArgs>()({
+  select: {
+    createdAt: true,
+    currencies: true,
+    description: true,
+    id: true,
+    metaPayment: true,
+    name: true,
+    updatedAt: true
+  }
 })
+
+export const paymentMethodWithCurrenciesWithoutDetails =
+  Prisma.validator<Prisma.PaymentMethodArgs>()({
+    select: {
+      currencies: {
+        select: {
+          id: true,
+          name: true,
+          symbol: true
+        }
+      },
+      description: true,
+      id: true,
+      metaPayment: true,
+      name: true
+    }
+  })
 
 export const personWithAllData = Prisma.validator<Prisma.PersonArgs>()({
   include: {
@@ -65,11 +109,11 @@ export const receiptWithAll = Prisma.validator<Prisma.ReceiptArgs>()({
     charges: {
       select: {
         amount: true,
-        conversion: { select: { dolar: true, euro: true } },
+        currency: { select: { id: true, name: true, symbol: true } },
         id: true,
         paymentMethod: {
           select: {
-            currency: { select: { name: true, symbol: true } },
+            currencies: { select: { name: true, symbol: true } },
             name: true,
             id: true
           }
@@ -119,18 +163,18 @@ export const studentWithPersonCareerAndStatus = Prisma.validator<Prisma.StudentA
 
 export const billing = Prisma.validator<Prisma.BillingArgs>()({
   select: {
+    amount: true,
+    createdAt: true,
+    dateToPay: true,
     id: true,
     isCharged: true,
     product: true,
     productName: true,
-    amount: true,
-    semester: true,
-    createAt: true,
-    dateToPay: true
+    semester: true
   }
 })
 
-export const userEssencials = Prisma.validator<Prisma.UserArgs>()({
+export const userEssentials = Prisma.validator<Prisma.UserArgs>()({
   select: {
     id: true,
     status: true,
@@ -172,3 +216,12 @@ export const userWithAll = Prisma.validator<Prisma.UserArgs>()({
 })
 
 export const reportArqueo = Prisma.validator<Prisma.ChargeArgs>()({})
+
+export const conversionWithCurrency = Prisma.validator<Prisma.ConversionArgs>()({
+  select: {
+    currency: { select: { id: true, name: true, symbol: true } },
+    id: true,
+    date: true,
+    value: true
+  }
+})

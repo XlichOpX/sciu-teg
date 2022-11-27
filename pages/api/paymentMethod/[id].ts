@@ -2,6 +2,8 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { paymentMethodWithCurrencies } from 'prisma/queries'
+import { paymentMethodUpdateSchema } from 'schema/paymentMethodSchema'
 import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
@@ -26,9 +28,10 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos a UN método de pago
       try {
         const paymentMethod = await prisma.paymentMethod.findFirst({
-          include: { currency: true },
+          ...paymentMethodWithCurrencies,
           where: { id: Number(id) }
         })
+
         if (!paymentMethod) res.status(404).end(`PaymentMethod not found`)
         res.status(200).send(paymentMethod)
       } catch (error) {
@@ -46,13 +49,21 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
           where: { id: Number(id) }
         })
         if (!paymentMethod) res.status(404).end(`PaymentMethod not found`)
+        // Validate Body
+        const validBody = paymentMethodUpdateSchema.safeParse(body)
+        if (!validBody.success) return res.status(400)
+
+        const { currencies } = validBody.data
+
         const updatePaymentMethod = await prisma.paymentMethod.update({
           data: {
-            ...body
+            ...validBody.data,
+            currencies: { set: currencies }
           },
           where: {
             id: Number(id)
-          }
+          },
+          ...paymentMethodWithCurrencies
         })
         res.status(201).send(updatePaymentMethod)
       } catch (error) {
