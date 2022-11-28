@@ -52,46 +52,54 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         // Iteramos cada fila del excel asociada al estudiante para preparar los productos, facturación y cobros
         for (const row of rows) {
           // Billing y Productos
-          const productName =
-            row.producto.toLocaleLowerCase().includes('mensualidad') ||
-            row.producto.toLocaleLowerCase().includes('retardo')
-              ? `${row.producto.trim()} de ${row.mensualidad?.trim()} ${row.semestre?.trim()}`
-              : row.producto.trim()
-
-          const matchedBillings = await prisma.billing.findMany({
-            select: { id: true, amount: true, isCharged: true, productName: true },
-            where: {
-              productName: { startsWith: productName, mode: 'insensitive' },
-              isCharged: { equals: false },
-              student: { personId: student.personId }
-            }
-          })
-
-          const billing =
-            matchedBillings.length <= 1
-              ? matchedBillings[0]
-              : matchedBillings.filter((bill) =>
-                  bill.productName.toLocaleLowerCase().includes(productName.toLocaleLowerCase())
-                )[0]
-
-          const product = await prisma.product.findFirst({
-            select: { id: true, price: true },
-            where: { name: stringSearch(productName) }
-          })
-
+          let billing
+          let product
           let amount: number
-          if (billing) {
+          if (row.mensualidad && row.semestre) {
+            billing = await prisma.billing.findFirst({
+              select: { id: true, amount: true, isCharged: true, productName: true },
+              where: {
+                AND: [
+                  {
+                    productName: {
+                      contains: row.producto,
+                      mode: 'insensitive'
+                    }
+                  },
+                  {
+                    productName: {
+                      contains: row.mensualidad,
+                      mode: 'insensitive'
+                    }
+                  },
+                  {
+                    productName: {
+                      contains: row.semestre,
+                      mode: 'insensitive'
+                    }
+                  },
+                  { isCharged: { equals: false } },
+                  { student: { personId: student.personId } }
+                ]
+              }
+            })
+
+            if (!billing) throw new Error('billing not found')
+
             billings.push(billing.id)
             if (billing.amount === row.precio) amount = row.precio
             else
               throw new Error(
                 `El precio ${row.precio} no corresponde al pendiente por pagar en: ${billing.productName}`
               )
-          } else if (product) {
+          } else {
+            product = await prisma.product.findFirst({
+              select: { id: true, price: true },
+              where: { name: stringSearch(row.producto) }
+            })
+            if (!product) throw new Error('product not found')
             products.push({ id: product.id, quantity: row.cantidad })
             amount = row.precio
-          } else {
-            throw new Error('Billing and Product not Found')
           }
 
           //Cobros
@@ -190,47 +198,6 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 }
 
 /**
- * manejo del cuerpo de la request para convertir el archivo (codeado en Base64)
- * en un objeto manejable con la librería XLSX
- */
-// const handleBody = (body: NextApiRequest['body']) => {
-//   //Leemos el cuerpo y formateamos a un workBook, un objeto manejable en js
-//   const workBook = XLSX.read(body, {
-//     type: 'base64',
-//     cellDates: true,
-//     cellFormula: true,
-//     dense: true
-//   })
-//   const sheetName = workBook.SheetNames[0]
-//   const workSheet = workBook.Sheets[sheetName]['!data']
-//   if (!workSheet) throw new Error('not Worksheet initiated')
-
-//   const rows = workSheet.map((row, index, arr) => {
-//     const r = index //row Index
-//     return row
-//       .map((col, index) => {
-//         // convertimos cada fila en un arreglo [col]: valor
-//         const c = index //col Index
-//         let cell = col.v || col.w
-//         if (typeof cell === 'string') cell = cell.toLocaleLowerCase().trim()
-
-//         const addr = XLSX.utils.encode_cell({ r, c })
-//         const prop = XLSX.utils.format_cell(arr[0][c])
-//         return { [prop]: cell, [`${prop}_addr`]: addr }
-//       })
-//       .reduce((row, cell) => {
-//         // reducimos la matriz a un solo arreglo de objetos [col]: valor
-//         return { ...row, ...cell }
-//       }, {})
-//   })
-
-//   // eliminamos el registro 0 (cabecera)
-//   rows.shift()
-//   //Devolvemos el dataCell formateado.
-//   return { dataCell: rows }
-// }
-
-/**
  * Recibe el arreglo de filas y extrae la información necesaria y elimina los espacios innecesarios de los strings
  * Así como ordena en un objeto docNum -> Array de columnas para facilitar la iteración de estos
  * @param { SheetData } SheetData
@@ -269,78 +236,3 @@ function findCurrency(currencies: Pick<Currency, 'id' | 'name' | 'symbol'>[], fi
     return isSymbol || isName
   })?.id
 }
-// (
-//   dataCell: { [x: string]: string | number | Date | boolean | undefined }[] | undefined
-// ) => {
-//   if (!dataCell) throw Error(`not dataCell`)
-//   const rows = dataCell.map((row) => {
-//     const person = row['cedula'] as string
-//     if (!person) throw new Error(`not found data in ${row['cedula_addr']}`)
-//     const productPrice = row['precio'] as number
-//     if (!productPrice) throw new Error(`not found data in ${row['precio_addr']}`)
-//     const quantity = row['cantidad'] as number
-//     if (!quantity) throw new Error(`not found data in ${row['cantidad_addr']}`)
-//     const paymentMethod = row['metodo_de_pago'] as string
-//     if (!paymentMethod) throw new Error(`not found data in ${row['metodo_de_pago_addr']}`)
-//     const amount = row['monto_cobrado'] as number
-//     if (!amount) throw new Error(`not found data in ${row['monto_cobrado_addr']}`)
-//     const referencia = row['referencia'] as string
-//     if (!referencia) throw new Error(`not found data in ${row['referencia_addr']}`)
-//     const fecha = new Date(row['fecha'] as unknown as Date)
-//     if (!fecha) throw new Error(`not found data in ${row['fecha_addr']}`)
-//     const productName =
-//       row['producto'] == 'mensualidad'
-//         ? `${row['producto']} de ${row['mensualidad']} ${row['semestre']}`
-//         : (row['producto'] as string)
-//     if (!productName)
-//       throw new Error(
-//         `not fount data in ${
-//           row['producto'] === 'mensualidad'
-//             ? `${row['mensualidad_addr']} ó ${row['semestre_addr']}`
-//             : row['product_addr']
-//         }`
-//       )
-//     return {
-//       person,
-//       productPrice,
-//       quantity,
-//       paymentMethod,
-//       amount,
-//       referencia,
-//       fecha,
-//       productName
-//     }
-//   })
-//   return _.groupBy(rows, 'person')
-// }
-
-/**
- * Endpoint temporal para la creación de la lógica de cargar un excel con muchos cobros.
- * Para lograr esto requerimos dos partes de lógica.
- * En el front, surtir una interface con un uploader de archivos EXCEL
- * (SOLO 'Hojas de Cálculo' o CSV, aún por definir las extensiones a admitir, falta buscar una lib que lo haga)
- * en el back, se recibirá un POST con el archivo suministrado y se transforma a javascript Object.
- *
- * Se extrae la data de este y se iterará por 'ROW' ? (Filas)
- *
- * Cada fila será un producto. A no ser que se vea una forma de generar args ilimitados por columnas
- * (a partir de una en particular)
- *
- * Al iterar, se debe almacenar una referencia al campo que se está leyendo en todo momento, en caso de error devolver
- * un mensaje amigable con esta referencia para su corrección Incluso poder facilitar observaciones de posibles errores.
- *
- * Se validará que la data sea consistente y no se haya cobrado anteriormente
- * (al menos que el último cobro no haya sido demasiado similar persona/monto/fecha/método de pago/algún otro valor que determinemos clave)
- *
- * Antes/durante/después de la validación, se organizarán los cobros para realizar el mínimo número de recibos por estudiantes
- * generando así un recibo por estudiante/persona en el archivo de ser posible
- *
- * Por cada recibo que se genere se ha de mandar a 'imprimir' dicho recibo y entregarlo en PDF
- * o bien enviarlo directamente a un correo que estará indicado en el archivo cargado / registrado en el sistema
- *
- * Buscar la manera (de ser posible) de mostrar el progreso en el frontend. Caso contrario dar un loading y entregar
- * respuesta de éxito o error.
- *
- * En caso de error NADA debería de hacerse. (todo el proceso debería de invertirse y no tocar nada.)
- *
- */
