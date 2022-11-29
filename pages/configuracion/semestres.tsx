@@ -1,7 +1,7 @@
 import { Alert, Divider, Flex } from '@chakra-ui/react'
 import { FullyCenteredSpinner, SearchInput } from 'components/app'
 import { SettingsLayout } from 'components/settings'
-import { CreateSemesterModal, SemesterList } from 'components/settings/semesters'
+import { SemesterList } from 'components/settings/semesters'
 import { useAuth, useSemesters } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
@@ -17,7 +17,7 @@ const SemesterSettings: NextPageWithLayout = () => {
     <>
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
         <SearchInput placeholder="Buscar semestres" onChange={({ text }) => setSearch(text)} />
-        {user?.permissions.includes('CREATE_SEMESTER') && <CreateSemesterModal />}
+        {/* {user?.permissions.includes('CREATE_SEMESTER') && <CreateSemesterModal />} */}
       </Flex>
 
       <Divider my={4} />

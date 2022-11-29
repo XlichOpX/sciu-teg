@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ComponentPropsWithoutRef } from 'react'
 import type { SubmitHandler } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
-import { semesterCreateSchema } from 'schema/semesterSchema'
+import { semesterUpdateSchema } from 'schema/semesterSchema'
 import { z } from 'zod'
 
 export const SemesterForm = ({ onSubmit, defaultValues, ...props }: SemesterFormProps) => {
@@ -19,19 +19,13 @@ export const SemesterForm = ({ onSubmit, defaultValues, ...props }: SemesterForm
     handleSubmit,
     formState: { errors },
     watch
-  } = useForm<FormInput>({ resolver: zodResolver(semesterCreateSchema), defaultValues })
+  } = useForm<FormInput>({ resolver: zodResolver(semesterUpdateSchema), defaultValues })
 
   const [startDate, endDate] = watch(['startDate', 'endDate'])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} {...props} noValidate>
       <Stack gap={3}>
-        <FormControl isInvalid={!!errors.semester} isRequired>
-          <FormLabel>Nombre</FormLabel>
-          <Input {...register('semester')} />
-          <FormErrorMessage>{errors.semester?.message}</FormErrorMessage>
-        </FormControl>
-
         <SimpleGrid columns={2} gap={4}>
           <FormControl isInvalid={!!errors.startDate} isRequired>
             <FormLabel>Fecha de inicio</FormLabel>
@@ -50,7 +44,7 @@ export const SemesterForm = ({ onSubmit, defaultValues, ...props }: SemesterForm
   )
 }
 
-type FormInput = z.infer<typeof semesterCreateSchema>
+type FormInput = z.infer<typeof semesterUpdateSchema>
 
 export type SemesterFormSubmitHandler = SubmitHandler<FormInput>
 
