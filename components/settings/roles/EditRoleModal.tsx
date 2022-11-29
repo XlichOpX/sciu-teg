@@ -15,9 +15,10 @@ import { roleKeysMatcher, useAuth, useMatchMutate } from 'hooks'
 import { HttpError } from 'lib/http-error'
 import { useState } from 'react'
 import { deleteRole, updateRole } from 'services/roles'
+import { RoleWithPermissions } from 'types/role'
 import { RoleForm, RoleFormSubmitHandler } from './RoleForm'
 
-export const EditRoleModal = ({ role }: { role: any }) => {
+export const EditRoleModal = ({ role }: { role: RoleWithPermissions }) => {
   const { onOpen, isOpen, onClose } = useDisclosure()
   const { user } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
