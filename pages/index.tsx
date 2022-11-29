@@ -1,14 +1,18 @@
-import { Button, Container, Heading, useToast } from '@chakra-ui/react'
+import { Container, Divider, Heading } from '@chakra-ui/react'
+import { MonthlySoldProducts } from 'components/home/MonthlySoldProducts'
 import { BaseLayout } from 'components/layouts'
+import { useAuth } from 'hooks'
 import Head from 'next/head'
 import { NextPageWithLayout } from './_app'
 
 const Home: NextPageWithLayout = () => {
-  const toast = useToast()
+  const { user } = useAuth()
+  if (!user) return null
+
   return (
     <>
       <Head>
-        <title>SCIU - TEG</title>
+        <title>Sistema de Cobranzas - IUJO</title>
         <meta
           name="description"
           content="Sistema de Cobranzas para una Institución Universitaria"
@@ -17,22 +21,16 @@ const Home: NextPageWithLayout = () => {
       </Head>
 
       <Container maxW="container.xl" as="main" py={4}>
-        <Heading as="h1" mb={4}>
-          SCIU - TEG
+        <Heading as="h1" mb={4} textAlign="center">
+          Sistema de Cobranzas - IUJO
         </Heading>
 
-        <p>
-          Aquí estaremos desarrollando el Sistema de Gestión de Cobranzas para una Institución
-          Universitaria, nuestro proyecto de Tesis
-        </p>
-
-        <Button
-          colorScheme="blue"
-          mt={4}
-          onClick={() => toast({ description: '¡Sí, criminal!', status: 'success' })}
-        >
-          ¡Criminal!
-        </Button>
+        {user.permissions.includes('READ_REPORT') && (
+          <>
+            <Divider my={4} />
+            <MonthlySoldProducts />
+          </>
+        )}
       </Container>
     </>
   )

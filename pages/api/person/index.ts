@@ -36,7 +36,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           ...personListing,
           ...routePaginate(query),
           where,
-          orderBy: { firstLastName: 'asc', firstName: 'asc' }
+          orderBy: [{ firstLastName: 'asc' }, { firstName: 'asc' }]
         })
 
         if (!result) res.status(404).end(`People not found`)
