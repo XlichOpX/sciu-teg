@@ -21,7 +21,10 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
     case 'GET':
       try {
         //obtenemos TODAS las carreras
-        const careers = await prisma.career.findMany({ where: { career: stringSearch(keyword) } })
+        const careers = await prisma.career.findMany({
+          where: { career: stringSearch(keyword) },
+          orderBy: { career: 'asc' }
+        })
 
         if (!careers) res.status(404).end(`Careers not found`)
         res.status(200).send(careers)

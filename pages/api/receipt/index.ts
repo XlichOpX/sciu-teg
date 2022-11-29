@@ -82,7 +82,7 @@ const getReceipts = async (
     ...routePaginate(query),
     where,
     orderBy: {
-      id: 'desc'
+      createdAt: 'desc'
     }
   })
   return { count, result }

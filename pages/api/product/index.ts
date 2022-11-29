@@ -24,7 +24,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         const result = await prisma.product.findMany({
           ...productWithCategory,
           ...routePaginate(query),
-          where
+          where,
+          orderBy: { name: 'asc' }
         })
         const count = await prisma.product.count({ where })
 

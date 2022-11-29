@@ -22,7 +22,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos TODOS los estado de usuario
       try {
         const status = await prisma.userStatus.findMany({
-          where: { description: stringSearch(keyword) }
+          where: { description: stringSearch(keyword) },
+          orderBy: { status: 'asc' }
         })
 
         if (!status) return res.status(404).end(`UserStatus not found`)

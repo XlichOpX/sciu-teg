@@ -26,7 +26,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos TODOS los usuarios
       try {
         const users = await prisma.user.findMany({
-          ...userEssentials
+          ...userEssentials,
+          orderBy: { username: 'asc' }
         })
 
         if (!users) return res.status(404).end(`Users not found`)
