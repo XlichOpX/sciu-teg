@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
 import { conversionKeysMatcher, useAuth, useMatchMutate } from 'hooks'
+import { HttpError } from 'lib/http-error'
 import { useState } from 'react'
 import { deleteConversion, updateConversion } from 'services/conversions'
 import { ConversionWithCurrency } from 'types/conversion'
@@ -49,8 +50,13 @@ export const EditConversionModal = ({
       await matchMutate(conversionKeysMatcher)
       onClose()
       toast({ status: 'success', description: 'Tasa de cambio eliminada' })
-    } catch {
-      toast({ status: 'error', description: 'Ocurrió un error al eliminar la tasa de cambio' })
+    } catch (error) {
+      if (error instanceof HttpError) {
+        toast({ status: 'error', description: error.message })
+      } else {
+        toast({ status: 'error', description: 'Ocurrió un error al eliminar la tasa de cambio' })
+        console.error(error)
+      }
     } finally {
       setIsSubmitting(false)
     }
