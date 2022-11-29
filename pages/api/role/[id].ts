@@ -71,7 +71,7 @@ async function roleHandler(req: NextApiRequest, res: NextApiResponse) {
         const user = await prisma.user.count({
           where: { id: Number(id) }
         })
-        if (user > 0) res.status(409).end(`Role relation exists`)
+        if (user > 0) return res.status(409).end(`Role relation exists`)
 
         const delRole = await prisma.role.delete({ where: { id: Number(id) } })
         res.status(202).send(delRole)

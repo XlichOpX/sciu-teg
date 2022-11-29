@@ -12,11 +12,13 @@ import {
 import { Permission } from '@prisma/client'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
 import { roleKeysMatcher, useAuth, useMatchMutate } from 'hooks'
+import { HttpError } from 'lib/http-error'
 import { useState } from 'react'
 import { deleteRole, updateRole } from 'services/roles'
+import { RoleWithPermissions } from 'types/role'
 import { RoleForm, RoleFormSubmitHandler } from './RoleForm'
 
-export const EditRoleModal = ({ role }: { role: any }) => {
+export const EditRoleModal = ({ role }: { role: RoleWithPermissions }) => {
   const { onOpen, isOpen, onClose } = useDisclosure()
   const { user } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -52,8 +54,13 @@ export const EditRoleModal = ({ role }: { role: any }) => {
       await matchMutate(roleKeysMatcher)
       onClose()
       toast({ status: 'success', description: 'Rol eliminado' })
-    } catch {
-      toast({ status: 'error', description: 'Ocurrió un error al actualizar el rol' })
+    } catch (error) {
+      if (error instanceof HttpError) {
+        toast({ status: 'error', description: error.message })
+      } else {
+        toast({ status: 'error', description: 'Ocurrió un error al actualizar el rol' })
+        console.error(error)
+      }
     } finally {
       setIsSubmitting(false)
     }

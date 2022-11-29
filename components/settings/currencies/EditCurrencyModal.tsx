@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
 import { currencyKeysMatcher, useAuth, useMatchMutate } from 'hooks'
+import { HttpError } from 'lib/http-error'
 import { SubmitHandler } from 'react-hook-form'
 import { currencyUpdateSchema } from 'schema/currencySchema'
 import { deleteCurrency, updateCurrency } from 'services/currencies'
@@ -43,8 +44,12 @@ export const EditCurrencyModal = ({ currency }: { currency: Currency }) => {
       await matchMutate(currencyKeysMatcher)
       toast({ status: 'success', description: 'Moneda eliminada' })
       onClose()
-    } catch {
-      toast({ status: 'error', description: 'Ocurrió un error al eliminar la moneda' })
+    } catch (error) {
+      if (error instanceof HttpError) {
+        toast({ status: 'error', description: error.message })
+      } else {
+        console.error(error)
+      }
     }
   }
 

@@ -1,5 +1,6 @@
 import { Prisma, UserStatus } from '@prisma/client'
 import { fetch } from 'lib/fetch'
+import { HttpError } from 'lib/http-error'
 import { CreateUserStatusInput, UpdateUserStatusInput } from 'types/userStatus'
 
 export const getUserStatus = async () => {
@@ -26,5 +27,12 @@ export async function createUserStatus(data: CreateUserStatusInput) {
 }
 
 export async function deleteUserStatus(id: number) {
-  return await fetch(`/api/userStatus/${id}`, { method: 'DELETE' })
+  try {
+    return await fetch(`/api/userStatus/${id}`, { method: 'DELETE' })
+  } catch (error) {
+    if (error instanceof HttpError && error.statusCode === 409) {
+      error.message = 'El status se encuentra en uso'
+    }
+    throw error
+  }
 }

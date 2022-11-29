@@ -1,4 +1,5 @@
 import { fetch } from 'lib/fetch'
+import { HttpError } from 'lib/http-error'
 import { CreateDoctypeInput, UpdateDoctypeInput } from 'types/doctype'
 
 export async function updateDoctype(id: number, data: UpdateDoctypeInput) {
@@ -13,5 +14,12 @@ export async function createDoctype(data: CreateDoctypeInput) {
 }
 
 export async function deleteDoctype(id: number) {
-  return await fetch(`/api/docType/${id}`, { method: 'DELETE' })
+  try {
+    return await fetch(`/api/docType/${id}`, { method: 'DELETE' })
+  } catch (error) {
+    if (error instanceof HttpError && error.statusCode === 409) {
+      error.message = 'El tipo de documento se encuentra en uso'
+    }
+    throw error
+  }
 }

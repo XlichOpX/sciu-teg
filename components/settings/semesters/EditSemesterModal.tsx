@@ -9,11 +9,11 @@ import {
   useDisclosure,
   useToast
 } from '@chakra-ui/react'
-import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
-import { semesterKeysMatcher, useAuth, useMatchMutate } from 'hooks'
+import { CancelButton, EditButton, SaveButton } from 'components/app'
+import { semesterKeysMatcher, useMatchMutate } from 'hooks'
 import { SubmitHandler } from 'react-hook-form'
 import { semesterUpdateSchema } from 'schema/semesterSchema'
-import { deleteSemester, updateSemester } from 'services/semesters'
+import { updateSemester } from 'services/semesters'
 import { Semester } from 'types/semester'
 import { toDateInputString } from 'utils/toDateInputString'
 import { z } from 'zod'
@@ -25,7 +25,6 @@ export const EditSemesterModal = ({ semester }: { semester: Semester }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const toast = useToast()
   const matchMutate = useMatchMutate()
-  const { user } = useAuth()
 
   const onSubmit: SubmitHandler<EditSemesterForm> = async (data) => {
     try {
@@ -35,17 +34,6 @@ export const EditSemesterModal = ({ semester }: { semester: Semester }) => {
       onClose()
     } catch {
       toast({ status: 'error', description: 'Ocurrió un error al actualizar el semestre' })
-    }
-  }
-
-  const onDelete = async () => {
-    try {
-      await deleteSemester(semester.id)
-      await matchMutate(semesterKeysMatcher)
-      toast({ status: 'success', description: 'Semestre eliminado' })
-      onClose()
-    } catch {
-      toast({ status: 'error', description: 'Ocurrió un error al eliminar la semestre' })
     }
   }
 
@@ -63,7 +51,6 @@ export const EditSemesterModal = ({ semester }: { semester: Semester }) => {
               onSubmit={onSubmit}
               id="EditSemesterForm"
               defaultValues={{
-                semester: semester.semester,
                 startDate: toDateInputString(semester.startDate),
                 endDate: toDateInputString(semester.endDate)
               }}
@@ -71,15 +58,7 @@ export const EditSemesterModal = ({ semester }: { semester: Semester }) => {
           </ModalBody>
 
           <ModalFooter>
-            {user?.permissions.includes('DELETE_SEMESTER') && (
-              <DeleteButton
-                confirmBody="¿Está seguro de eliminar este semestre?"
-                onDelete={onDelete}
-                mr="auto"
-              />
-            )}
-
-            <CancelButton mr={3} onClick={onClose} />
+            <CancelButton mr="auto" onClick={onClose} />
 
             <SaveButton type="submit" form="EditSemesterForm" />
           </ModalFooter>

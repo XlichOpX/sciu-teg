@@ -2,7 +2,7 @@ import { Divider, Flex, Text } from '@chakra-ui/react'
 import { Semester } from '@prisma/client'
 import { SimpleBox } from 'components/app'
 import { useAuth } from 'hooks'
-import { toDateInputString } from 'utils/toDateInputString'
+import dayjs from 'lib/dayjs'
 import { EditSemesterModal } from './EditSemesterModal'
 
 export const SemesterItem = ({ semester }: { semester: Semester }) => {
@@ -17,8 +17,8 @@ export const SemesterItem = ({ semester }: { semester: Semester }) => {
 
       <Divider my={2} />
 
-      <Text>Inicio: {toDateInputString(semester.startDate)}</Text>
-      <Text>Fin: {toDateInputString(semester.endDate)}</Text>
+      <Text>Inicio: {dayjs(semester.startDate).format('dddd, D [de] MMMM [de] YYYY')}</Text>
+      <Text>Fin: {dayjs(semester.endDate).format('dddd, D [de] MMMM [de] YYYY')}</Text>
     </SimpleBox>
   )
 }
