@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
 import { useAuth, useMatchMutate, userStatusKeysMatcher } from 'hooks'
+import { HttpError } from 'lib/http-error'
 import { useState } from 'react'
 import { SubmitHandler } from 'react-hook-form'
 import { userStatusUpdateSchema } from 'schema/userStatusSchema'
@@ -48,8 +49,16 @@ export const EditUserStatusModal = ({ userStatus }: { userStatus: UserStatus }) 
       await matchMutate(userStatusKeysMatcher)
       toast({ status: 'success', description: 'Status de usuario eliminado' })
       onClose()
-    } catch {
-      toast({ status: 'error', description: 'Ocurrió un error al eliminar la status de usuario' })
+    } catch (error) {
+      if (error instanceof HttpError) {
+        toast({ status: 'error', description: error.message })
+      } else {
+        toast({
+          status: 'error',
+          description: 'Ocurrió un error al eliminar la status de usuario'
+        })
+        console.error(error)
+      }
     }
   }
 
