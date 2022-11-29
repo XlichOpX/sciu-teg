@@ -78,7 +78,7 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
       //eliminamos a UN método de pago
       try {
         const charge = await prisma.charge.count({ where: { paymentMethodId: Number(id) } })
-        if (charge > 0) return res.status(404).end(`PaymentMethod exists relations`)
+        if (charge > 0) return res.status(409).end(`PaymentMethod exists relations`)
 
         const delPaymentMethod = await prisma.paymentMethod.delete({
           where: { id: Number(id) }
