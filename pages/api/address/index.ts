@@ -21,7 +21,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos TODAS las direcciones
       try {
         const addresses = await prisma.address.findMany({
-          where: { shortAddress: stringSearch(keyword) }
+          where: { shortAddress: stringSearch(keyword) },
+          orderBy: { shortAddress: 'asc' }
         })
         res.status(200).send(addresses)
       } catch (error) {

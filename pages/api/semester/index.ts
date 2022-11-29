@@ -15,7 +15,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los semestres
       try {
-        const semesters = await prisma.semester.findMany()
+        const semesters = await prisma.semester.findMany({ orderBy: { createdAt: 'desc' } })
         res.status(200).send(semesters)
       } catch (error) {
         if (error instanceof Error) {

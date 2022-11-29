@@ -21,7 +21,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos TODAS las preguntas secretas
       try {
         const secretQuestions = await prisma.secretQuestion.findMany({
-          where: { question: stringSearch(keyword) }
+          where: { question: stringSearch(keyword) },
+          orderBy: { question: 'asc' }
         })
         res.status(200).send(secretQuestions)
       } catch (error) {

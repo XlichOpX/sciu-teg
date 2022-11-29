@@ -24,7 +24,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       try {
         const roles = await prisma.role.findMany({
           ...roleWithPermissions,
-          where: { name: stringSearch(keyword) }
+          where: { name: stringSearch(keyword) },
+          orderBy: { name: 'asc' }
         })
         res.status(200).send(roles)
       } catch (error) {

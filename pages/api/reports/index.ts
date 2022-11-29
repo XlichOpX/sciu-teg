@@ -12,7 +12,7 @@ export default withIronSessionApiRoute(handle, ironOptions)
 async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { method, session, query } = req
   if (!(method === 'GET')) return res.json({ error: 'method not allowed' })
-  if (!canUserDo(session, 'READ_REPORT')) return res.status(403).send(`Can't read this.`)
+  if (!(await canUserDo(session, 'READ_REPORT'))) return res.status(403).send(`Can't read this.`)
 
   const { report } = query
   // queryString like: reports?report=arqByPayMethod&start=MM/DD/YYYY&end=MM/DD/YYYY&paymentMethod=ID&paymentMethod=ID2...

@@ -15,7 +15,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los estado de estudiantes
       try {
-        const status = await prisma.studentStatus.findMany()
+        const status = await prisma.studentStatus.findMany({ orderBy: { status: 'asc' } })
         res.status(200).send(status)
       } catch (error) {
         if (error instanceof Error) {

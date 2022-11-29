@@ -26,7 +26,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos TODOS los usuarios
       try {
         const users = await prisma.user.findMany({
-          ...userEssentials
+          ...userEssentials,
+          orderBy: { username: 'asc' }
         })
 
         if (!users) return res.status(404).end(`Users not found`)
@@ -44,7 +45,6 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       try {
         // Validamos los campos del request body
         const validBody = await validateBody(body, userSchema)
-        console.log(body)
         const { data } = validBody
         //extraemos la 'data' validada
 
@@ -110,7 +110,6 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         res.status(201).send(result)
       } catch (error) {
         if (error instanceof Error) {
-          console.log(error.message)
           res.status(400).send(error.message)
         }
       }

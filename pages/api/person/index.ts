@@ -35,7 +35,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         const result = await prisma.person.findMany({
           ...personListing,
           ...routePaginate(query),
-          where
+          where,
+          orderBy: { firstLastName: 'asc', firstName: 'asc' }
         })
 
         if (!result) res.status(404).end(`People not found`)

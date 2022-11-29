@@ -16,7 +16,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los cargos
       try {
-        const charges = await prisma.charge.findMany()
+        const charges = await prisma.charge.findMany({ orderBy: { createdAt: 'desc' } })
 
         if (!charges) return res.status(404).end(`Charges not found`)
         res.status(200).send(charges)

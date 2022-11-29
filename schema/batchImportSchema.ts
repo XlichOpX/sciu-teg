@@ -1,5 +1,4 @@
 import { getCurrencies } from 'services/currencies'
-import getServerSideCurrencies from 'utils/getServerSideCurrencies'
 import { z } from 'zod'
 
 /** Intenta convertir el input a string antes de validarlo como tal */
@@ -53,6 +52,7 @@ export const dataSchema = z
 
         let currencies
         if (typeof window === 'undefined') {
+          const getServerSideCurrencies = (await import('utils/getServerSideCurrencies')).default
           currencies = await getServerSideCurrencies()
         } else {
           currencies = await getCurrencies()

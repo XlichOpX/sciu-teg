@@ -14,7 +14,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case 'GET':
       try {
-        const currencies = await prisma.currency.findMany()
+        const currencies = await prisma.currency.findMany({ orderBy: { createdAt: 'desc' } })
         res.status(200).json(currencies)
       } catch (error) {
         if (error instanceof Error) {

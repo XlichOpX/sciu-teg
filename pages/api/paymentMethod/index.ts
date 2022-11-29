@@ -21,7 +21,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos TODOS los métodos de pago
       try {
         const paymentMethod = await prisma.paymentMethod.findMany({
-          ...paymentMethodWithCurrenciesWithoutDetails
+          ...paymentMethodWithCurrenciesWithoutDetails,
+          orderBy: { name: 'asc' }
         })
 
         if (!paymentMethod) return res.status(404).end(`PaymentMethods not found`)

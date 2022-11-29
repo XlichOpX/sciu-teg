@@ -13,16 +13,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { theme } from 'theme'
 import { ReceiptWithAll } from 'types/receipt'
 import { z } from 'zod'
+
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  /**
-   * Recibo el arreglo de recibos o ids de recibos
-   * Itero cada uno y voy generando:
-   * Genero el pdf que se necesita para el recibo
-   * lo almaceno en un arreglo
-   * Para enviar el correo requiero email, nombre del estudiante y crear un asunto dinámico, así como un cuerpo dinámico
-   * envío un correo con todos los pdf 'cargados'
-   * devuelvo una respuesta OK o un error con información del mismo.
-   */
   const { method, body } = req
   switch (method) {
     case 'POST':
@@ -76,9 +68,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 }
 
 export async function sendMail({ from, to, subject, text, html, attachments }: Mail.Options) {
-  // Only needed if you don't have a real mail account for testing
-  // const testAccount = await nodemailer.createTestAccount()
-
+  /**
+   * Objeto de transporte de pruebas... se ha de eliminar al pasar a producción
+   */
   const transportObject = {
     host: 'smtp.ethereal.email',
     port: 587,
@@ -88,6 +80,9 @@ export async function sendMail({ from, to, subject, text, html, attachments }: M
     }
   }
 
+  /**
+   * Esta sección hace uso de las variables de entorno.
+   */
   // const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env
   // const transportObject: SMTPTransport.Options = {
   //   host: SMTP_HOST,
@@ -110,11 +105,16 @@ export async function sendMail({ from, to, subject, text, html, attachments }: M
     html, //Html template that use in the message
     attachments // attach files array
   })
-  console.log(info.messageId)
   if (info.accepted.includes(to as string)) return true
   else throw new Error(`no delivered email from ${to}`)
 }
 
+/**
+ * Función que prepara el PDF, devuelve el nombre del archivo (un texto encriptado)
+ * y el pdf como Buffer
+ * @param receipt ReceiptWithAll
+ * @returns
+ */
 async function prepareReportPdf(receipt: ReceiptWithAll) {
   const hash = hashString(
     `${receipt.person.firstName} ${receipt.person.firstLastName} - ${receipt.id}`
@@ -124,7 +124,12 @@ async function prepareReportPdf(receipt: ReceiptWithAll) {
   const content = await convertReceiptToPdf(receipt, { landscape: true, format: 'a4' })
   return { filename, content }
 }
-
+/**
+ * Función que convierte en PDF el recibo pasado parametrizado por las opciones dadas
+ * @param receipt ReceiptWithAll
+ * @param options Opciones para manejar la impresión del PDF
+ * @returns
+ */
 export async function convertReceiptToPdf(
   receipt: ReceiptWithAll,
   options: { landscape: boolean; format: string }
