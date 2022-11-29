@@ -72,6 +72,11 @@ async function currencyHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA 'moneda'
       try {
+        const paymentMethod = await prisma.paymentMethod.count({
+          where: { currencies: { some: { id: { equals: Number(id) } } } }
+        })
+        if (paymentMethod > 0) return res.status(409).send(`PaymentMethod relations exists`)
+
         const delCurrency = await prisma.currency.delete({ where: { id: Number(id) } })
         res.status(202).send(delCurrency)
       } catch (error) {
