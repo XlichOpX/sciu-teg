@@ -19,7 +19,6 @@ export default withIronSessionApiRoute(handle, ironOptions)
 async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { method, body } = req
   if (method === 'POST') {
-    console.log({ body })
     try {
       const { data } = await validateBody(body, sheetSchema)
       // // obtenemos los datos en un formate manejable.
@@ -27,10 +26,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       // const { dataCell } = handleBody(body)
       const parsedData = await parseData(data)
       if (!parsedData) throw new Error(`error`)
-      console.log({ parsedData })
       const byDocNumber = _.groupBy(parsedData, 'cedula')
       const receiptArr: Receipt[] = []
-      console.log({ byDocNumber })
       for (const docNum in byDocNumber) {
         // iteramos, por cada agrupación por identificación
 
@@ -48,7 +45,6 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         const products: CreateReceiptInput['products'] = []
         const charges: CreateReceiptInput['charges'] = []
         let receiptAmount = 0
-        console.log(rows)
         // Iteramos cada fila del excel asociada al estudiante para preparar los productos, facturación y cobros
         for (const row of rows) {
           // Billing y Productos
@@ -177,9 +173,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           amount: receiptAmount
         }
         // generamos el recibo y lo introducimos en el arreglo de recibos creados
-        console.log(receiptData)
         const receipt = await insertReceipt(receiptData)
-        console.log(receipt)
         receiptArr.push(receipt)
       }
       // Una vez iterado todos los grupos de recibos se devuelve un arreglo con toda la información de estos al frontend
@@ -204,31 +198,30 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
  * @returns
  */
 const parseData = async ({ data, headings }: SheetData) => {
-  try {
-    const currencies = await prisma.currency.findMany({
-      select: { id: true, name: true, symbol: true }
-    })
-    // iteramos cada fila...
-    return data.map((row) => {
-      // iteramos cada columna
-      return Object.fromEntries(
-        row.map((field, index) => {
-          if (headings[index] === 'moneda') {
-            const cur = findCurrency(currencies, field as string)
-            if (cur) field = cur
-            else {
-              throw new Error(`The moneda ${row[index]} is not a valid moneda`)
-            }
+  const currencies = await prisma.currency.findMany({
+    select: { id: true, name: true, symbol: true }
+  })
+  // iteramos cada fila...
+  return data.map((row) => {
+    // iteramos cada columna
+    return Object.fromEntries(
+      row.map((field, index) => {
+        if (headings[index] === 'moneda') {
+          const cur = findCurrency(currencies, field as string)
+          if (cur) field = cur
+          else {
+            throw new Error(`The moneda ${row[index]} is not a valid moneda`)
           }
-          return [headings[index], field]
-        })
-      ) as rowSheet
-    })
-  } catch (error) {
-    console.log(error)
-  }
+        }
+        return [headings[index], field]
+      })
+    ) as rowSheet
+  })
 }
 
+/**
+ * Función que busca una moneda dentro de un arreglo de monedas a través de igualar texto
+ */
 function findCurrency(currencies: Pick<Currency, 'id' | 'name' | 'symbol'>[], field: string) {
   return currencies.find((currency) => {
     const isSymbol = currency.symbol.toLocaleLowerCase() === field.toLocaleLowerCase()

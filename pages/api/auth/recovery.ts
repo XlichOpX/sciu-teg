@@ -13,8 +13,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case 'GET':
       try {
-        console.log('entre aqui')
-        //crearemos la sesión temporal para dar acceso al usuario 'anonimous'
+        //crearemos la sesión temporal para dar acceso al usuario 'anonymous'
         const { username } = query
         if (!username) return
 
@@ -39,7 +38,6 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
     case 'POST':
       // tomamos el BODY y validamos las respuestas que en él se hayan...
       try {
-        //error temporal. Toca ponerlo chido
         if (!body) return res.status(403).end(`Error, not body`)
 
         /** body like:
@@ -62,7 +60,6 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           if (Object.prototype.hasOwnProperty.call(body, key) && key.includes('answer')) {
             const requestValue = body[key]
             const secretValue = secret[key as keyof Secret]
-            console.log(compare(requestValue, secretValue as string), secretValue)
             if (!(secretValue && compare(requestValue, secretValue as string)))
               return res.status(403).end(`Error, not match Answer.`)
           }
