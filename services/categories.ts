@@ -1,5 +1,6 @@
-import { CategoryInput } from 'types/category'
 import { fetch } from 'lib/fetch'
+import { HttpError } from 'lib/http-error'
+import { CategoryInput } from 'types/category'
 
 export async function updateCategory(id: number, data: CategoryInput) {
   await fetch(`/api/category/${id}`, {
@@ -13,5 +14,15 @@ export async function createCategory(data: CategoryInput) {
 }
 
 export async function deleteCategory(id: number) {
-  return await fetch(`/api/category/${id}`, { method: 'DELETE' })
+  try {
+    return await fetch(`/api/category/${id}`, { method: 'DELETE' })
+  } catch (error) {
+    if (!(error instanceof HttpError)) throw error
+
+    if (error.statusCode === 409) {
+      error.message = 'La categoría se encuentra en uso'
+    }
+
+    throw error
+  }
 }

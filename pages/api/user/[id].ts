@@ -3,7 +3,7 @@ import { encrypt, secretCrypt } from 'lib/crypter'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { userEssencials, userWithAll } from 'prisma/queries'
+import { userEssentials, userWithAll } from 'prisma/queries'
 import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
@@ -72,7 +72,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
           where: {
             id: Number(id)
           },
-          ...userEssencials
+          ...userEssentials
         })
         res.status(201).send(updateUser)
       } catch (error) {

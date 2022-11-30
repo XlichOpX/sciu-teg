@@ -1,13 +1,16 @@
 import {
+  Alert,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
+  Select,
   SimpleGrid,
   Stack
 } from '@chakra-ui/react'
 import { Select as RSelect } from 'chakra-react-select'
-import { useRoles } from 'hooks'
+import { FullyCenteredSpinner } from 'components/app'
+import { useRoles, useSecretQuestions } from 'hooks'
 import type { SubmitHandler, UseFormReturn } from 'react-hook-form'
 import { Controller } from 'react-hook-form'
 import { userSchema } from 'schema/userSchema'
@@ -30,22 +33,30 @@ interface UserFormProps {
 }
 
 export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
-  const { selectOptions } = useRoles()
+  const { selectOptions, error } = useRoles()
+  const { secretQuestions } = useSecretQuestions()
+
+  const cantReadRoles = error?.statusCode === 403
 
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors }
+    formState: { errors },
+    watch
   } = formHook
 
+  const selectedQuestions = watch([
+    'secret.questionOne',
+    'secret.questionTwo',
+    'secret.questionThree'
+  ])
+
+  if (cantReadRoles) return <Alert status="error">No tiene permisos para leer roles</Alert>
+  if (!secretQuestions) return <FullyCenteredSpinner />
+
   return (
-    <Stack
-      gap={2}
-      as="form"
-      onSubmit={handleSubmit(onSubmit, (errors) => console.log(errors))}
-      id={id}
-    >
+    <Stack gap={2} as="form" onSubmit={handleSubmit(onSubmit)} id={id} noValidate>
       <FormControl isInvalid={!!errors.username} isRequired>
         <FormLabel>Nombre de usuario</FormLabel>
         <Input {...register('username')} />
@@ -67,7 +78,19 @@ export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
       <SimpleGrid columns={[1, 2]} gap={4}>
         <FormControl isInvalid={!!errors.secret?.questionOne} isRequired>
           <FormLabel>Pregunta #1</FormLabel>
-          <Input {...register('secret.questionOne')} />
+          <Select {...register('secret.questionOne')} defaultValue={secretQuestions[0].question}>
+            {secretQuestions.map((sq) => (
+              <option
+                key={sq.id}
+                value={sq.question}
+                disabled={
+                  selectedQuestions[0] !== sq.question && selectedQuestions.includes(sq.question)
+                }
+              >
+                {sq.question}
+              </option>
+            ))}
+          </Select>
           <FormErrorMessage>{errors.secret?.questionOne?.message}</FormErrorMessage>
         </FormControl>
 
@@ -79,7 +102,19 @@ export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
 
         <FormControl isInvalid={!!errors.secret?.questionTwo} isRequired>
           <FormLabel>Pregunta #2</FormLabel>
-          <Input {...register('secret.questionTwo')} />
+          <Select {...register('secret.questionTwo')} defaultValue={secretQuestions[1].question}>
+            {secretQuestions.map((sq) => (
+              <option
+                key={sq.id}
+                value={sq.question}
+                disabled={
+                  selectedQuestions[1] !== sq.question && selectedQuestions.includes(sq.question)
+                }
+              >
+                {sq.question}
+              </option>
+            ))}
+          </Select>
           <FormErrorMessage>{errors.secret?.questionTwo?.message}</FormErrorMessage>
         </FormControl>
 
@@ -91,7 +126,19 @@ export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
 
         <FormControl isInvalid={!!errors.secret?.questionThree} isRequired>
           <FormLabel>Pregunta #3</FormLabel>
-          <Input {...register('secret.questionThree')} />
+          <Select {...register('secret.questionThree')} defaultValue={secretQuestions[2].question}>
+            {secretQuestions.map((sq) => (
+              <option
+                key={sq.id}
+                value={sq.question}
+                disabled={
+                  selectedQuestions[2] !== sq.question && selectedQuestions.includes(sq.question)
+                }
+              >
+                {sq.question}
+              </option>
+            ))}
+          </Select>
           <FormErrorMessage>{errors.secret?.questionThree?.message}</FormErrorMessage>
         </FormControl>
 

@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { chargeWithPaymentMethodAndConversion } from 'prisma/queries'
+import { chargeWithPaymentMethodAndCurrencies } from 'prisma/queries'
 import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
@@ -27,7 +27,7 @@ async function chargeHandler(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos a UN cargo
       try {
         const charge = await prisma.charge.findFirst({
-          ...chargeWithPaymentMethodAndConversion,
+          ...chargeWithPaymentMethodAndCurrencies,
           where: { id: Number(id) }
         })
         if (!charge) res.status(404).end(`Charge not found`)

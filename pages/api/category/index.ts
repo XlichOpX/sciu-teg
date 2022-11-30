@@ -13,9 +13,9 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   switch (method) {
     case 'GET':
-      //obtenemos TODAS las categorias
+      //obtenemos TODAS las categorías
       try {
-        const categories = await prisma.category.findMany()
+        const categories = await prisma.category.findMany({ orderBy: { name: 'asc' } })
         if (!categories) return res.status(404).end(`Categories not found`)
         res.status(200).send(categories)
       } catch (error) {

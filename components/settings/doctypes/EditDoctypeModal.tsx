@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
 import { doctypeKeysMatcher, useAuth, useMatchMutate } from 'hooks'
+import { HttpError } from 'lib/http-error'
 import { SubmitHandler } from 'react-hook-form'
 import { doctypeUpdateSchema } from 'schema/doctypeSchema'
 import { deleteDoctype, updateDoctype } from 'services/doctypes'
@@ -43,8 +44,13 @@ export const EditDoctypeModal = ({ doctype }: { doctype: DocType }) => {
       await matchMutate(doctypeKeysMatcher)
       toast({ status: 'success', description: 'Tipo de documento eliminado' })
       onClose()
-    } catch {
-      toast({ status: 'error', description: 'Ocurrió un error al eliminar el tipo de documento' })
+    } catch (error) {
+      if (error instanceof HttpError) {
+        toast({ status: 'error', description: error.message })
+      } else {
+        toast({ status: 'error', description: 'Ocurrió un error al eliminar el tipo de documento' })
+        console.error(error)
+      }
     }
   }
 

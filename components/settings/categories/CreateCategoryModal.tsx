@@ -6,19 +6,24 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { categoryKeysMatcher, useMatchMutate } from 'hooks'
+import { useForm } from 'react-hook-form'
 import { categorySchema } from 'schema/categorySchema'
+import { createCategory } from 'services/categories'
 import { CategoryInput } from 'types/category'
 import { CategoryForm } from './CategoryForm'
 
-export const CreateCategoryModal = ({ onSubmit }: { onSubmit: SubmitHandler<CategoryInput> }) => {
+export const CreateCategoryModal = () => {
   const { onOpen, isOpen, onClose } = useDisclosure()
+  const toast = useToast()
 
   const formHook = useForm<CategoryInput>({ resolver: zodResolver(categorySchema) })
+  const matchMutate = useMatchMutate()
 
   return (
     <>
@@ -27,9 +32,7 @@ export const CreateCategoryModal = ({ onSubmit }: { onSubmit: SubmitHandler<Cate
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
-            <h3>Crear categoría</h3>
-          </ModalHeader>
+          <ModalHeader>Crear categoría</ModalHeader>
           <ModalCloseButton />
 
           <ModalBody>
@@ -37,8 +40,14 @@ export const CreateCategoryModal = ({ onSubmit }: { onSubmit: SubmitHandler<Cate
               id="CreateCategoryForm"
               formHook={formHook}
               onSubmit={async (data) => {
-                await onSubmit(data)
-                onClose()
+                try {
+                  await createCategory(data)
+                  await matchMutate(categoryKeysMatcher)
+                  toast({ status: 'success', description: 'Categoría creada con éxito' })
+                  onClose()
+                } catch {
+                  toast({ status: 'error', description: 'Ocurrió un error al crear la categoría' })
+                }
               }}
               resetOnSubmit
             />

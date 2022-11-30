@@ -6,15 +6,7 @@ import { useAuth, useCategories } from 'hooks'
 import { NextPageWithLayout } from 'pages/_app'
 
 const CategorySettings: NextPageWithLayout = () => {
-  const {
-    categories,
-    createCategory,
-    updateCategory,
-    deleteCategory,
-    isLoading,
-    error,
-    setSearch
-  } = useCategories()
+  const { categories, isLoading, error, setSearch } = useCategories()
 
   const { user } = useAuth()
 
@@ -26,9 +18,7 @@ const CategorySettings: NextPageWithLayout = () => {
     <>
       <Flex direction={['column', 'row']} align="stretch" justify="space-between" gap={4}>
         <SearchInput placeholder="Buscar categorías" onChange={({ text }) => setSearch(text)} />
-        {user?.permissions.includes('CREATE_CATEGORY') && (
-          <CreateCategoryModal onSubmit={createCategory} />
-        )}
+        {user?.permissions.includes('CREATE_CATEGORY') && <CreateCategoryModal />}
       </Flex>
       <Divider my={4} />
 
@@ -38,12 +28,7 @@ const CategorySettings: NextPageWithLayout = () => {
 
       <SimpleGrid minChildWidth="2xs" gap={4}>
         {categories?.map((c) => (
-          <CategoryItem
-            key={c.id}
-            category={c}
-            onUpdate={(data) => updateCategory(c.id, data)}
-            onDelete={() => deleteCategory(c.id)}
-          />
+          <CategoryItem key={c.id} category={c} />
         ))}
       </SimpleGrid>
     </>

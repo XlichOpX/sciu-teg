@@ -9,18 +9,19 @@ import {
   useDisclosure,
   useToast
 } from '@chakra-ui/react'
-import { Conversion } from '@prisma/client'
 import { CancelButton, DeleteButton, EditButton, SaveButton } from 'components/app'
 import { conversionKeysMatcher, useAuth, useMatchMutate } from 'hooks'
+import { HttpError } from 'lib/http-error'
 import { useState } from 'react'
 import { deleteConversion, updateConversion } from 'services/conversions'
+import { ConversionWithCurrency } from 'types/conversion'
 import { ConversionForm, ConversionFormSubmitHandler } from './ConversionForm'
 
 export const EditConversionModal = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   conversion: { id, date, ...defaultValues }
 }: {
-  conversion: Conversion
+  conversion: ConversionWithCurrency
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { isOpen, onClose, onOpen } = useDisclosure()
@@ -49,8 +50,13 @@ export const EditConversionModal = ({
       await matchMutate(conversionKeysMatcher)
       onClose()
       toast({ status: 'success', description: 'Tasa de cambio eliminada' })
-    } catch {
-      toast({ status: 'error', description: 'Ocurrió un error al eliminar la tasa de cambio' })
+    } catch (error) {
+      if (error instanceof HttpError) {
+        toast({ status: 'error', description: error.message })
+      } else {
+        toast({ status: 'error', description: 'Ocurrió un error al eliminar la tasa de cambio' })
+        console.error(error)
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -70,7 +76,7 @@ export const EditConversionModal = ({
             <ConversionForm
               id="EditConversionForm"
               onSubmit={onUpdate}
-              defaultValues={defaultValues}
+              defaultValues={{ value: defaultValues.value, currencyId: defaultValues.currency.id }}
             />
           </ModalBody>
 

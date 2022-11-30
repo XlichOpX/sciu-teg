@@ -16,7 +16,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los tipos de documentos
       try {
-        const docTypes = await prisma.docType.findMany()
+        const docTypes = await prisma.docType.findMany({ orderBy: { type: 'asc' } })
 
         if (!docTypes) res.status(404).end(`DocTypes not found`)
         res.status(200).send(docTypes)

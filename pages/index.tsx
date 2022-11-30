@@ -1,14 +1,22 @@
-import { Button, Container, Heading, useToast } from '@chakra-ui/react'
+import { Container, Divider, Flex, Heading } from '@chakra-ui/react'
+import { SimpleBox } from 'components/app'
+import { LatestConversions } from 'components/home/LatestConversions'
+import { MonthlySoldProducts } from 'components/home/MonthlySoldProducts'
+import { SemesterIndicator } from 'components/home/SemesterIndicator'
 import { BaseLayout } from 'components/layouts'
+import { useAuth } from 'hooks'
 import Head from 'next/head'
 import { NextPageWithLayout } from './_app'
 
 const Home: NextPageWithLayout = () => {
-  const toast = useToast()
+  const { user } = useAuth()
+
+  if (!user) return null
+
   return (
     <>
       <Head>
-        <title>SCIU - TEG</title>
+        <title>Sistema de Cobranzas - IUJO</title>
         <meta
           name="description"
           content="Sistema de Cobranzas para una Institución Universitaria"
@@ -17,22 +25,21 @@ const Home: NextPageWithLayout = () => {
       </Head>
 
       <Container maxW="container.xl" as="main" py={4}>
-        <Heading as="h1" mb={4}>
-          SCIU - TEG
+        <Heading as="h1" mb={4} textAlign="center">
+          Sistema de Cobranzas - IUJO
         </Heading>
 
-        <p>
-          Aquí estaremos desarrollando el Sistema de Gestión de Cobranzas para una Institución
-          Universitaria, nuestro proyecto de Tesis
-        </p>
+        {user.permissions.includes('READ_SEMESTER') && <SemesterIndicator />}
+        <Divider my={4} />
 
-        <Button
-          colorScheme="blue"
-          mt={4}
-          onClick={() => toast({ description: '¡Sí, criminal!', status: 'success' })}
-        >
-          ¡Criminal!
-        </Button>
+        <Flex gap={8} alignItems="flex-start">
+          {user.permissions.includes('READ_REPORT') && (
+            <SimpleBox shadow="md" p={4} w="78%">
+              <MonthlySoldProducts />
+            </SimpleBox>
+          )}
+          {user.permissions.includes('READ_CONVERSION') && <LatestConversions w="22%" />}
+        </Flex>
       </Container>
     </>
   )

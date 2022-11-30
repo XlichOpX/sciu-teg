@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client'
-import { userEssencials, userWithAll } from 'prisma/queries'
+import { userEssentials, userWithAll } from 'prisma/queries'
 import { userSchema, userUpdateSchema } from 'schema/userSchema'
 import { z } from 'zod'
 
-export type UserEssencials = Prisma.UserGetPayload<typeof userEssencials>
+export type UserEssentials = Prisma.UserGetPayload<typeof userEssentials>
 
 export type UserWithAll = Prisma.UserGetPayload<typeof userWithAll>
 

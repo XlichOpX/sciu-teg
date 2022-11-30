@@ -15,7 +15,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los permisos
       try {
-        const permissions = await prisma.permission.findMany()
+        const permissions = await prisma.permission.findMany({ orderBy: { id: 'asc' } })
 
         if (!permissions) return res.status(404).end(`Permissions not found`)
         res.status(200).send(permissions)

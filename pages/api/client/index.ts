@@ -34,6 +34,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         const result = await prisma.client.findMany({
           ...clientWithPersonAndOccupation,
           ...routePaginate(query),
+          orderBy: { person: { firstLastName: 'asc', firstName: 'asc' } },
           where
         })
 

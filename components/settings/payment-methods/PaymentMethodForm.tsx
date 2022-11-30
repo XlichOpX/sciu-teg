@@ -1,4 +1,5 @@
 import {
+  Alert,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -8,12 +9,14 @@ import {
   Text,
   VStack
 } from '@chakra-ui/react'
+import { Select as RSelect } from 'chakra-react-select'
+import { FullyCenteredSpinner } from 'components/app'
 import { InputArrayHeader } from 'components/app/InputArrayHeader'
 import { useCurrencies } from 'hooks'
-import { SubmitHandler, useFieldArray, UseFormReturn } from 'react-hook-form'
-import { PaymentMethodInput } from 'types/paymentMethod'
+import { Controller, SubmitHandler, useFieldArray, UseFormReturn } from 'react-hook-form'
+import { PaymentMethodCreateInput } from 'types/paymentMethod'
 
-export type PaymentMethodFormSubmitHandler = SubmitHandler<PaymentMethodInput>
+export type PaymentMethodFormSubmitHandler = SubmitHandler<PaymentMethodCreateInput>
 
 export const PaymentMethodForm = ({
   id,
@@ -23,10 +26,10 @@ export const PaymentMethodForm = ({
 }: {
   id: string
   onSubmit: PaymentMethodFormSubmitHandler
-  formHook: UseFormReturn<PaymentMethodInput>
+  formHook: UseFormReturn<PaymentMethodCreateInput>
   resetOnSubmit?: boolean
 }) => {
-  const { currencies } = useCurrencies()
+  const { currencies, error } = useCurrencies()
 
   const {
     handleSubmit,
@@ -37,6 +40,11 @@ export const PaymentMethodForm = ({
   } = formHook
 
   const { fields, append, remove } = useFieldArray({ name: 'metaPayment', control })
+
+  if (error?.statusCode === 403)
+    return <Alert status="error">No tiene permiso para leer monedas</Alert>
+
+  if (!currencies) return <FullyCenteredSpinner />
 
   return (
     <VStack
@@ -62,16 +70,36 @@ export const PaymentMethodForm = ({
         <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={!!errors.currencyId} isRequired>
-        <FormLabel>Moneda</FormLabel>
-        <Select {...register('currencyId', { valueAsNumber: true })}>
-          {currencies?.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name} - {c.symbol}
-            </option>
-          ))}
-        </Select>
-        <FormErrorMessage>{errors.currencyId?.message}</FormErrorMessage>
+      <FormControl isInvalid={!!errors.currencies} isRequired>
+        <FormLabel>Monedas</FormLabel>
+        <Controller
+          name="currencies"
+          control={control}
+          render={({ field: { name, ref, onBlur, onChange, value } }) => (
+            <RSelect
+              isMulti
+              name={name}
+              ref={ref}
+              onBlur={onBlur}
+              onChange={(nv) => onChange(nv.map((c) => ({ id: c.id })))}
+              options={currencies}
+              value={value}
+              getOptionLabel={(o) => {
+                const currency = currencies.find((c) => c.id === o.id)
+                if (!currency) return ''
+                return `${currency.name} - ${currency.symbol}`
+              }}
+              getOptionValue={(o) => {
+                const currency = currencies.find((c) => c.id === o.id)
+                if (!currency) return ''
+                return currency.id.toString()
+              }}
+              placeholder="Seleccionar monedas"
+              noOptionsMessage={() => 'Sin resultados'}
+            />
+          )}
+        />
+        <FormErrorMessage>{errors.currencies?.message}</FormErrorMessage>
       </FormControl>
 
       <InputArrayHeader

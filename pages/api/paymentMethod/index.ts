@@ -2,7 +2,11 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { paymentMethodWithConversion } from 'prisma/queries'
+import {
+  paymentMethodWithCurrencies,
+  paymentMethodWithCurrenciesWithoutDetails
+} from 'prisma/queries'
+import { paymentMethodCreateSchema } from 'schema/paymentMethodSchema'
 import { canUserDo } from 'utils/checkPermissions'
 
 // GET|POST /api/paymentMethod
@@ -17,7 +21,8 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       //obtenemos TODOS los métodos de pago
       try {
         const paymentMethod = await prisma.paymentMethod.findMany({
-          ...paymentMethodWithConversion
+          ...paymentMethodWithCurrenciesWithoutDetails,
+          orderBy: { name: 'asc' }
         })
 
         if (!paymentMethod) return res.status(404).end(`PaymentMethods not found`)
@@ -33,9 +38,14 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't create this.`)
       //creamos UN método de pago
       try {
+        // Validate Body
+        const validBody = paymentMethodCreateSchema.safeParse(body)
+        if (!validBody.success) return res.status(400).send(`Invalid Request`)
+
+        const { currencies } = validBody.data
         const result = await prisma.paymentMethod.create({
-          data: { ...body },
-          ...paymentMethodWithConversion
+          data: { ...validBody.data, currencies: { connect: currencies } },
+          ...paymentMethodWithCurrencies
         })
         res.status(201).send(result)
       } catch (error) {

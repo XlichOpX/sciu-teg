@@ -1,10 +1,10 @@
 import { Heading, Text } from '@chakra-ui/react'
-import { Role } from '@prisma/client'
 import { SimpleBox } from 'components/app'
 import { useAuth } from 'hooks'
+import { RoleWithPermissions } from 'types/role'
 import { EditRoleModal } from './EditRoleModal'
 
-export const RoleItem = ({ role }: { role: Role }) => {
+export const RoleItem = ({ role }: { role: RoleWithPermissions }) => {
   const { user } = useAuth()
 
   return (

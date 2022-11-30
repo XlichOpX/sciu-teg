@@ -2,6 +2,8 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { currencyUpdateSchema } from 'schema/currencySchema'
+import validateBody from 'utils/bodyValidate'
 import { canUserDo } from 'utils/checkPermissions'
 import z from 'zod'
 
@@ -46,9 +48,13 @@ async function currencyHandler(req: NextApiRequest, res: NextApiResponse) {
           where: { id: Number(id) }
         })
         if (!currency) res.status(404).end(`Currency not found`)
+
+        //Validate body
+        const validBody = await validateBody(body, currencyUpdateSchema)
+
         const updateCurrency = await prisma.currency.update({
           data: {
-            ...body
+            ...validBody.data
           },
           where: {
             id: Number(id)
@@ -66,6 +72,11 @@ async function currencyHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA 'moneda'
       try {
+        const paymentMethod = await prisma.paymentMethod.count({
+          where: { currencies: { some: { id: { equals: Number(id) } } } }
+        })
+        if (paymentMethod > 0) return res.status(409).send(`PaymentMethod relations exists`)
+
         const delCurrency = await prisma.currency.delete({ where: { id: Number(id) } })
         res.status(202).send(delCurrency)
       } catch (error) {

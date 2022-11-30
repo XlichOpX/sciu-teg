@@ -21,10 +21,12 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { CancelButton, SaveButton } from 'components/app'
+import { useState } from 'react'
 import { SubmitHandler } from 'react-hook-form'
 import { BsWalletFill } from 'react-icons/bs'
 import { createReceipt } from 'services/receipts'
 import { BillingComparatorArgs } from 'types/billing'
+import { round } from 'utils/round'
 import { ChargesForm, ChargesFormData } from './ChargesForm'
 import { ProductReceivable } from './ReceivablesForm'
 
@@ -43,13 +45,16 @@ export const ChargeSelectionModal = ({
   ...props
 }: ChargeSelectionModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [isLoading, setIsLoading] = useState(false)
   const toast = useToast()
 
   let totalAmount = 0
   totalAmount += billings?.reduce((ac, sb) => ac + sb.amount, 0) ?? 0
   totalAmount += products.reduce((ac, p) => ac + p.price * p.quantity, 0)
+  totalAmount = round(totalAmount)
 
   const onRecordCharge: SubmitHandler<ChargesFormData> = async (data) => {
+    setIsLoading(true)
     try {
       const receipt = await createReceipt({
         ...data,
@@ -64,6 +69,8 @@ export const ChargeSelectionModal = ({
       window.open(window.location.origin + `/recibos/${receipt.id}`)
     } catch {
       toast({ status: 'error', description: 'Ocurrió un error al registrar el cobro' })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -133,7 +140,7 @@ export const ChargeSelectionModal = ({
 
           <ModalFooter>
             <CancelButton mr="auto" onClick={onClose} />
-            <SaveButton type="submit" form="ChargesForm">
+            <SaveButton type="submit" form="ChargesForm" disabled={isLoading}>
               Registrar cobro
             </SaveButton>
           </ModalFooter>

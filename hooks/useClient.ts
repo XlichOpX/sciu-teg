@@ -1,28 +1,15 @@
-import { HttpError } from 'lib/http-error'
+import { getClient } from 'services/clients'
 import useSWR from 'swr'
-import { ClientWithPersonAndOccupation } from 'types/client'
 
-export const useClient = (docNum?: string) => {
-  const { data, error: originalError } = useSWR<
-    { count: number; result: ClientWithPersonAndOccupation[] },
-    HttpError
-  >(docNum ? `/api/client?keyword=${docNum}` : null)
-
-  const isLoading = !data && !originalError
-
-  let error = originalError
-  if (!isLoading && !data?.result[0]) {
-    error = new HttpError({ message: 'Cliente no encontrado', statusCode: 404 })
-  }
+export const useClient = (docNum: string) => {
+  const { data, error } = useSWR(docNum ? `/api/client?keyword=${docNum}` : null, () =>
+    getClient(docNum)
+  )
 
   return {
-    client: data?.result[0],
+    client: data,
     error,
-    errorMsg: error
-      ? error.statusCode === 404
-        ? error.message
-        : 'Ocurrió un problema al buscar el cliente'
-      : undefined,
+    errorMsg: error?.message,
     isLoading: !data && !error
   }
 }

@@ -1,11 +1,11 @@
-import { Conversion } from '@prisma/client'
 import useSWR from 'swr'
+import { ConversionWithCurrency } from 'types/conversion'
 import { calcPages } from 'utils/calcPages'
 import { usePagination } from './usePagination'
 
 export const useConversions = ({ itemsPerPage = 20 } = {}) => {
   const { page, offset, limit, setPage } = usePagination({ itemsPerPage })
-  const { data, error } = useSWR<{ count: number; result: Conversion[] }, Error>(
+  const { data, error } = useSWR<{ count: number; result: ConversionWithCurrency[] }, Error>(
     `/api/conversion?offset=${offset}&limit=${limit}`
   )
   return {
