@@ -2,6 +2,7 @@
 
 export * from './AddressSelect'
 export * from './CancelButton'
+export * from './ConvertableAmount'
 export * from './CreateButton'
 export * from './DeleteButton'
 export * from './EditButton'

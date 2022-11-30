@@ -1,11 +1,10 @@
 import {
   ButtonProps,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
-  InputGroup,
-  InputLeftElement,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -19,12 +18,13 @@ import {
   NumberInputField,
   NumberInputStepper,
   SimpleGrid,
+  Text,
   useDisclosure
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CancelButton, CreateButton } from 'components/app'
+import { CancelButton, ConvertableAmount, CreateButton } from 'components/app'
 import { useProductsByCategory } from 'hooks/useProductsByCategory'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { receiptProductSchema } from 'schema/receiptSchema'
 import { z } from 'zod'
@@ -47,6 +47,7 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>()
   const { products } = useProductsByCategory({ categoryId: selectedCategoryId })
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const {
     handleSubmit,
@@ -89,7 +90,7 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent ref={containerRef}>
           <ModalHeader>
             <h2>Agregar producto</h2>
           </ModalHeader>
@@ -125,7 +126,7 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
                 <FormErrorMessage>{errors.id?.message}</FormErrorMessage>
               </FormControl>
 
-              <SimpleGrid columns={2} gap={4} alignItems="center">
+              <SimpleGrid columns={2} gap={4}>
                 <FormControl isInvalid={!!errors.quantity} isRequired>
                   <FormLabel>Cantidad</FormLabel>
                   <Controller
@@ -149,20 +150,17 @@ export const AddProductModal = ({ onSubmit, ...props }: AddProductModalProps) =>
                   <FormErrorMessage>{errors.quantity?.message}</FormErrorMessage>
                 </FormControl>
 
-                <FormControl>
-                  <FormLabel>Precio</FormLabel>
-                  <InputGroup>
-                    <InputLeftElement
-                      pointerEvents="none"
-                      _dark={{ color: 'gray.300' }}
-                      _light={{ color: 'gray.700' }}
-                      zIndex={0}
-                    >
-                      $
-                    </InputLeftElement>
-                    <Input readOnly value={selectedProductPrice * quantity} />
-                  </InputGroup>
-                </FormControl>
+                <Flex direction="column" justifyContent="space-between">
+                  <Text as="span" fontWeight="medium">
+                    Precio
+                  </Text>
+                  <Input as="span" display="flex" alignItems="center">
+                    <ConvertableAmount
+                      portalRef={containerRef}
+                      amount={selectedProductPrice * quantity}
+                    />
+                  </Input>
+                </Flex>
               </SimpleGrid>
             </form>
           </ModalBody>

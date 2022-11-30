@@ -1,8 +1,9 @@
 import { Alert, FormControl, FormHelperText, Stack } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FullyCenteredSpinner } from 'components/app'
+import { ConvertableAmount, FullyCenteredSpinner } from 'components/app'
 import { InputArrayHeader } from 'components/app/InputArrayHeader'
 import { useLatestConversions, usePaymentMethods } from 'hooks'
+import { RefObject } from 'react'
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { receiptCreateSchemaInput } from 'schema/receiptSchema'
 import { getDiffLabel } from 'utils/getDiffLabel'
@@ -16,11 +17,13 @@ export type ChargesFormData = z.infer<typeof chargesFormSchema>
 export const ChargesForm = ({
   maxAmount,
   id,
-  onSubmit
+  onSubmit,
+  containerPortalRef
 }: {
   maxAmount: number
   id: string
   onSubmit: SubmitHandler<ChargesFormData>
+  containerPortalRef?: RefObject<HTMLElement>
 }) => {
   const { paymentMethods, error: payMethodsError } = usePaymentMethods()
   const { latestConversions, error: conversionsError } = useLatestConversions()
@@ -99,7 +102,11 @@ export const ChargesForm = ({
           ))}
           {amountDiff !== 0 && (
             <FormHelperText textAlign="center" color="red.300" fontSize="md" fontWeight="bold">
-              {getDiffLabel(amountDiff)}: $ {Math.abs(round(amountDiff))}
+              {getDiffLabel(amountDiff)}:{' '}
+              <ConvertableAmount
+                portalRef={containerPortalRef}
+                amount={Math.abs(round(amountDiff))}
+              />
             </FormHelperText>
           )}
         </FormControl>

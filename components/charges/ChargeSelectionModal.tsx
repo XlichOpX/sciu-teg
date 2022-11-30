@@ -20,8 +20,8 @@ import {
   useDisclosure,
   useToast
 } from '@chakra-ui/react'
-import { CancelButton, SaveButton } from 'components/app'
-import { useState } from 'react'
+import { CancelButton, ConvertableAmount, SaveButton } from 'components/app'
+import { useRef, useState } from 'react'
 import { SubmitHandler } from 'react-hook-form'
 import { BsWalletFill } from 'react-icons/bs'
 import { createReceipt } from 'services/receipts'
@@ -47,6 +47,7 @@ export const ChargeSelectionModal = ({
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isLoading, setIsLoading] = useState(false)
   const toast = useToast()
+  const containerRef = useRef<HTMLDivElement>(null)
 
   let totalAmount = 0
   totalAmount += billings?.reduce((ac, sb) => ac + sb.amount, 0) ?? 0
@@ -82,7 +83,7 @@ export const ChargeSelectionModal = ({
 
       <Modal isOpen={isOpen} onClose={onClose} size="2xl">
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent ref={containerRef}>
           <ModalHeader>
             <h2>Registrar cobro</h2>
           </ModalHeader>
@@ -105,7 +106,7 @@ export const ChargeSelectionModal = ({
                     <Tr key={sb.id}>
                       <Td pl={0}>{sb.productName}</Td>
                       <Td textAlign="right" pr={0}>
-                        $ {sb.amount}
+                        <ConvertableAmount portalRef={containerRef} amount={sb.amount} />
                       </Td>
                     </Tr>
                   ))}
@@ -116,7 +117,7 @@ export const ChargeSelectionModal = ({
                         {p.name} (x{p.quantity})
                       </Td>
                       <Td textAlign="right" pr={0}>
-                        $ {p.price * p.quantity}
+                        <ConvertableAmount portalRef={containerRef} amount={p.price * p.quantity} />
                       </Td>
                     </Tr>
                   ))}
@@ -126,7 +127,7 @@ export const ChargeSelectionModal = ({
                   <Tr fontWeight="bold">
                     <Td pl={0}>Total</Td>
                     <Td pr={0} textAlign="right">
-                      $ {totalAmount}
+                      <ConvertableAmount portalRef={containerRef} amount={totalAmount} />
                     </Td>
                   </Tr>
                 </Tfoot>
@@ -135,7 +136,12 @@ export const ChargeSelectionModal = ({
 
             <Divider mb={3} />
 
-            <ChargesForm id="ChargesForm" maxAmount={totalAmount} onSubmit={onRecordCharge} />
+            <ChargesForm
+              containerPortalRef={containerRef}
+              id="ChargesForm"
+              maxAmount={totalAmount}
+              onSubmit={onRecordCharge}
+            />
           </ModalBody>
 
           <ModalFooter>

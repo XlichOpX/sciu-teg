@@ -1,5 +1,5 @@
 import { Divider, Flex, Heading, HStack, VStack } from '@chakra-ui/react'
-import { SimpleBox } from 'components/app'
+import { ConvertableAmount, SimpleBox } from 'components/app'
 import { useAuth } from 'hooks'
 import { BsBoxSeam, BsCurrencyDollar } from 'react-icons/bs'
 import { MdOutlineCategory } from 'react-icons/md'
@@ -23,7 +23,10 @@ export const ProductItem = ({ product }: { product: ProductWithCategory }) => {
 
       <VStack align="flex-start">
         <HStack as="p">
-          <BsCurrencyDollar /> <span>Precio: {product.price}</span>
+          <BsCurrencyDollar />{' '}
+          <span>
+            Precio: <ConvertableAmount amount={product.price} />
+          </span>
         </HStack>
         <HStack as="p">
           <BsBoxSeam /> <span>Inventario: {product.stock >= 0 ? product.stock : 'No aplica'}</span>
