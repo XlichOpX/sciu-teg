@@ -7,11 +7,12 @@ import {
   Title,
   Tooltip
 } from 'chart.js'
+import autocolor from 'chartjs-plugin-autocolors'
 import { groupBy } from 'lodash'
 import { Bar } from 'react-chartjs-2'
 import { ProductReport } from 'types/report'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, autocolor)
 
 export const SoldProductsGraph = ({ data }: { data: ProductReport[] }) => {
   const groupedData = groupBy(data, 'category.name')
