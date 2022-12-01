@@ -61,7 +61,7 @@ export const EditProductModal = ({ product }: { product: ProductWithCategory }) 
 
   return (
     <>
-      <EditButton alignSelf="flex-start" onClick={onOpen} />
+      <EditButton onClick={onOpen} flexShrink={0} />
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

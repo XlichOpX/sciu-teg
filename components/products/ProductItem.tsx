@@ -23,16 +23,18 @@ export const ProductItem = ({ product }: { product: ProductWithCategory }) => {
 
       <VStack align="flex-start">
         <HStack as="p">
-          <BsCurrencyDollar />{' '}
+          <BsCurrencyDollar style={{ flexShrink: 0 }} />{' '}
           <span>
             Precio: <ConvertableAmount amount={product.price} />
           </span>
         </HStack>
         <HStack as="p">
-          <BsBoxSeam /> <span>Inventario: {product.stock >= 0 ? product.stock : 'No aplica'}</span>
+          <BsBoxSeam style={{ flexShrink: 0 }} />{' '}
+          <span>Inventario: {product.stock >= 0 ? product.stock : 'No aplica'}</span>
         </HStack>
         <HStack as="p">
-          <MdOutlineCategory /> <span>Categoría: {product.category.name}</span>
+          <MdOutlineCategory style={{ flexShrink: 0 }} />{' '}
+          <span>Categoría: {product.category.name}</span>
         </HStack>
       </VStack>
     </SimpleBox>
