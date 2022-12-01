@@ -29,8 +29,11 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
 
         case 'number':
           return {
-            message: `Debe ser mayor${issue.inclusive ? 'o igual' : ''} a ${issue.minimum}`
+            message: `Debe ser mayor${issue.inclusive ? ' o igual' : ''} a ${issue.minimum}`
           }
+
+        case 'array':
+          return { message: `Debe tener al menos ${issue.minimum} un elemento` }
       }
       break
 
@@ -47,6 +50,9 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
           return {
             message: `Debe ser menor${issue.inclusive ? 'o igual' : ''} a ${issue.maximum}`
           }
+
+        case 'array':
+          return { message: `Debe tener menos de ${issue.maximum} elementos` }
       }
       break
 
