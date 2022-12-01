@@ -15,7 +15,8 @@ export const LatestConversions = (props: ComponentProps<typeof SimpleBox>) => {
             {latestConversions.map((lc) => (
               <li key={lc.id}>
                 <chakra.span fontWeight="medium">{lc.currency.name}:</chakra.span>{' '}
-                {lc.currency.symbol} {lc.value} = $1
+                {lc.currency.symbol}{' '}
+                {lc.value.toLocaleString(undefined, { maximumFractionDigits: 2 })} = $1
               </li>
             ))}
           </chakra.ul>
