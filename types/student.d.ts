@@ -1,5 +1,8 @@
 import { Prisma } from '@prisma/client'
-import { studentWithPersonCareerAndStatus } from 'prisma/queries'
+import {
+  studentWithPersonCareerAndStatus,
+  studentWithPersonStatusCareerAndEnrolledSemesters
+} from 'prisma/queries'
 
 export type StudentWithPersonCareerAndStatus = Prisma.StudentGetPayload<
   typeof studentWithPersonCareerAndStatus

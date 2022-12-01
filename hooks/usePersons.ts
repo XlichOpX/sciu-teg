@@ -17,7 +17,7 @@ export const usePersons = () => {
       p.middleName,
       p.firstLastName,
       p.secondLastName,
-      '- DI:',
+      `- ${p.docType.type}:`,
       p.docNumber
     ].join(' ')
   }))

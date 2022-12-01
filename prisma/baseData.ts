@@ -228,3 +228,11 @@ export const PAYMENT_METHODS = [
   },
   { name: 'Pago móvil', description: 'Pago móvil desde bancos nacionales', currencies: ['Bolívar'] }
 ]
+
+export const SECRET_QUESTIONS = [
+  '¿Cuál es el primer nombre de tú madre?',
+  '¿Cuál es el segundo apellido de tú padre?',
+  '¿El nombre de tú mascota favorita?',
+  '¿De qué color es el caballo blanco de Simón Bolivar?',
+  '¿Sí 2 + 2 es pez, a qué hora vas por el pan bebé?'
+]
