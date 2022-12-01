@@ -70,7 +70,7 @@ export const EditRoleModal = ({ role }: { role: RoleWithPermissions }) => {
     <>
       <EditButton onClick={onOpen} flexShrink={0} />
 
-      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
+      <Modal isOpen={isOpen} onClose={onClose} size="6xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Editar rol: {role.name}</ModalHeader>
