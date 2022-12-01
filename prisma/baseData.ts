@@ -205,7 +205,7 @@ export const DOCUMENT_TYPES = ['CV', 'CE', 'PP', 'RIF']
 
 export const CURRENCIES = [
   { name: 'Bolívar', symbol: 'Bs', conversion: 13.19 },
-  { name: 'Euro', symbol: '€', conversion: 1.05 },
+  { name: 'Euro', symbol: '€', conversion: 0.98 },
   { name: 'Dólar', symbol: '$', conversion: 1 }
 ]
 
