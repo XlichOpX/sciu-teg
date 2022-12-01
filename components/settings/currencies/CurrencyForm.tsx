@@ -18,13 +18,13 @@ export const CurrencyForm = ({ onSubmit, defaultValues, ...props }: CurrencyForm
       <SimpleGrid columns={2} gap={4}>
         <FormControl isInvalid={!!errors.name} isRequired>
           <FormLabel>Nombre</FormLabel>
-          <Input {...register('name')} placeholder="Dólar" />
+          <Input {...register('name')} isReadOnly={defaultValues?.name === 'Bolívar'} />
           <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
         </FormControl>
 
         <FormControl isInvalid={!!errors.symbol} isRequired>
           <FormLabel>Símbolo</FormLabel>
-          <Input {...register('symbol')} placeholder="$" />
+          <Input {...register('symbol')} />
           <FormErrorMessage>{errors.symbol?.message}</FormErrorMessage>
         </FormControl>
       </SimpleGrid>

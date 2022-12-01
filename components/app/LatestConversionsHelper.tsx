@@ -41,7 +41,7 @@ export const LatestConversionsHelper = ({
             latestConversions?.map((conversion) =>
               conversion.currency.name !== bsConversion.currency.name ? (
                 <p key={conversion.id}>
-                  {conversion.currency.symbol} 1 = Bs{' '}
+                  {conversion.currency.symbol} 1 = {bsConversion.currency.symbol}{' '}
                   {(bsConversion.value / conversion.value).toLocaleString(undefined, {
                     maximumFractionDigits: 2
                   })}

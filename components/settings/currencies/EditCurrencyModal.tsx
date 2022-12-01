@@ -60,9 +60,7 @@ export const EditCurrencyModal = ({ currency }: { currency: Currency }) => {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            <h2>
-              Editar moneda: {currency.name} - {currency.symbol}
-            </h2>
+            Editar moneda: {currency.name} - {currency.symbol}
           </ModalHeader>
           <ModalCloseButton />
 
