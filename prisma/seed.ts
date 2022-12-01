@@ -10,7 +10,7 @@ import {
   SECRET_QUESTIONS,
   STUDENT_STATUS
 } from './baseData'
-import { permissionsMoca } from './permissions'
+import { permissions } from './permissions'
 
 const tables = Prisma.dmmf.datamodel.models.map((model) => `"${model.name}"`).join(', ')
 
@@ -69,7 +69,7 @@ async function createSecretQuestions() {
 
 async function createPermissions() {
   await prisma.permission.createMany({
-    data: permissionsMoca
+    data: permissions
   })
   return (await prisma.permission.findMany({ select: { id: true } })).map((p) => p.id)
 }
