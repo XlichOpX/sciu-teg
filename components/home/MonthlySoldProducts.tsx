@@ -32,7 +32,8 @@ export const MonthlySoldProducts = () => {
           </Heading>
           <Divider my={2} />
           <Text textAlign="center" fontWeight="medium">
-            Total recaudado: ${(data as ProductReport[]).reduce((ac, c) => ac + c.amount, 0)}
+            Total recaudado: $
+            {(data as ProductReport[]).reduce((ac, c) => ac + c.amount, 0).toFixed(2)}
           </Text>
           <SoldProductsGraph data={data as ProductReport[]} />
         </>
