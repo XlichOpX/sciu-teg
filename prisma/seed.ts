@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { Prisma, PrismaClient } from '@prisma/client'
-import { encrypt } from '../lib/crypter'
+import { encryptToSaveDB } from '../lib/crypter'
 import { permissionsMoca } from './permissions'
 
 faker.setLocale('es')
@@ -129,7 +129,7 @@ async function createDummyUser() {
   await prisma.user.create({
     data: {
       username: 'admin',
-      password: encrypt('password')[1],
+      password: encryptToSaveDB('password'),
       person: {
         connect: { id: 1 }
       },
@@ -142,11 +142,11 @@ async function createDummyUser() {
       secret: {
         create: {
           questionOne: 'hola',
-          answerOne: 'chao',
+          answerOne: encryptToSaveDB('chao'),
           questionTwo: 'hola',
-          answerTwo: 'chao',
+          answerTwo: encryptToSaveDB('chao'),
           questionThree: 'hola',
-          answerThree: 'chao'
+          answerThree: encryptToSaveDB('chao')
         }
       },
       roles: { connect: { id: 1 } }
