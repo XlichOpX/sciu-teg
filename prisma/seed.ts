@@ -7,6 +7,7 @@ import {
   CURRENCIES,
   DOCUMENT_TYPES,
   PAYMENT_METHODS,
+  SECRET_QUESTIONS,
   STUDENT_STATUS
 } from './baseData'
 import { permissionsMoca } from './permissions'
@@ -46,6 +47,8 @@ async function main() {
 
   const permissionIDs = await createPermissions()
   await createDummyUser(permissionIDs)
+
+  await createSecretQuestions()
 }
 
 main()
@@ -57,6 +60,12 @@ main()
     await prisma.$disconnect()
     process.exit(1)
   })
+
+async function createSecretQuestions() {
+  await prisma.secretQuestion.createMany({
+    data: SECRET_QUESTIONS.map((e) => ({ question: e }))
+  })
+}
 
 async function createPermissions() {
   await prisma.permission.createMany({
