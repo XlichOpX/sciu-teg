@@ -12,7 +12,7 @@ export const CurrencyItem = ({ currency }: { currency: Currency }) => {
       <Text fontWeight="bold">
         {currency.name} - {currency.symbol}
       </Text>
-      {currency.symbol !== '$' && user?.permissions.includes('EDIT_CURRENCY') && (
+      {currency.name !== 'Dólar' && user?.permissions.includes('EDIT_CURRENCY') && (
         <EditCurrencyModal currency={currency} />
       )}
     </SimpleBox>

@@ -32,7 +32,7 @@ export const ConvertableAmount = ({
           <PopoverBody>
             {latestConversions
               ? latestConversions.map((lc) =>
-                  lc.currency.symbol !== '$' ? (
+                  lc.currency.name !== 'Dólar' ? (
                     <p key={lc.id}>
                       {lc.currency.symbol} {round(amount * lc.value).toLocaleString()}
                     </p>
