@@ -121,7 +121,7 @@ export const PaymentMethodInputs = ({
             {diff !== 0 && (
               <>
                 {' '}
-                | {getDiffLabel(diff)}: {currentCurrency?.symbol} {round(Math.abs(diff))}
+                | {getDiffLabel(diff)}: {currentCurrency?.symbol} {Math.abs(diff).toLocaleString()}
               </>
             )}
           </FormHelperText>

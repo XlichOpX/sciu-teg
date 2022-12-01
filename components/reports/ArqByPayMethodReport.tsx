@@ -14,7 +14,7 @@ export const ArqByPayMethodReport = ({ data }: { data: GroupedPaymentMethodRepor
                   {key}
                 </Th>
                 <Td textAlign="right" fontWeight="medium" pb={2} py={6}>
-                  Total: $ {data[key].reduce((ac, c) => ac + c.amount, 0)}
+                  Total: ${data[key].reduce((ac, c) => ac + c.amount, 0).toLocaleString()}
                 </Td>
               </Tr>
 
@@ -24,7 +24,7 @@ export const ArqByPayMethodReport = ({ data }: { data: GroupedPaymentMethodRepor
                     <i>{row.currency.name}</i>
                   </Td>
                   <Td textAlign="right" py={2}>
-                    $ {row.amount}
+                    $ {row.amount.toLocaleString()}
                   </Td>
                 </Tr>
               ))}
@@ -34,11 +34,13 @@ export const ArqByPayMethodReport = ({ data }: { data: GroupedPaymentMethodRepor
           <Tr>
             <Td colSpan={2} textAlign="right" fontWeight="medium">
               TOTAL GENERAL: ${' '}
-              {Object.values(data).reduce(
-                (grandTotal, payMethod) =>
-                  grandTotal + payMethod.reduce((total, current) => total + current.amount, 0),
-                0
-              )}
+              {Object.values(data)
+                .reduce(
+                  (grandTotal, payMethod) =>
+                    grandTotal + payMethod.reduce((total, current) => total + current.amount, 0),
+                  0
+                )
+                .toLocaleString()}
             </Td>
           </Tr>
         </Tbody>
