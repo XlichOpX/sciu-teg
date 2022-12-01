@@ -32,7 +32,7 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
           where: { id: Number(id) }
         })
 
-        if (!paymentMethod) res.status(404).end(`PaymentMethod not found`)
+        if (!paymentMethod) return res.status(404).end(`PaymentMethod not found`)
         res.status(200).send(paymentMethod)
       } catch (error) {
         if (error instanceof Error) {
@@ -48,7 +48,7 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
         const paymentMethod = await prisma.paymentMethod.findFirst({
           where: { id: Number(id) }
         })
-        if (!paymentMethod) res.status(404).end(`PaymentMethod not found`)
+        if (!paymentMethod) return res.status(404).end(`PaymentMethod not found`)
         // Validate Body
         const validBody = paymentMethodUpdateSchema.safeParse(body)
         if (!validBody.success) return res.status(400)
@@ -77,8 +77,12 @@ async function paymentMethodHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN método de pago
       try {
+        const paymentMethod = await prisma.paymentMethod.findFirst({
+          where: { id: Number(id) }
+        })
+        if (!paymentMethod) return res.status(404).end(`PaymentMethod not found`)
         const charge = await prisma.charge.count({ where: { paymentMethodId: Number(id) } })
-        if (charge > 0) return res.status(409).end(`PaymentMethod exists relations`)
+        if (charge > 0) return res.status(409).end('Error relationships exist')
 
         const delPaymentMethod = await prisma.paymentMethod.delete({
           where: { id: Number(id) }

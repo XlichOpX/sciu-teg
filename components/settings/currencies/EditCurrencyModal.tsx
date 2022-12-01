@@ -55,14 +55,12 @@ export const EditCurrencyModal = ({ currency }: { currency: Currency }) => {
 
   return (
     <>
-      <EditButton onClick={onOpen} />
+      <EditButton onClick={onOpen} flexShrink={0} />
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            <h2>
-              Editar moneda: {currency.name} - {currency.symbol}
-            </h2>
+            Editar moneda: {currency.name} - {currency.symbol}
           </ModalHeader>
           <ModalCloseButton />
 
@@ -71,7 +69,7 @@ export const EditCurrencyModal = ({ currency }: { currency: Currency }) => {
           </ModalBody>
 
           <ModalFooter>
-            {user?.permissions.includes('DELETE_CURRENCY') && (
+            {currency.name !== 'Bolívar' && user?.permissions.includes('DELETE_CURRENCY') && (
               <DeleteButton
                 confirmBody="¿Está seguro de eliminar este moneda?"
                 onDelete={onDelete}

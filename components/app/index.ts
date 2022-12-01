@@ -2,11 +2,13 @@
 
 export * from './AddressSelect'
 export * from './CancelButton'
+export * from './ConvertableAmount'
 export * from './CreateButton'
 export * from './DeleteButton'
 export * from './EditButton'
 export * from './FullyCenteredSpinner'
 export * from './HeadingWithSearch'
+export * from './LatestConversionsHelper'
 export * from './LoginBtn'
 export * from './Logo'
 export * from './LogoutButton'

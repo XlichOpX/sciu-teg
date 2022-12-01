@@ -1,5 +1,6 @@
 import { Category, Currency, PaymentMethod } from '@prisma/client'
 import { withIronSessionApiRoute } from 'iron-session/next'
+import dayjs from 'lib/dayjs'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import _ from 'lodash'
@@ -204,10 +205,11 @@ async function generateBasicReport({
 function intervalDates({ start, end }: NextApiRequestQuery) {
   const startDate: string | undefined = Array.isArray(start) ? start[0] : start
   const endDate: string | undefined = Array.isArray(end) ? end[0] : end
-
   return {
     startDate: startDate ? new Date(startDate) : undefined,
-    endDate: endDate ? new Date(endDate) : undefined
+    endDate: endDate
+      ? dayjs(endDate).set('h', 23).set('m', 59).set('s', 59).set('ms', 999).toDate()
+      : undefined
   }
 }
 

@@ -1,172 +1,48 @@
-export const permss = [
-  'CREATE_ADDRESS',
-  'READ_ADDRESS',
-  'EDIT_ADDRESS',
-  'DELETE_ADDRESS',
+const entities = {
+  PERSON: 'Personas',
+  STUDENT: 'Estudiantes',
+  CLIENT: 'Clientes',
+  OCCUPATION: 'Ocupaciones',
+  STUDENTSTATUS: 'Estados de estudiante',
+  ENROLLMENT: 'Inscripciones',
+  SEMESTER: 'Semestres',
+  CAREER: 'Carreras',
+  DOCTYPE: 'Tipos de documento',
+  ADDRESS: 'Direcciones',
+  RECEIPT: 'Recibos',
+  PRODUCT: 'Productos',
+  CATEGORY: 'Categorías',
+  CHARGE: 'Cobros',
+  PAYMENTMETHOD: 'Métodos de pago',
+  CURRENCY: 'Divisas',
+  CONVERSION: 'Tasas de cambio',
+  PARAMETER: 'Parámetros',
+  USER: 'Usuarios',
+  SECRET: 'Secretos',
+  USERSTATUS: 'Estados de usuario',
+  ROLE: 'Roles',
+  PERMISSION: 'Permisos',
+  BILLING: 'Deudas',
+  SECRETQUESTION: 'Preguntas secretas'
+} as const
+type Entity = keyof typeof entities
 
-  'CREATE_BILLING',
-  'READ_BILLING',
-  'EDIT_BILLING',
-  'DELETE_BILLING',
+const operations = {
+  CREATE: 'Crear',
+  READ: 'Leer',
+  DELETE: 'Eliminar',
+  EDIT: 'Editar'
+} as const
+type Operation = keyof typeof operations
 
-  'CREATE_CAREER',
-  'READ_CAREER',
-  'EDIT_CAREER',
-  'DELETE_CAREER',
+export const permissions = Object.keys(entities).flatMap((entity) =>
+  Object.keys(operations).map((operation) => ({
+    permission: `${operation}_${entity}`,
+    description: `${operations[operation as Operation]}: ${entities[entity as Entity]}`
+  }))
+)
 
-  'CREATE_CATEGORY',
-  'READ_CATEGORY',
-  'EDIT_CATEGORY',
-  'DELETE_CATEGORY',
-
-  'CREATE_CHARGE',
-  'READ_CHARGE',
-  'EDIT_CHARGE',
-  'DELETE_CHARGE',
-
-  'CREATE_CLIENT',
-  'READ_CLIENT',
-  'EDIT_CLIENT',
-  'DELETE_CLIENT',
-
-  'CREATE_CONVERSION',
-  'READ_CONVERSION',
-  'EDIT_CONVERSION',
-  'DELETE_CONVERSION',
-
-  'CREATE_CURRENCY',
-  'READ_CURRENCY',
-  'EDIT_CURRENCY',
-  'DELETE_CURRENCY',
-
-  'CREATE_DOCTYPE',
-  'READ_DOCTYPE',
-  'EDIT_DOCTYPE',
-  'DELETE_DOCTYPE',
-
-  'CREATE_OCCUPATION',
-  'READ_OCCUPATION',
-  'EDIT_OCCUPATION',
-  'DELETE_OCCUPATION',
-
-  'CREATE_PARAMETER',
-  'READ_PARAMETER',
-  'EDIT_PARAMETER',
-  'DELETE_PARAMETER',
-
-  'CREATE_PAYMENTMETHOD',
-  'READ_PAYMENTMETHOD',
-  'EDIT_PAYMENTMETHOD',
-  'DELETE_PAYMENTMETHOD',
-
-  'CREATE_PERMISSION',
-  'READ_PERMISSION',
-  'EDIT_PERMISSION',
-  'DELETE_PERMISSION',
-
-  'CREATE_PERSON',
-  'READ_PERSON',
-  'EDIT_PERSON',
-  'DELETE_PERSON',
-
-  'CREATE_PRODUCT',
-  'READ_PRODUCT',
-  'EDIT_PRODUCT',
-  'DELETE_PRODUCT',
-
-  'CREATE_RECEIPT',
-  'READ_RECEIPT',
-  'EDIT_RECEIPT',
-  'DELETE_RECEIPT',
-
-  'CREATE_REPORT',
-  'READ_REPORT',
-  'EDIT_REPORT',
-  'DELETE_REPORT',
-
-  'CREATE_ROLE',
-  'READ_ROLE',
-  'EDIT_ROLE',
-  'DELETE_ROLE',
-
-  'CREATE_SECRET',
-  'READ_SECRET',
-  'EDIT_SECRET',
-  'DELETE_SECRET',
-
-  'CREATE_SECRETQUESTION',
-  'READ_SECRETQUESTION',
-  'EDIT_SECRETQUESTION',
-  'DELETE_SECRETQUESTION',
-
-  'CREATE_SEMESTER',
-  'READ_SEMESTER',
-  'EDIT_SEMESTER',
-  'DELETE_SEMESTER',
-
-  'CREATE_STUDENT',
-  'READ_STUDENT',
-  'EDIT_STUDENT',
-  'DELETE_STUDENT',
-
-  'CREATE_STUDENTSTATUS',
-  'READ_STUDENTSTATUS',
-  'EDIT_STUDENTSTATUS',
-  'DELETE_STUDENTSTATUS',
-
-  'ACCESS_USERS_MUTATION',
-  'CREATE_USER',
-  'READ_USER',
-  'EDIT_USER',
-  'DELETE_USER',
-
-  'CREATE_USERSTATUS',
-  'READ_USERSTATUS',
-  'EDIT_USERSTATUS',
-  'DELETE_USERSTATUS'
-]
-export const permissionsMoca = permss.map((perm) => {
-  const splitedPerm = perm.split('_')
-
-  const permiso = {
-    CREATE: 'Crear',
-    EDIT: 'Editar',
-    READ: 'Leer',
-    DELETE: 'Eliminar',
-    ACCESS: 'Acceder'
-  }
-  type Permiso = typeof permiso
-  const entidades = {
-    ADDRESS: 'Direcciones',
-    BILLING: 'Orden',
-    CAREER: 'Carrera',
-    CATEGORY: 'Categoría',
-    CHARGE: 'Cargo',
-    CLIENT: 'Cliente',
-    CONVERSION: 'Conversión',
-    CURRENCY: 'Divisa',
-    DOCTYPE: 'Tipo de Documento',
-    OCCUPATION: 'Ocupación',
-    PARAMETER: 'Parámetro',
-    PAYMENTMETHOD: 'Método de pago',
-    PERMISSION: 'Permiso',
-    PERSON: 'Persona',
-    PRODUCT: 'Producto',
-    RECEIPT: 'Recibo',
-    ROLE: 'Rol',
-    SECRET: 'Secrecto',
-    SECRETQUESTION: 'Pregunta Secreta',
-    SEMESTER: 'Semestre',
-    STUDENT: 'Estudiante',
-    STUDENTSTATUS: 'Estado del Estudiante',
-    USER: 'Usuario',
-    USERSTATUS: 'Estado del Usuario'
-  }
-  type Entidades = typeof entidades
-  return {
-    permission: perm,
-    description: `${permiso[splitedPerm[0] as keyof Permiso]} ${
-      splitedPerm[2] ? 'a' : ''
-    } la entidad: ${entidades[splitedPerm[1] as keyof Entidades]}`
-  }
-})
+permissions.push(
+  { permission: 'ACCESS_USERS_MUTATION', description: 'Modificar usuarios' },
+  { permission: 'READ_REPORT', description: 'Leer informes' }
+)

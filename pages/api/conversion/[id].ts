@@ -34,7 +34,7 @@ async function conversionHandler(req: NextApiRequest, res: NextApiResponse) {
           ...conversionWithCurrency,
           where: { id: Number(id) }
         })
-        if (!conversion) res.status(404).end(`Conversion not found`)
+        if (!conversion) return res.status(404).end(`Conversion not found`)
         res.status(200).send(conversion)
       } catch (error) {
         if (error instanceof Error) {
@@ -49,6 +49,7 @@ async function conversionHandler(req: NextApiRequest, res: NextApiResponse) {
       try {
         const conversion = await prisma.conversion.findFirst({ where: { id: Number(id) } })
         if (!conversion) return res.status(404).end(`Conversion not found`)
+
         if (dayjs(conversion.date).add(30, 'minutes') < dayjs())
           return res.status(404).end(`Can't Conversion update`)
 
@@ -73,14 +74,13 @@ async function conversionHandler(req: NextApiRequest, res: NextApiResponse) {
     case 'DELETE':
       if (!(await canUserDo(session, 'DELETE_CONVERSION')))
         return res.status(403).send(`Can't delete this.`)
-
       //eliminamos a UNA conversión
       try {
         const conversion = await prisma.conversion.findFirst({ where: { id: Number(id) } })
         if (!conversion) return res.status(404).end(`Conversion not found`)
 
         if (dayjs(conversion.date).add(30, 'minutes') < dayjs())
-          return res.status(404).end(`Can't Conversion delete`)
+          return res.status(409).end(`Can't Conversion delete`)
 
         const delConversion = await prisma.conversion.delete({
           where: { id: Number(id) }

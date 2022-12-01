@@ -30,7 +30,7 @@ async function roleHandler(req: NextApiRequest, res: NextApiResponse) {
           ...roleWithPermissions,
           where: { id: Number(id) }
         })
-        if (!role) res.status(404).end(`Role not found`)
+        if (!role) return res.status(404).end(`Role not found`)
         res.status(200).send(role)
       } catch (error) {
         if (error instanceof Error) {
@@ -45,7 +45,7 @@ async function roleHandler(req: NextApiRequest, res: NextApiResponse) {
         const role = await prisma.role.findFirst({
           where: { id: Number(id) }
         })
-        if (!role) res.status(404).end(`Role not found`)
+        if (!role) return res.status(404).end(`Role not found`)
 
         const updateRole = await prisma.role.update({
           data: {
@@ -68,10 +68,15 @@ async function roleHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN rol
       try {
-        const user = await prisma.user.count({
+        const role = await prisma.role.findFirst({
           where: { id: Number(id) }
         })
-        if (user > 0) return res.status(409).end(`Role relation exists`)
+        if (!role) return res.status(404).end(`Role not found`)
+
+        const user = await prisma.user.count({
+          where: { roles: { some: { id: Number(id) } } }
+        })
+        if (user > 0) return res.status(409).end('Error relationships exist')
 
         const delRole = await prisma.role.delete({ where: { id: Number(id) } })
         res.status(202).send(delRole)

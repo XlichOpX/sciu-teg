@@ -21,7 +21,7 @@ export const SoldProductsReport = ({ data }: { data: ProductReport[] }) => {
                     Cantidad
                   </Th>
                   <Td textAlign="right" fontWeight="medium" pb={2} pt={6}>
-                    Total: $ {groupedData[key].reduce((ac, c) => ac + c.amount, 0)}
+                    Total: $ {groupedData[key].reduce((ac, c) => ac + c.amount, 0).toLocaleString()}
                   </Td>
                 </Tr>
 
@@ -32,7 +32,7 @@ export const SoldProductsReport = ({ data }: { data: ProductReport[] }) => {
                     </Td>
                     <Td textAlign="center">{row.quantity}</Td>
                     <Td isNumeric py={2}>
-                      $ {row.amount}
+                      $ {row.amount.toLocaleString()}
                     </Td>
                   </Tr>
                 ))}
@@ -42,11 +42,13 @@ export const SoldProductsReport = ({ data }: { data: ProductReport[] }) => {
             <Tr>
               <Td colSpan={3} textAlign="right" fontWeight="medium">
                 TOTAL GENERAL: ${' '}
-                {Object.values(groupedData).reduce(
-                  (grandTotal, payMethod) =>
-                    grandTotal + payMethod.reduce((total, current) => total + current.amount, 0),
-                  0
-                )}
+                {Object.values(groupedData)
+                  .reduce(
+                    (grandTotal, payMethod) =>
+                      grandTotal + payMethod.reduce((total, current) => total + current.amount, 0),
+                    0
+                  )
+                  .toLocaleString()}
               </Td>
             </Tr>
           </Tbody>

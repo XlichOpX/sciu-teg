@@ -55,7 +55,7 @@ export const ReceiptList = ({
                   {r.person.docType.type}-{r.person.docNumber}
                 </Td>
               )}
-              <Td textAlign="center">$ {r.amount}</Td>
+              <Td textAlign="center">$ {r.amount.toLocaleString()}</Td>
             </Tr>
           ))}
         </Tbody>

@@ -79,7 +79,7 @@ export const EditUserModal = ({ user }: { user: UserEssentials }) => {
 
   return (
     <>
-      <EditButton onClick={onOpen} />
+      <EditButton onClick={onOpen} flexShrink={0} />
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

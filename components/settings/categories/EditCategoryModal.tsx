@@ -62,7 +62,7 @@ export const EditCategoryModal = ({ category }: { category: Category }) => {
 
   return (
     <>
-      <EditButton pos="absolute" top={4} right={4} onClick={onOpen} />
+      <EditButton onClick={onOpen} flexShrink={0} />
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

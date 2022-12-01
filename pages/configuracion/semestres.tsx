@@ -30,8 +30,8 @@ const SemesterSettings: NextPageWithLayout = () => {
       {isLoading && <FullyCenteredSpinner />}
 
       <SemesterList>
-        {semesters?.map((r) => (
-          <SemesterList.Item key={r.id} semester={r} />
+        {semesters?.map((r, i) => (
+          <SemesterList.Item key={r.id} semester={r} isCurrent={i === 0} />
         ))}
       </SemesterList>
     </>

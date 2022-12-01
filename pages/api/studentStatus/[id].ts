@@ -29,7 +29,7 @@ async function studentStatusHandler(req: NextApiRequest, res: NextApiResponse) {
         const status = await prisma.studentStatus.findFirst({
           where: { id: Number(id) }
         })
-        if (!status) res.status(404).end(`Status not found`)
+        if (!status) return res.status(404).end(`Status not found`)
         res.status(200).send(status)
       } catch (error) {
         if (error instanceof Error) {
@@ -45,7 +45,7 @@ async function studentStatusHandler(req: NextApiRequest, res: NextApiResponse) {
         const status = await prisma.studentStatus.findFirst({
           where: { id: Number(id) }
         })
-        if (!status) res.status(404).end(`Status not found`)
+        if (!status) return res.status(404).end(`Status not found`)
 
         const updateStatus = await prisma.studentStatus.update({
           data: { ...body },
@@ -65,14 +65,13 @@ async function studentStatusHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN estado de estudiante
       try {
-        const student = await prisma.student.count({
-          where: { statusId: Number(id) }
-        })
-        if (student > 0) res.status(409).end(`Status ${student} relations exists`)
+        const status = await prisma.studentStatus.findFirst({ where: { id: Number(id) } })
+        if (!status) return res.status(404).end(`Status not found`)
 
-        const delStatus = await prisma.studentStatus.delete({
-          where: { id: Number(id) }
-        })
+        const student = await prisma.student.count({ where: { statusId: Number(id) } })
+        if (student > 0) return res.status(409).end('Error relationships exist')
+
+        const delStatus = await prisma.studentStatus.delete({ where: { id: Number(id) } })
         res.status(202).send(delStatus)
       } catch (error) {
         if (error instanceof Error) {

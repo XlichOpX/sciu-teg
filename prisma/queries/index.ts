@@ -197,6 +197,7 @@ export const personListing = Prisma.validator<Prisma.PersonArgs>()({
     secondLastName: true,
     student: { select: { id: true } },
     client: { select: { id: true } },
+    user: { select: { id: true } },
     docNumber: true,
     docType: { select: { type: true } },
     email: true,

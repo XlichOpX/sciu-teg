@@ -36,9 +36,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           ...studentWithPersonCareerAndStatus,
           ...routePaginate(query),
           where,
-          orderBy: {
-            person: { firstLastName: 'asc', firstName: 'asc' }
-          }
+          orderBy: [{ person: { firstLastName: 'asc' } }, { person: { firstName: 'asc' } }]
         })
 
         const count = await prisma.student.count({ where })
