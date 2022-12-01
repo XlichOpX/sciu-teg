@@ -33,3 +33,5 @@ export const useReceipts = ({
     }
   }
 }
+
+export const receiptKeysMatcher = '/api/receipt.*'

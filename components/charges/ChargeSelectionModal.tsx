@@ -21,6 +21,7 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { CancelButton, ConvertableAmount, SaveButton } from 'components/app'
+import { productKeysMatcher, receiptKeysMatcher, useMatchMutate } from 'hooks'
 import { useRef, useState } from 'react'
 import { SubmitHandler } from 'react-hook-form'
 import { BsWalletFill } from 'react-icons/bs'
@@ -48,6 +49,7 @@ export const ChargeSelectionModal = ({
   const [isLoading, setIsLoading] = useState(false)
   const toast = useToast()
   const containerRef = useRef<HTMLDivElement>(null)
+  const matchMutate = useMatchMutate()
 
   let totalAmount = 0
   totalAmount += billings?.reduce((ac, sb) => ac + sb.amount, 0) ?? 0
@@ -66,6 +68,8 @@ export const ChargeSelectionModal = ({
       })
       onRecord()
       onClose()
+      matchMutate(productKeysMatcher)
+      matchMutate(receiptKeysMatcher)
       toast({ status: 'success', description: 'Cobro registrado' })
       window.open(window.location.origin + `/recibos/${receipt.id}`)
     } catch {
