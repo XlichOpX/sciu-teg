@@ -14,4 +14,19 @@ const Table = {
   }
 }
 
-export const theme = extendTheme({ config, components: { Table } })
+const Popover = {
+  baseStyle: {
+    zIndex: 1500
+  },
+  variants: {
+    dark: {
+      content: {
+        bg: 'gray.700',
+        color: 'whiteAlpha.900',
+        border: '0'
+      }
+    }
+  }
+}
+
+export const theme = extendTheme({ config, components: { Table, Popover } })
