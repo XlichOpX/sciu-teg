@@ -1,89 +1,51 @@
 import { faker } from '@faker-js/faker'
 import { Prisma, PrismaClient } from '@prisma/client'
 import { encryptToSaveDB } from '../lib/crypter'
+import {
+  CAREERS,
+  CATEGORIES,
+  CURRENCIES,
+  DOCUMENT_TYPES,
+  PAYMENT_METHODS,
+  STUDENT_STATUS
+} from './baseData'
 import { permissionsMoca } from './permissions'
 
+const tables = Prisma.dmmf.datamodel.models.map((model) => `"${model.name}"`).join(', ')
+
 faker.setLocale('es')
-
 const prisma = new PrismaClient()
-
-const CAREERS = [
-  'Informática',
-  'Contabilidad',
-  'Administración',
-  'Electrotecnia',
-  'Electrónica',
-  'Educación'
-]
-
-const DOCUMENT_TYPES = ['CV', 'CE', 'PP', 'RIF']
-
-const STUDENT_STATUS = ['Matriculado', 'Egresado', 'Retirado']
-
-const CURRENCIES = [
-  { name: 'Bolívar', symbol: 'Bs' },
-  { name: 'Euro', symbol: '€' },
-  { name: 'Dólar', symbol: '$' }
-]
-
-const PAYMENT_METHODS = ['Tarjeta', 'Transferencia', 'Efectivo', 'Pago móvil']
-
-const CATEGORIES = [
-  genCategory('Tramitación de títulos', ['Fondo Negro Título', 'Petición de Grado']),
-  genCategory('Matrícula', [
-    'Derecho de Inscripción',
-    'Reingreso',
-    'Mensualidad',
-    'Recargo por Retardo'
-  ]),
-  genCategory('Derecho a Grado', [
-    'Solicitud de Acto de Grado por Secretaria',
-    'Paquete constancias graduandos',
-    'Permiso Acto de Grado'
-  ]),
-  genCategory('Procesos estudiantiles', [
-    'Cambio de carrera',
-    'Equivalencia Internas Entre Carrera'
-  ]),
-  genCategory('Constancias', [
-    'Constancia de Inscripción',
-    'Constancia de Buena Conducta',
-    'Constancia de Estudio'
-  ])
-]
 
 // Parámetros para manejar la cantidad de datos a generar
 const totalOccupations = 5
-const totalStudents = 5
+const totalStudents = 10
 const totalClients = 5
-const totalConversions = 4
 const receiptsPerPerson = 2
 const productsPerReceipt = 2
 const chargesPerReceipt = 1
 
 async function main() {
-  const currenciesIDs = await createCurrencies()
-  const paymentMethodsIDs = await createPaymentMethods({ currenciesIDs })
-  await createConversions({ currenciesIDs })
+  await prisma.$executeRawUnsafe(`TRUNCATE ${tables} RESTART IDENTITY CASCADE;`)
+
   const docTypeIDs = await createDocTypes()
+  const statusIDs = await createStudentStatus()
+  const careerIDs = await createCareers()
+  await createStudents({ docTypeIDs, careerIDs, statusIDs })
 
   const occupationIDs = await createOccupations()
-  const careerIDs = await createCareers()
-  const statusIDs = await createStudentStatus()
-
-  await createStudents({ docTypeIDs, careerIDs, statusIDs })
   await createClients({ docTypeIDs, occupationIDs })
 
   await createCategoriesAndProducts()
+
+  const currenciesIDs = await createCurrencies()
+  const paymentMethodsIDs = await createPaymentMethods()
   await createReceipts({ currenciesIDs, paymentMethodsIDs })
 
-  const permissionIDs = await createPermissions()
-  await createRoles({ permissionIDs })
   await createParameters()
-
   await createSemester()
 
-  await createDummyUser()
+  const permissionIDs = await createPermissions()
+  await createDummyUser(permissionIDs)
 }
 
 main()
@@ -106,9 +68,9 @@ async function createPermissions() {
 async function createSemester() {
   await prisma.semester.create({
     data: {
-      startDate: new Date('2022-02-04T00:00-04:00'),
-      endDate: new Date('2022-08-04T00:00-04:00'),
-      semester: '2022-I'
+      startDate: new Date('2022-03-02T00:00-04:00'),
+      endDate: new Date('2022-09-02T00:00-04:00'),
+      semester: '2022-II'
     }
   })
 }
@@ -125,7 +87,7 @@ async function createParameters() {
   })
 }
 
-async function createDummyUser() {
+async function createDummyUser(permissionIDs: number[]) {
   await prisma.user.create({
     data: {
       username: 'admin',
@@ -149,7 +111,13 @@ async function createDummyUser() {
           answerThree: encryptToSaveDB('chao')
         }
       },
-      roles: { connect: { id: 1 } }
+      roles: {
+        create: {
+          name: 'Administrador',
+          description: 'Usuario principal del sistema',
+          permissions: { connect: permissionIDs.map((p) => ({ id: p })) }
+        }
+      }
     }
   })
 }
@@ -213,17 +181,26 @@ async function createReceipts({
   return receipts
 }
 
-async function createConversions({ currenciesIDs }: { currenciesIDs: number[] }) {
-  await prisma.conversion.createMany({
-    data: Array.from({ length: totalConversions }).map(() => ({
-      value: faker.datatype.number({ min: 0, max: 10, precision: 0.0001 }),
-      currencyId: getRandomValueFromArray(currenciesIDs)
-    }))
-  })
-}
-
 async function createCategoriesAndProducts() {
-  return await Promise.all(CATEGORIES.map((data) => prisma.category.create({ data })))
+  return await Promise.all(
+    CATEGORIES.map((data) =>
+      prisma.category.create({
+        data: {
+          name: data.name,
+          description: faker.lorem.sentence(3),
+          products: {
+            createMany: {
+              data: data.products.map((p) => ({
+                name: p.name,
+                stock: faker.datatype.number({ min: -1, max: 100 }),
+                price: faker.datatype.number({ min: 0.1, max: 30, precision: 0.01 })
+              }))
+            }
+          }
+        }
+      })
+    )
+  )
 }
 
 async function createClients({
@@ -272,7 +249,7 @@ async function createStudentStatus() {
   await prisma.studentStatus.createMany({
     data: STUDENT_STATUS.map((status) => ({
       status,
-      description: status
+      description: faker.lorem.sentence(3)
     }))
   })
   return (await prisma.studentStatus.findMany({ select: { id: true } })).map((ss) => ss.id)
@@ -286,7 +263,7 @@ async function createCareers() {
 async function createOccupations() {
   await prisma.occupation.createMany({
     data: Array.from({ length: totalOccupations }).map(() => ({
-      occupation: faker.name.jobTitle()
+      occupation: faker.lorem.words(2)
     }))
   })
   return (await prisma.occupation.findMany({ select: { id: true } })).map((o) => o.id)
@@ -298,45 +275,40 @@ async function createDocTypes() {
   })
   return (await prisma.docType.findMany({ select: { id: true } })).map((dt) => dt.id)
 }
-async function createPaymentMethods({ currenciesIDs }: { currenciesIDs: number[] }) {
-  return (
-    await Promise.all(
-      PAYMENT_METHODS.map(async (pm) => {
-        return await prisma.paymentMethod.create({
-          data: {
-            name: pm,
-            description: pm,
-            currencies: { connect: currenciesIDs.map((c) => ({ id: c })) }
-          },
-          select: { id: true }
-        })
+async function createPaymentMethods() {
+  await Promise.all(
+    PAYMENT_METHODS.map((pm) =>
+      prisma.paymentMethod.create({
+        data: {
+          name: pm.name,
+          description: pm.description,
+          currencies: { connect: pm.currencies.map((c) => ({ name: c })) },
+          metaPayment: pm.metaPayment
+        }
       })
     )
-  ).map((pm) => pm.id)
+  )
+  return (await prisma.paymentMethod.findMany({ select: { id: true } })).map((pm) => pm.id)
 }
 
 async function createCurrencies() {
-  await prisma.currency.createMany({
-    data: CURRENCIES
-  })
+  await Promise.all(
+    CURRENCIES.map((c) =>
+      prisma.currency.create({
+        data: {
+          name: c.name,
+          symbol: c.symbol,
+          conversions: {
+            create: {
+              value: c.conversion,
+              date: faker.date.recent(3)
+            }
+          }
+        }
+      })
+    )
+  )
   return (await prisma.currency.findMany({ select: { id: true } })).map((c) => c.id)
-}
-
-async function createRoles({ permissionIDs }: { permissionIDs: number[] }) {
-  await prisma.role.create({
-    data: {
-      name: 'adm',
-      description: 'Dios',
-      permissions: { connect: permissionIDs.map((p) => ({ id: p })) }
-    }
-  })
-
-  await prisma.role.createMany({
-    data: Array.from({ length: 6 }).map(() => ({
-      name: faker.name.jobType(),
-      description: faker.lorem.sentence(4)
-    }))
-  })
 }
 
 function genPerson(docTypeIds: number[]): Prisma.PersonCreateInput {
@@ -353,22 +325,6 @@ function genPerson(docTypeIds: number[]): Prisma.PersonCreateInput {
       }
     },
     docType: { connect: { id: getRandomValueFromArray(docTypeIds) } }
-  }
-}
-
-function genProduct(name: string) {
-  return {
-    name,
-    price: Number(faker.commerce.price(1, 30)),
-    stock: faker.datatype.number(100)
-  }
-}
-
-function genCategory(name: string, products: string[]): Prisma.CategoryCreateInput {
-  return {
-    name,
-    description: faker.lorem.sentence(),
-    products: { createMany: { data: products.map((pr) => genProduct(pr)) } }
   }
 }
 
