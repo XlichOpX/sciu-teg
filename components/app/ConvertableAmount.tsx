@@ -31,11 +31,13 @@ export const ConvertableAmount = ({
         <PopoverContent width="auto">
           <PopoverBody>
             {latestConversions
-              ? latestConversions.map((lc) => (
-                  <p key={lc.id}>
-                    {lc.currency.symbol} {round(amount * lc.value).toLocaleString()}
-                  </p>
-                ))
+              ? latestConversions.map((lc) =>
+                  lc.currency.symbol !== '$' ? (
+                    <p key={lc.id}>
+                      {lc.currency.symbol} {round(amount * lc.value).toLocaleString()}
+                    </p>
+                  ) : null
+                )
               : 'Cargando...'}
           </PopoverBody>
         </PopoverContent>
