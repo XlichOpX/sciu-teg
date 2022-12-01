@@ -62,24 +62,24 @@ const productsPerReceipt = 2
 const chargesPerReceipt = 1
 
 async function main() {
-  await createPaymentMethods()
-  await createCurrencies()
-  await createDocTypes()
-  const docTypeIds = (await prisma.docType.findMany()).map((d) => d.id)
-  await createOccupations()
-  await createCareers()
-  await createStudentStatus()
+  const currenciesIDs = await createCurrencies()
+  const paymentMethodsIDs = await createPaymentMethods({ currenciesIDs })
+  await createConversions({ currenciesIDs })
+  const docTypeIDs = await createDocTypes()
 
-  await createStudents(docTypeIds)
-  await createClients(docTypeIds)
+  const occupationIDs = await createOccupations()
+  const careerIDs = await createCareers()
+  const statusIDs = await createStudentStatus()
+
+  await createStudents({ docTypeIDs, careerIDs, statusIDs })
+  await createClients({ docTypeIDs, occupationIDs })
 
   await createCategoriesAndProducts()
-  await createConversions()
-  await createReceipts()
+  await createReceipts({ currenciesIDs, paymentMethodsIDs })
 
-  await createRoles()
+  const permissionIDs = await createPermissions()
+  await createRoles({ permissionIDs })
   await createParameters()
-  await createPermissions()
 
   await createSemester()
 
@@ -100,6 +100,7 @@ async function createPermissions() {
   await prisma.permission.createMany({
     data: permissionsMoca
   })
+  return (await prisma.permission.findMany({ select: { id: true } })).map((p) => p.id)
 }
 
 async function createSemester() {
@@ -153,11 +154,15 @@ async function createDummyUser() {
   })
 }
 
-async function createReceipts() {
+async function createReceipts({
+  currenciesIDs,
+  paymentMethodsIDs
+}: {
+  currenciesIDs: number[]
+  paymentMethodsIDs: number[]
+}) {
   const persons = await prisma.person.findMany()
   const products = await prisma.product.findMany()
-  const paymentMethodIds = (await prisma.paymentMethod.findMany()).map((pm) => pm.id)
-  const currencyId = (await prisma.currency.findMany()).map((c) => c.id)
 
   const receipts = Promise.all(
     persons
@@ -192,9 +197,9 @@ async function createReceipts() {
                 createMany: {
                   data: Array.from({ length: totalCharges }).map(() => ({
                     amount: totalAmount / totalCharges,
-                    paymentMethodId: getRandomValueFromArray(paymentMethodIds),
+                    paymentMethodId: getRandomValueFromArray(paymentMethodsIDs),
                     createdAt: faker.date.recent(),
-                    currencyId: getRandomValueFromArray(currencyId)
+                    currencyId: getRandomValueFromArray(currenciesIDs)
                   }))
                 }
               }
@@ -208,13 +213,11 @@ async function createReceipts() {
   return receipts
 }
 
-async function createConversions() {
-  const currencies = await (await prisma.currency.findMany()).map((e) => e.id)
-
+async function createConversions({ currenciesIDs }: { currenciesIDs: number[] }) {
   await prisma.conversion.createMany({
     data: Array.from({ length: totalConversions }).map(() => ({
       value: faker.datatype.number({ min: 0, max: 10, precision: 0.0001 }),
-      currencyId: getRandomValueFromArray(currencies)
+      currencyId: getRandomValueFromArray(currenciesIDs)
     }))
   })
 }
@@ -223,89 +226,116 @@ async function createCategoriesAndProducts() {
   return await Promise.all(CATEGORIES.map((data) => prisma.category.create({ data })))
 }
 
-async function createClients(docTypeIds: number[]) {
-  const occupationIds = (await prisma.occupation.findMany()).map((o) => o.id)
+async function createClients({
+  docTypeIDs,
+  occupationIDs
+}: {
+  docTypeIDs: number[]
+  occupationIDs: number[]
+}) {
   return await Promise.all(
     Array.from({ length: totalClients })
       .map(() => ({
         person: {
-          create: genPerson(docTypeIds)
+          create: genPerson(docTypeIDs)
         },
-        occupation: { connect: { id: getRandomValueFromArray(occupationIds) } }
+        occupation: { connect: { id: getRandomValueFromArray(occupationIDs) } }
       }))
       .map((data) => prisma.client.create({ data }))
   )
 }
 
-async function createStudents(docTypeIds: number[]) {
-  const careerIds = (await prisma.career.findMany()).map((c) => c.id)
-  const statusIds = (await prisma.studentStatus.findMany()).map((s) => s.id)
+async function createStudents({
+  docTypeIDs,
+  careerIDs,
+  statusIDs
+}: {
+  docTypeIDs: number[]
+  careerIDs: number[]
+  statusIDs: number[]
+}) {
   return await Promise.all(
     Array.from({ length: totalStudents })
       .map(() => ({
         person: {
-          create: genPerson(docTypeIds)
+          create: genPerson(docTypeIDs)
         },
         currentSemester: getRandomInt({ max: 6 }),
-        career: { connect: { id: getRandomValueFromArray(careerIds) } },
-        status: { connect: { id: getRandomValueFromArray(statusIds) } }
+        career: { connect: { id: getRandomValueFromArray(careerIDs) } },
+        status: { connect: { id: getRandomValueFromArray(statusIDs) } }
       }))
       .map((data) => prisma.student.create({ data }))
   )
 }
 
 async function createStudentStatus() {
-  return await prisma.studentStatus.createMany({
+  await prisma.studentStatus.createMany({
     data: STUDENT_STATUS.map((status) => ({
       status,
       description: status
     }))
   })
+  return (await prisma.studentStatus.findMany({ select: { id: true } })).map((ss) => ss.id)
 }
 
 async function createCareers() {
-  return await prisma.career.createMany({ data: CAREERS.map((career) => ({ career })) })
+  await prisma.career.createMany({ data: CAREERS.map((career) => ({ career })) })
+  return (await prisma.career.findMany({ select: { id: true } })).map((c) => c.id)
 }
 
 async function createOccupations() {
-  return await prisma.occupation.createMany({
+  await prisma.occupation.createMany({
     data: Array.from({ length: totalOccupations }).map(() => ({
       occupation: faker.name.jobTitle()
     }))
   })
+  return (await prisma.occupation.findMany({ select: { id: true } })).map((o) => o.id)
 }
 
 async function createDocTypes() {
-  return await prisma.docType.createMany({
+  await prisma.docType.createMany({
     data: DOCUMENT_TYPES.map((type) => ({ type }))
   })
+  return (await prisma.docType.findMany({ select: { id: true } })).map((dt) => dt.id)
 }
-async function createPaymentMethods() {
-  return await Promise.all(
-    PAYMENT_METHODS.map(async (pm) => {
-      return await prisma.paymentMethod.create({
-        data: { name: pm, description: pm },
-        select: { id: true }
+async function createPaymentMethods({ currenciesIDs }: { currenciesIDs: number[] }) {
+  return (
+    await Promise.all(
+      PAYMENT_METHODS.map(async (pm) => {
+        return await prisma.paymentMethod.create({
+          data: {
+            name: pm,
+            description: pm,
+            currencies: { connect: currenciesIDs.map((c) => ({ id: c })) }
+          },
+          select: { id: true }
+        })
       })
-    })
-  )
+    )
+  ).map((pm) => pm.id)
 }
 
 async function createCurrencies() {
   await prisma.currency.createMany({
     data: CURRENCIES
   })
+  return (await prisma.currency.findMany({ select: { id: true } })).map((c) => c.id)
 }
 
-async function createRoles() {
-  return await prisma.role.createMany({
-    data: [
-      { name: 'adm', description: 'Dios' },
-      ...Array.from({ length: 6 }).map(() => ({
-        name: faker.name.jobType(),
-        description: faker.lorem.sentence(4)
-      }))
-    ]
+async function createRoles({ permissionIDs }: { permissionIDs: number[] }) {
+  await prisma.role.create({
+    data: {
+      name: 'adm',
+      description: 'Dios',
+      permissions: { connect: permissionIDs.map((p) => ({ id: p })) }
+    }
+  })
+
+  await prisma.role.createMany({
+    data: Array.from({ length: 6 }).map(() => ({
+      name: faker.name.jobType(),
+      description: faker.lorem.sentence(4)
+    }))
   })
 }
 
