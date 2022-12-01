@@ -27,7 +27,7 @@ async function semesterHandler(req: NextApiRequest, res: NextApiResponse) {
         const semester = await prisma.semester.findFirst({
           where: { id: Number(id) }
         })
-        if (!semester) res.status(404).end(`Semester not found`)
+        if (!semester) return res.status(404).end(`Semester not found`)
         res.status(200).send(semester)
       } catch (error) {
         if (error instanceof Error) {
@@ -43,7 +43,7 @@ async function semesterHandler(req: NextApiRequest, res: NextApiResponse) {
         const semester = await prisma.semester.findFirst({
           where: { id: Number(id) }
         })
-        if (!semester) res.status(404).end(`Semester not found`)
+        if (!semester) return res.status(404).end(`Semester not found`)
 
         const updateSemester = await prisma.semester.update({
           data: {
@@ -65,8 +65,13 @@ async function semesterHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN semestre
       try {
+        const semester = await prisma.semester.findFirst({
+          where: { id: Number(id) }
+        })
+        if (!semester) return res.status(404).end(`Semester not found`)
+
         const billing = await prisma.billing.count({ where: { semesterId: Number(id) } })
-        if (billing > 0) res.status(409).end(`Semester relation exists`)
+        if (billing > 0) return res.status(409).end('Error relationships exist')
 
         const delSemester = await prisma.semester.delete({ where: { id: Number(id) } })
         res.status(202).send(delSemester)

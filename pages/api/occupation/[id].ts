@@ -30,7 +30,7 @@ async function occupationHandler(req: NextApiRequest, res: NextApiResponse) {
         const occupation = await prisma.occupation.findFirst({
           where: { id: Number(id) }
         })
-        if (!occupation) res.status(404).end(`Occupation not found`)
+        if (!occupation) return res.status(404).end(`Occupation not found`)
         res.status(200).send(occupation)
       } catch (error) {
         if (error instanceof Error) {
@@ -46,7 +46,7 @@ async function occupationHandler(req: NextApiRequest, res: NextApiResponse) {
         const occupation = await prisma.occupation.findFirst({
           where: { id: Number(id) }
         })
-        if (!occupation) res.status(404).end(`Occupation not found`)
+        if (!occupation) return res.status(404).end(`Occupation not found`)
         const updateOccupation: Occupation = await prisma.occupation.update({
           data: {
             ...body
@@ -67,10 +67,12 @@ async function occupationHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA ocupación de cliente
       try {
-        const client = await prisma.client.findFirst({
-          where: { occupationId: Number(id) }
-        })
-        if (!client) res.status(404).end(`Occupation relation exists`)
+        const occupation = await prisma.occupation.findFirst({ where: { id: Number(id) } })
+        if (!occupation) return res.status(404).end(`Occupation not found`)
+
+        const client = await prisma.client.count({ where: { occupationId: Number(id) } })
+        if (client > 0) res.status(409).end('Error relationships exist')
+
         const delOccupation: Occupation = await prisma.occupation.delete({
           where: { id: Number(id) }
         })

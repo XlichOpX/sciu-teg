@@ -30,7 +30,7 @@ async function chargeHandler(req: NextApiRequest, res: NextApiResponse) {
           ...chargeWithPaymentMethodAndCurrencies,
           where: { id: Number(id) }
         })
-        if (!charge) res.status(404).end(`Charge not found`)
+        if (!charge) return res.status(404).end(`Charge not found`)
         res.status(200).send(charge)
       } catch (error) {
         if (error instanceof Error) {
@@ -46,7 +46,7 @@ async function chargeHandler(req: NextApiRequest, res: NextApiResponse) {
         const charge = await prisma.charge.findFirst({
           where: { id: Number(id) }
         })
-        if (!charge) res.status(404).end(`Charge not found`)
+        if (!charge) return res.status(404).end(`Charge not found`)
         const updateCharge = await prisma.charge.update({
           data: { ...body },
           where: {
@@ -65,6 +65,9 @@ async function chargeHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UN cargo
       try {
+        const charge = await prisma.charge.findFirst({ where: { id: Number(id) } })
+        if (!charge) return res.status(404).end(`Charge not found`)
+
         const delCharge = await prisma.charge.delete({ where: { id: Number(id) } })
         res.status(202).send(delCharge)
       } catch (error) {

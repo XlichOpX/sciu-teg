@@ -30,7 +30,7 @@ async function careerHandler(req: NextApiRequest, res: NextApiResponse) {
         const career = await prisma.career.findFirst({
           where: { id: Number(id) }
         })
-        if (!career) res.status(404).end(`Career not found`)
+        if (!career) return res.status(404).end(`Career not found`)
         res.status(200).send(career)
       } catch (error) {
         if (error instanceof Error) {
@@ -46,7 +46,7 @@ async function careerHandler(req: NextApiRequest, res: NextApiResponse) {
         const career = await prisma.career.findFirst({
           where: { id: Number(id) }
         })
-        if (!career) res.status(404).end(`Career not found`)
+        if (!career) return res.status(404).end(`Career not found`)
         //actualizamos a UNA carrera
         const updateCareer: Career = await prisma.career.update({
           data: {
@@ -68,13 +68,13 @@ async function careerHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't delete this.`)
       try {
         //eliminamos a UNA carrera
-        const student = await prisma.student.count({
-          where: { careerId: Number(id) }
-        })
+        const career = await prisma.career.findFirst({ where: { id: Number(id) } })
+        if (!career) return res.status(404).end(`Career not found`)
 
-        if (student > 0) return res.status(404).json(`Error, exists asosiated students`)
+        const student = await prisma.student.count({ where: { careerId: Number(id) } })
+        if (student > 0) return res.status(409).end('Error relationships exist')
 
-        const delCareer: Career = await prisma.career.delete({ where: { id: Number(id) } })
+        const delCareer = await prisma.career.delete({ where: { id: Number(id) } })
         res.status(202).send(delCareer)
       } catch (error) {
         if (error instanceof Error) {

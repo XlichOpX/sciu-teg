@@ -29,7 +29,7 @@ async function addressHandler(req: NextApiRequest, res: NextApiResponse) {
         const address = await prisma.address.findFirst({
           where: { id: Number(id) }
         })
-        if (!address) res.status(404).end(`Address not found`)
+        if (!address) return res.status(404).end(`Address not found`)
         res.status(200).send(address)
       } catch (error) {
         if (error instanceof Error) {
@@ -45,7 +45,7 @@ async function addressHandler(req: NextApiRequest, res: NextApiResponse) {
         const address = await prisma.address.findFirst({
           where: { id: Number(id) }
         })
-        if (!address) res.status(404).end(`Address not found`)
+        if (!address) return res.status(404).end(`Address not found`)
 
         const updateAddress = await prisma.address.update({
           data: {
@@ -67,6 +67,9 @@ async function addressHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA dirección
       try {
+        const address = await prisma.address.findFirst({ where: { id: Number(id) } })
+        if (!address) return res.status(404).end(`Address not found`)
+
         const delAddress = await prisma.address.delete({ where: { id: Number(id) } })
         res.status(202).send(delAddress)
       } catch (error) {

@@ -65,10 +65,10 @@ async function docTypeHandler(req: NextApiRequest, res: NextApiResponse) {
         if (!(await canUserDo(session, 'DELETE_DOCTYPE')))
           return res.status(403).send(`Can't delete this.`)
         //eliminamos a UN tipo de documento
-        const person = await prisma.person.findFirst({
+        const person = await prisma.person.count({
           where: { docTypeId: Number(id) }
         })
-        if (person) res.status(404).end(`DocType relation exists`)
+        if (person > 0) return res.status(409).end(`DocType relation exists`)
         const delDocType = await prisma.docType.delete({ where: { id: Number(id) } })
         res.status(202).send(delDocType)
       } catch (error) {

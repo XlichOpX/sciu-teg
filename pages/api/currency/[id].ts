@@ -31,7 +31,7 @@ async function currencyHandler(req: NextApiRequest, res: NextApiResponse) {
         const currency = await prisma.currency.findFirst({
           where: { id: Number(id) }
         })
-        if (!currency) res.status(404).end(`Currency not found`)
+        if (!currency) return res.status(404).end(`Currency not found`)
         res.status(201).send(currency)
       } catch (error) {
         if (error instanceof Error) {
@@ -47,7 +47,7 @@ async function currencyHandler(req: NextApiRequest, res: NextApiResponse) {
         const currency = await prisma.currency.findFirst({
           where: { id: Number(id) }
         })
-        if (!currency) res.status(404).end(`Currency not found`)
+        if (!currency) return res.status(404).end(`Currency not found`)
 
         //Validate body
         const validBody = await validateBody(body, currencyUpdateSchema)
@@ -75,7 +75,7 @@ async function currencyHandler(req: NextApiRequest, res: NextApiResponse) {
         const paymentMethod = await prisma.paymentMethod.count({
           where: { currencies: { some: { id: { equals: Number(id) } } } }
         })
-        if (paymentMethod > 0) return res.status(409).send(`PaymentMethod relations exists`)
+        if (paymentMethod > 0) return res.status(409).send('Error relationships exist')
 
         const delCurrency = await prisma.currency.delete({ where: { id: Number(id) } })
         res.status(202).send(delCurrency)

@@ -27,7 +27,7 @@ async function categoryHandler(req: NextApiRequest, res: NextApiResponse) {
         const category = await prisma.category.findFirst({
           where: { id: Number(id) }
         })
-        if (!category) res.status(404).end(`Category not found`)
+        if (!category) return res.status(404).end(`Category not found`)
         res.status(200).send(category)
       } catch (error) {
         if (error instanceof Error) {
@@ -43,7 +43,7 @@ async function categoryHandler(req: NextApiRequest, res: NextApiResponse) {
         const category = await prisma.category.findFirst({
           where: { id: Number(id) }
         })
-        if (!category) res.status(404).end(`Category not found`)
+        if (!category) return res.status(404).end(`Category not found`)
         const updateCategory = await prisma.category.update({
           data: {
             ...body
@@ -64,8 +64,12 @@ async function categoryHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't delete this.`)
       //eliminamos a UNA categoría
       try {
+        const category = await prisma.category.findFirst({ where: { id: Number(id) } })
+        if (!category) return res.status(404).end(`Category not found`)
+
         const product = await prisma.product.count({ where: { categoryId: Number(id) } })
-        if (product > 0) return res.status(409).end(`Exists relation products`)
+        if (product > 0) return res.status(409).end('Error relationships exist')
+
         const delCategory = await prisma.category.delete({ where: { id: Number(id) } })
         res.status(202).send(delCategory)
       } catch (error) {
