@@ -1,5 +1,5 @@
 import { Alert, chakra, Container } from '@chakra-ui/react'
-import { FullyCenteredSpinner } from 'components/app'
+import { FullyCenteredSpinner, LatestConversionsHelper } from 'components/app'
 import { useAuth } from 'hooks'
 import Head from 'next/head'
 import { ReactNode } from 'react'
@@ -23,6 +23,10 @@ export const BaseLayout = ({ children }: { children: ReactNode }) => {
           <Navbar />
           <Container maxW="container.xl" as="main" py={4}>
             {children}
+            <LatestConversionsHelper
+              buttonProps={{ pos: 'fixed', left: 2, bottom: 2, p: 1 }}
+              popoverContentProps={{ marginLeft: 2 }}
+            />
           </Container>
         </>
       ) : (
