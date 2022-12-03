@@ -2,6 +2,7 @@
 import { createServer } from 'http'
 import next from 'next'
 import { parse } from 'url'
+import scheduleConversionTask from './cron/scheduleConversionTask'
 import scheduleUpdateTask from './cron/scheduleUpdateTask'
 
 const port = parseInt(process.env.PORT || '3000', 10)
@@ -19,13 +20,6 @@ const app = next({
 })
 const handle = app.getRequestHandler()
 
-try {
-  console.log('Ejecutando desde server.ts')
-  scheduleUpdateTask('*/1 * * * *')
-} catch (error) {
-  console.log({ error })
-}
-
 app.prepare().then(() => {
   createServer(async (req, res) => {
     try {
@@ -41,6 +35,12 @@ app.prepare().then(() => {
       res.end('internal server error')
     }
   }).listen(port, () => {
-    console.log(`> Ready on http://${hostname}:${port}`)
+    console.log(`IUJO CAJA <${dev ? 'Desarrollo' : 'Producción'}> -> http://${hostname}:${port}`)
+    try {
+      scheduleUpdateTask('0 14 16 */ *')
+      scheduleConversionTask('0 08 */ * *')
+    } catch (error) {
+      console.log({ error })
+    }
   })
 })

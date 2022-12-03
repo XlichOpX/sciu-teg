@@ -9,9 +9,9 @@ export default async function updateStudentBillingCron() {
   // Levantamos una conexión con prisma.
   try {
     console.log(
-      `Tarea de Actualización agendada Activada a las: ${dayjs()
+      `==Tarea: Actualización de Morosos : ${dayjs()
         .locale('es')
-        .format('HH:mm, dddd, MMMM D, YYYY')}`
+        .format('HH:mm:ss, dddd, MMMM D, YYYY')}`
     )
 
     const students = await prisma.student.findMany({
@@ -70,8 +70,16 @@ export default async function updateStudentBillingCron() {
           : `<span>No se han generado Nuevos Morosos...</span>`
     }
 
-    const result = await sendMail(mailOptions)
-    console.log(result.messageId)
+    sendMail(mailOptions).then((result) => {
+      console.log(
+        `============================================================================
+  Tarea: Actualización de Morosos ==> Terminada a las: ${dayjs()
+    .locale('es')
+    .format('HH:mm:ss, dddd, MMMM D, YYYY')}
+  Identificación del Mensaje:${result.messageId}
+============================================================================`
+      )
+    })
   } catch (error) {
     const mailOptions = {
       from: '"Instituto Universitario Jesús Obrero - Sede Catia" <caja@iujo.edu.ve>',
@@ -82,7 +90,15 @@ export default async function updateStudentBillingCron() {
       text: `A continuación se muestra el error producido al generar los morosos`,
       html: `<pre>${JSON.stringify(error, Object.getOwnPropertyNames(error))}</pre>`
     }
-    const result = await sendMail(mailOptions)
-    console.log(result.messageId)
+    sendMail(mailOptions).then((result) => {
+      console.log(
+        `============================================================================
+  Tarea: Actualización de Morosos ==> Errada a las: ${dayjs()
+    .locale('es')
+    .format('HH:mm:ss, dddd, MMMM D, YYYY')}
+  Identificación del Mensaje:${result.messageId}
+============================================================================`
+      )
+    })
   }
 }
