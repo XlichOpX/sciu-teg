@@ -135,7 +135,6 @@ export async function checkBillings(
 
   if (options?.onlyNews) {
     newBillings.push(...latePaymentData)
-    console.log(newBillings)
     return newBillings ?? []
   }
 
