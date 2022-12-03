@@ -1,15 +1,20 @@
 import { Prisma, Product, Semester, Student } from '@prisma/client'
-import dayjs from 'lib/dayjs'
-import prisma from 'lib/prisma'
-import { billing } from 'prisma/queries'
-import { StudentWithPersonCareerAndStatus } from 'types/student'
-import { stringSearch } from 'utils/routePaginate'
+import dayjs from './../lib/dayjs'
+import prisma from './../lib/prisma'
+import { billing } from './../prisma/queries'
+import { BillingComparatorArgs } from './../types/billing'
+import { StudentWithPersonCareerAndStatus } from './../types/student'
+import { stringSearch } from './../utils/routePaginate'
 
 // ID of StudentStatus 'Matriculado'
 export const MATRICULADO = 1
 
-export async function checkBillings(student: StudentWithPersonCareerAndStatus) {
+export async function checkBillings(
+  student: StudentWithPersonCareerAndStatus,
+  options?: Partial<{ onlyNews: boolean }>
+) {
   // Recuperamos el usuario asociado al número de documento pasado
+  const newBillings: BillingComparatorArgs[] = []
   // Recuperamos el semestre actual
   const semester = await prisma.semester.findFirst({ orderBy: { endDate: 'desc' } })
   if (!semester) throw new Error(`Current Semester not found`)
@@ -71,7 +76,11 @@ export async function checkBillings(student: StudentWithPersonCareerAndStatus) {
     }
 
     //Creamos los billings.
-    const billings = await prisma.billing.createMany({ data })
+    newBillings.push(
+      ...(await prisma.$transaction(
+        data.map((bill) => prisma.billing.create({ ...billing, data: bill }))
+      ))
+    )
   }
 
   // Recuperamos todos los billings posterior a haber creado los pendientes, si lo fueron.
@@ -83,44 +92,51 @@ export async function checkBillings(student: StudentWithPersonCareerAndStatus) {
   })
 
   //Generamos retardos en función de la vejez del billing y si este no ha sido cobrado.
-  const latePaymentData = billings
-    .map((billing) => {
-      const {
-        product: { id },
-        dateToPay,
-        isCharged
-      } = billing
+  const latePaymentData = (
+    await Promise.all(
+      billings.map(async (bill) => {
+        const {
+          product: { id },
+          dateToPay,
+          isCharged
+        } = bill
 
-      // Validamos que el "billing" sea una mensualidad, no haya sido cobrada y tenga más de 15 días desde su fecha de pago (primero de cada mes)
-      if (isCharged) return
-      if (!(id === monthlyPayment.id)) return
-      if (!(dayjs(dateToPay).add(15, 'days') <= dayjs())) return
+        // Validamos que el "billing" sea una mensualidad, no haya sido cobrada y tenga más de 15 días desde su fecha de pago (primero de cada mes)
+        if (isCharged) return
+        if (!(id === monthlyPayment.id)) return
+        if (!(dayjs(dateToPay).add(15, 'days') <= dayjs())) return
 
-      //Validamos que exista un "billing" para el retardo generado, cobrado o no en la lista de retardos, asociada a la mensualidad que pasara la validación anterior.
-      const existLatePayment = billings.some((bill) => {
-        //Sí el "bill" es la mensualidad o es el retardo correspondiente a la mensualidad dará 0
-        const differenceBothDates = dayjs(bill.dateToPay).diff(dayjs(billing.dateToPay)) === 0
-        // Sí el "bill" es el retardo correspondiente devolverá true
-        const isDelayed = bill.product.id === latePayment.id
+        //Validamos que exista un "billing" para el retardo generado, cobrado o no en la lista de retardos, asociada a la mensualidad que pasara la validación anterior.
+        const existLatePayment = billings.some((bill) => {
+          //Sí el "bill" es la mensualidad o es el retardo correspondiente a la mensualidad dará 0
+          const differenceBothDates = dayjs(bill.dateToPay).diff(dayjs(bill.dateToPay)) === 0
+          // Sí el "bill" es el retardo correspondiente devolverá true
+          const isDelayed = bill.product.id === latePayment.id
 
-        return differenceBothDates && isDelayed
+          return differenceBothDates && isDelayed
+        })
+
+        // Retornamos un cobro x retardo pendiente. Sí no existe uno ya.
+        if (!existLatePayment) {
+          return await prisma.billing.create({
+            ...billing,
+            data: constructBilling(
+              latePayment,
+              student as Student,
+              semester,
+              `Retardo de ${bill.productName}`,
+              bill.dateToPay
+            )
+          })
+        }
       })
+    )
+  ).filter((e) => e !== undefined) as BillingComparatorArgs[]
 
-      // Retornamos un cobro x retardo pendiente. Sí no existe uno ya.
-      if (!existLatePayment) {
-        return constructBilling(
-          latePayment,
-          student as Student,
-          semester,
-          `Retardo de ${billing.productName}`,
-          billing.dateToPay
-        )
-      }
-    })
-    .filter((e) => e !== undefined) as Prisma.Enumerable<Prisma.BillingCreateManyInput>
-
-  if (latePaymentData) {
-    await prisma.billing.createMany({ data: latePaymentData })
+  if (options?.onlyNews) {
+    newBillings.push(...latePaymentData)
+    console.log(newBillings)
+    return newBillings ?? []
   }
 
   // Recuperamos y devolvemos todos los 'billings' pendientes por pagar

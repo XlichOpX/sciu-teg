@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
-import dayjs from 'lib/dayjs'
 import { NextApiRequestQuery } from 'next/dist/server/api-utils'
+import dayjs from './../lib/dayjs'
 
 export function routePaginate({ limit, offset }: NextApiRequestQuery) {
   const take = Number(Array.isArray(limit) ? limit[0] : limit) || 5
