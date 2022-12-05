@@ -3,11 +3,11 @@ import useSWR from 'swr'
 import { BillingComparatorArgs } from 'types/billing'
 import { StudentWithPersonCareerAndStatus } from 'types/student'
 
-export const useBillings = (docNumber: string) => {
+export const useBillings = (studentId: string) => {
   const { data, error, mutate } = useSWR<
     { student: StudentWithPersonCareerAndStatus; billings: BillingComparatorArgs[] },
     HttpError
-  >(docNumber ? `/api/student/${docNumber}/billing` : null)
+  >(studentId ? `/api/student/${studentId}/billing` : null)
 
   return {
     data,

@@ -17,9 +17,9 @@ import { useForm } from 'react-hook-form'
 
 const StudentDetail: NextPageWithLayout = () => {
   const router = useRouter()
-  const docNumber = router.query.docNum as string
+  const studentId = router.query.docNum as string
 
-  const { data, errorMsg, isLoading, mutate } = useBillings(docNumber)
+  const { data, errorMsg, isLoading, mutate } = useBillings(studentId)
 
   const billingsFormHook = useForm<ReceivablesFormData>({
     defaultValues: { billings: [] }
@@ -30,7 +30,11 @@ const StudentDetail: NextPageWithLayout = () => {
 
   return (
     <>
-      <Head>{docNumber && <title>{`Estudiantes | ${docNumber}`}</title>}</Head>
+      <Head>
+        {data && (
+          <title>{`Estudiantes | ${data.student.person.docType.type}-${data.student.person.docNumber}`}</title>
+        )}
+      </Head>
 
       {errorMsg && (
         <Alert mb={4} status="error">
