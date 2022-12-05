@@ -5,10 +5,9 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { studentWithPersonCareerAndStatus } from 'prisma/queries'
 import { checkBillings } from 'utils/checkBillings'
 import { canUserDo } from 'utils/checkPermissions'
-import { stringSearch } from 'utils/routePaginate'
 import { z } from 'zod'
 // Validate typeof id
-const documentVal = z.string().min(1).max(12)
+const idValidation = z.preprocess((value) => Number(value), z.number().positive())
 
 // GET /student/[id]/billing
 export default withIronSessionApiRoute(billingHandle, ironOptions)
@@ -16,7 +15,7 @@ export default withIronSessionApiRoute(billingHandle, ironOptions)
 async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
   const {
     method,
-    query: { id: docNum },
+    query: { id },
     session
   } = req
   if (!(await canUserDo(session, 'CREATE_BILLING'))) return res.status(403).send(`Can't read this.`)
@@ -28,17 +27,17 @@ async function billingHandle(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // Validamos que el docNum sea un string válido (entre 1 y 12 caracteres)
-  const { success } = documentVal.safeParse(docNum)
-  if (!success) return res.status(404).send(`Document Number ${docNum} Not Allowed`)
+  const validateId = idValidation.safeParse(id)
+  if (!validateId.success) return res.status(404).send(`Document Number ${id} Not Allowed`)
 
   //Obtenemos al estudiante a partir de su número de identificación (Document Number)
   try {
     // Declaremos lo que necesitamos...
     const student = await prisma.student.findFirst({
       ...studentWithPersonCareerAndStatus,
-      where: { person: { docNumber: stringSearch(docNum) } }
+      where: { id: validateId.data }
     })
-    if (!student) return res.status(404).send(`Student doc:${docNum} not found`)
+    if (!student) return res.status(404).send(`Student id:${id} not found`)
 
     // Validamos sí hay 'billings' por generar o no y los devolvemos.
     const billings = await checkBillings(student)
