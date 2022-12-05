@@ -148,6 +148,7 @@ export const studentWithPersonCareerAndStatus = Prisma.validator<Prisma.StudentA
       select: {
         address: { select: { shortAddress: true } },
         docNumber: true,
+        docType: { select: { type: true } },
         firstLastName: true,
         firstName: true,
         id: true,

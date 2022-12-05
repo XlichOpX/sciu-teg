@@ -1,7 +1,7 @@
 import { Container, Divider, Flex, Heading } from '@chakra-ui/react'
-import { SimpleBox } from 'components/app'
+// import { SimpleBox } from 'components/app'
 import { LatestConversions } from 'components/home/LatestConversions'
-import { MonthlySoldProducts } from 'components/home/MonthlySoldProducts'
+// import { MonthlySoldProducts } from 'components/home/MonthlySoldProducts'
 import { SemesterIndicator } from 'components/home/SemesterIndicator'
 import { BaseLayout } from 'components/layouts'
 import { useAuth } from 'hooks'
@@ -33,11 +33,11 @@ const Home: NextPageWithLayout = () => {
         <Divider my={4} />
 
         <Flex gap={8} alignItems="flex-start">
-          {user.permissions.includes('READ_REPORT') && (
+          {/* {user.permissions.includes('READ_REPORT') && (
             <SimpleBox shadow="md" p={4} w="78%">
               <MonthlySoldProducts />
             </SimpleBox>
-          )}
+          )} */}
           {user.permissions.includes('READ_CONVERSION') && <LatestConversions w="22%" />}
         </Flex>
       </Container>
