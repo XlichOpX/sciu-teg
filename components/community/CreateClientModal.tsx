@@ -12,15 +12,18 @@ import {
 import { CancelButton, CreateButton, SaveButton } from 'components/app'
 import { HttpError } from 'lib/http-error'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import { createClient } from 'services/clients'
 import { ClientForm, ClientFormSubmitHandler } from './ClientForm'
 
 export const CreateClientModal = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const toast = useToast()
 
   const handleSubmit: ClientFormSubmitHandler = async (data) => {
+    setIsLoading(true)
     try {
       const newClient = await createClient(data)
       router.push(`/comunidad/${newClient.id}`)
@@ -29,6 +32,8 @@ export const CreateClientModal = () => {
       if (error instanceof HttpError) {
         toast({ status: 'error', description: error.message })
       }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -49,7 +54,7 @@ export const CreateClientModal = () => {
           <ModalFooter>
             <CancelButton mr="auto" onClick={onClose} />
 
-            <SaveButton type="submit" form="CreateClientForm">
+            <SaveButton type="submit" form="CreateClientForm" isLoading={isLoading}>
               Registrar cliente
             </SaveButton>
           </ModalFooter>
