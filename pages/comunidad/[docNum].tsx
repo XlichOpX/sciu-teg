@@ -12,8 +12,8 @@ import { FaGraduationCap } from 'react-icons/fa'
 
 const CommunityDetail: NextPageWithLayout = () => {
   const router = useRouter()
-  const docNumber = (router.query.docNum as string) ?? ''
-  const { client, errorMsg, error, isLoading } = useClient(docNumber)
+  const clientId = (router.query.docNum as string) ?? ''
+  const { client, errorMsg, error, isLoading } = useClient(clientId)
   const { user } = useAuth()
 
   const clientNotFound = error?.statusCode === 404
@@ -25,7 +25,7 @@ const CommunityDetail: NextPageWithLayout = () => {
 
   return (
     <>
-      <Head>{docNumber && <title>{`Comunidad | ${docNumber}`}</title>}</Head>
+      <Head>{clientId && <title>{`Comunidad | ${clientId}`}</title>}</Head>
 
       {errorMsg && (
         <Alert mb={4} status="error">
@@ -35,7 +35,7 @@ const CommunityDetail: NextPageWithLayout = () => {
 
       {clientNotFound && user.permissions.includes('CREATE_CLIENT') && <CreateClientModal />}
       {isStudent && (
-        <NLink href={`/estudiantes/${docNumber}`} passHref>
+        <NLink href={`/estudiantes/${clientId}`} passHref>
           <Button as="a" colorScheme="blue" leftIcon={<FaGraduationCap />}>
             Ir al estudiante
           </Button>

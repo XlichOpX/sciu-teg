@@ -1,9 +1,17 @@
 import { Alert } from '@chakra-ui/react'
-import { CommunityLayout } from 'components/community'
+import { CommunityLayout, CreateClientModal } from 'components/community'
+import { useAuth } from 'hooks'
 import { NextPageWithLayout } from '../_app'
 
 const CommunityIndex: NextPageWithLayout = () => {
-  return <Alert>Busque una persona por su número cédula...</Alert>
+  const { user } = useAuth()
+  if (!user) return null
+  return (
+    <>
+      <Alert mb={4}>Busque una persona por su número cédula...</Alert>
+      {user.permissions.includes('CREATE_CLIENT') && <CreateClientModal />}
+    </>
+  )
 }
 
 CommunityIndex.getLayout = (page) => <CommunityLayout>{page}</CommunityLayout>

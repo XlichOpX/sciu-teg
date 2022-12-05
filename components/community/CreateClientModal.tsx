@@ -23,9 +23,8 @@ export const CreateClientModal = () => {
   const handleSubmit: ClientFormSubmitHandler = async (data) => {
     try {
       const newClient = await createClient(data)
-      router.push(`/comunidad/${newClient.person.docNumber}`)
+      router.push(`/comunidad/${newClient.id}`)
       toast({ status: 'success', description: 'Cliente creado' })
-      window.location.pathname = `/comunidad/${newClient.person.docNumber}`
     } catch (error) {
       if (error instanceof HttpError) {
         toast({ status: 'error', description: error.message })

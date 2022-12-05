@@ -1,9 +1,9 @@
 import { getClient } from 'services/clients'
 import useSWR from 'swr'
 
-export const useClient = (docNum: string) => {
-  const { data, error } = useSWR(docNum ? `/api/client?keyword=${docNum}` : null, () =>
-    getClient(docNum)
+export const useClient = (clientId: string) => {
+  const { data, error } = useSWR(clientId ? `/api/client/${clientId}` : null, () =>
+    getClient(clientId)
   )
 
   return {
