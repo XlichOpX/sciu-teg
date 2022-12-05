@@ -12,7 +12,6 @@ import {
   Tbody,
   Td,
   Text,
-  Tfoot,
   Th,
   Thead,
   Tr
@@ -140,7 +139,6 @@ export const ReceiptDetail = ({
               </RTh>
             </Tr>
           </Thead>
-
           <Tbody>
             {receipt.chargedProducts.map((cp) => (
               <Tr key={cp.id}>
@@ -152,9 +150,6 @@ export const ReceiptDetail = ({
                 </RTd>
               </Tr>
             ))}
-          </Tbody>
-
-          <Tfoot>
             <Tr>
               <RTd colSpan={3} pl={0} fontWeight="bold">
                 TOTAL
@@ -186,7 +181,7 @@ export const ReceiptDetail = ({
                 </RTd>
               </Tr>
             ))}
-          </Tfoot>
+          </Tbody>
         </Table>
       </TableContainer>
     </Container>
