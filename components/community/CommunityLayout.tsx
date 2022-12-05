@@ -63,7 +63,7 @@ export const CommunityLayout = ({ children }: { children: ReactNode }) => {
                   _dark={{ borderBottomColor: 'whiteAlpha.200' }}
                   _light={{ borderBottomColor: 'blackAlpha.200' }}
                 >
-                  <NLink href={`/comunidad/${client.id}`} passHref>
+                  <NLink href={`/comunidad/${client.id}`}>
                     <Box
                       as="span"
                       h="full"

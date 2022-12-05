@@ -1,4 +1,4 @@
-import { Box, Button, Container, Link, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, Container, useDisclosure } from '@chakra-ui/react'
 import { useAuth } from 'hooks'
 import NextLink from 'next/link'
 import { FaGraduationCap, FaReceipt } from 'react-icons/fa'
@@ -74,10 +74,10 @@ export const Navbar = () => {
         justifyContent="space-between"
         alignItems="center"
       >
-        <NextLink href="/" passHref>
-          <Link fontSize="2xl" fontWeight="bold">
+        <NextLink href="/">
+          <Box as="span" fontSize="2xl" fontWeight="bold">
             <Logo />
-          </Link>
+          </Box>
         </NextLink>
 
         <Button
@@ -94,8 +94,8 @@ export const Navbar = () => {
         <Box as="ul" display={['none', null, 'flex']} gap="2" listStyleType="none">
           {filteredLinks.map(({ href, text, title, icon }) => (
             <li key={href}>
-              <NextLink href={href} passHref>
-                <Button as="a" variant="ghost" title={title} leftIcon={icon}>
+              <NextLink href={href}>
+                <Button as="span" variant="ghost" title={title} leftIcon={icon}>
                   {text}
                 </Button>
               </NextLink>
@@ -119,7 +119,7 @@ export const Navbar = () => {
           <li key={href}>
             <NextLink href={href} passHref>
               <Button
-                as="a"
+                as="span"
                 variant="ghost"
                 width="full"
                 title={title}

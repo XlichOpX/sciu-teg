@@ -100,9 +100,9 @@ export const SettingsSidebar = () => {
       <Flex as="ul" direction="column" gap={4} listStyleType="none">
         {filteredLinks.map((li) => (
           <li key={li.href}>
-            <Link href={li.href} passHref>
+            <Link href={li.href}>
               <Button
-                as="a"
+                as="span"
                 w="full"
                 variant={asPath === li.href ? 'solid' : 'ghost'}
                 justifyContent="flex-start"

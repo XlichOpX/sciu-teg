@@ -96,8 +96,8 @@ const Login: NextPageWithLayout = () => {
           </Button>
         </Box>
 
-        <NextLink href="/auth/recuperar-usuario" passHref>
-          <Link>¿Ha olvidado su contraseña?</Link>
+        <NextLink href="/auth/recuperar-usuario">
+          <Link as="span">¿Ha olvidado su contraseña?</Link>
         </NextLink>
       </Flex>
     </>

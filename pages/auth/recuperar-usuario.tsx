@@ -29,8 +29,8 @@ const UserRecovery: NextPageWithLayout = () => {
         direction="column"
         gap={6}
       >
-        <NLink href="/auth/login" passHref>
-          <Link alignSelf="flex-start" onClick={logout}>
+        <NLink href="/auth/login">
+          <Link as="span" alignSelf="flex-start" onClick={logout}>
             ← Volver al inicio de sesión
           </Link>
         </NLink>

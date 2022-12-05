@@ -12,7 +12,6 @@ import {
   VisuallyHidden
 } from '@chakra-ui/react'
 import dayjs from 'dayjs'
-import NLink from 'next/link'
 import { ReceiptWithPerson } from 'types/receipt'
 
 export const ReceiptList = ({
@@ -44,11 +43,9 @@ export const ReceiptList = ({
               <Td>{dayjs(r.createdAt).format('YYYY/MM/DD')}</Td>
               <Td textAlign="center">
                 {r.id}
-                <NLink href={`/recibos/${r.id}`} passHref>
-                  <Link target="_blank" pos="absolute" inset={0}>
-                    <VisuallyHidden>Recibo número: {r.id}</VisuallyHidden>
-                  </Link>
-                </NLink>
+                <Link pos="absolute" inset={0} href={`/recibos/${r.id}`} target="_blank">
+                  <VisuallyHidden>Recibo número: {r.id}</VisuallyHidden>
+                </Link>
               </Td>
               {showIdCol && (
                 <Td textAlign="center">
