@@ -40,7 +40,7 @@ export const CommunityLayout = ({ children }: { children: ReactNode }) => {
             toast({ status: 'error', description: 'No se encontró ningún cliente' })
             router.push('/comunidad')
           } else if (clients.length === 1) {
-            router.push(`/comunidad/${text}`)
+            router.push(`/comunidad/${clients[0].id}`)
           } else {
             setClients(clients)
           }
