@@ -58,7 +58,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
                 AND: [
                   {
                     productName: {
-                      contains: row.producto,
+                      startsWith: row.producto,
                       mode: 'insensitive'
                     }
                   },
@@ -123,7 +123,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
           const conversion = await prisma.conversion.findFirst({
             // dolar, euro, libra, bolivares, etc...
             select: { id: true, value: true },
-            where: { date: { lte }, id: row.moneda },
+            where: { date: { lte }, currencyId: row.moneda },
             orderBy: { date: 'desc' }
           })
           if (!conversion) throw new Error(`no conversion for currency ${row.moneda} found`)

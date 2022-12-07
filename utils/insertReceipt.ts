@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 import prisma from 'lib/prisma'
+import { receiptWithAll } from 'prisma/queries'
 import { CreateReceiptInput } from 'types/receipt'
 
 export const insertReceipt = async (body: CreateReceiptInput) => {
@@ -71,6 +72,7 @@ export const insertReceipt = async (body: CreateReceiptInput) => {
 
     // Preparamos el cuerpo para crear el recibo
     const receiptInput: Prisma.ReceiptCreateArgs = {
+      ...receiptWithAll,
       data: {
         amount,
         chargedProducts,
