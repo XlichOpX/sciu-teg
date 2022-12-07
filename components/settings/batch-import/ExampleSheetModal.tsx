@@ -35,7 +35,7 @@ export const ExampleSheetModal = () => {
           <ModalBody>
             <Image
               src={formatExampleImg}
-              alt="Formato que debe tener la hoja de excel a importar. Columnas:, cedula, semestre, mensualidad, producto, precio, cantidad, metodo_de_pago, monto_cobrado, referencia, fecha"
+              alt="Formato que debe tener la hoja de excel a importar. Columnas:, cedula, semestre, mensualidad, producto, precio, cantidad, metodo_de_pago, moneda, monto_cobrado, referencia, fecha"
             />
 
             <Divider my={3} />
@@ -49,20 +49,17 @@ export const ExampleSheetModal = () => {
 
               <chakra.ul listStylePos="inside" pl={4}>
                 <li>cedula</li>
-                <li>semestre</li>
+                <li>semestre (opcional si se trata del cobro de un producto)</li>
                 <li>mensualidad (opcional si se trata del cobro de un producto)</li>
                 <li>producto</li>
                 <li>precio</li>
                 <li>cantidad</li>
                 <li>metodo_de_pago</li>
+                <li>moneda</li>
                 <li>monto_cobrado</li>
                 <li>referencia</li>
                 <li>fecha</li>
               </chakra.ul>
-
-              <Text>
-                <strong>* Esta función solo soporta transferencias bancarias.</strong>
-              </Text>
             </Stack>
           </ModalBody>
 
