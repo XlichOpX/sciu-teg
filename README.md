@@ -1,6 +1,6 @@
 # TEG - Sistema de Gestión de Cobranzas
 
-_**Por** Yhan Montaño & Reynaldo González_
+_**Por** [Yhan Montaño](https://github.com/XlichOpX) & [Reynaldo González](https://github.com/kurokuro15)_
 
 Presentamos el siguiente repositorio como proyecto de TEG para optar por el título de Técnico Superior en Informática
 
