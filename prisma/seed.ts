@@ -19,11 +19,11 @@ const prisma = new PrismaClient()
 
 // Parámetros para manejar la cantidad de datos a generar
 const totalOccupations = 5
-const totalStudents = 10
-const totalClients = 5
-const receiptsPerPerson = 2
-const productsPerReceipt = 2
-const chargesPerReceipt = 1
+const totalStudents = 20
+const totalClients = 10
+const receiptsPerPerson = 3
+const productsPerReceipt = 3
+const chargesPerReceipt = 2
 
 async function main() {
   await prisma.$executeRawUnsafe(`TRUNCATE ${tables} RESTART IDENTITY CASCADE;`)
@@ -196,7 +196,7 @@ async function createCategoriesAndProducts() {
       prisma.category.create({
         data: {
           name: data.name,
-          description: faker.lorem.sentence(3),
+          description: data.description,
           products: {
             createMany: {
               data: data.products.map((p) => ({
