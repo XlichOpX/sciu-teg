@@ -1,7 +1,6 @@
 import { PersonSelect } from 'components/app/PersonSelect'
-import { HttpError } from 'lib/http-error'
 import { SubmitHandler, UseFormReturn } from 'react-hook-form'
-import { getUserById } from 'services/users'
+import { getPersonById } from 'services/persons'
 import { z } from 'zod'
 
 export const personSelectFormSchema = z.object({
@@ -13,12 +12,9 @@ export const personSelectFormSchema = z.object({
     .refine(
       async (val) => {
         try {
-          await getUserById(val)
-          return false
+          return !(await getPersonById(val)).user
         } catch (error) {
-          if (error instanceof HttpError && error.statusCode === 404) {
-            return true
-          }
+          console.error(error)
         }
       },
       { message: 'Esta persona ya tiene un usuario' }
