@@ -47,7 +47,7 @@ export const StudentsLayout = ({ children }: { children: ReactNode }) => {
         }}
       />
       {children}
-      <Modal isOpen={Boolean(students)} onClose={onClose}>
+      <Modal isOpen={Boolean(students)} onClose={onClose} size="lg">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Estudiantes encontrados</ModalHeader>
@@ -74,7 +74,8 @@ export const StudentsLayout = ({ children }: { children: ReactNode }) => {
                       onClick={onClose}
                     >
                       {student.person.firstName} {student.person.firstLastName} -{' '}
-                      {student.person.docType.type}: {student.person.docNumber}
+                      {student.person.docType.type}: {student.person.docNumber} |{' '}
+                      {student.status.status}
                     </Box>
                   </NLink>
                 </Box>
