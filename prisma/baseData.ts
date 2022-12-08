@@ -142,3 +142,76 @@ export const SECRET_QUESTIONS = [
   'Color del caballo blanco de Simón Bolivar',
   'Nombre de tu primera escuela'
 ]
+
+export const ROLES = [
+  {
+    name: 'Analista',
+    description: 'Capacidad para ver informes',
+    permissions: [
+      'READ_SEMESTER',
+      'READ_RECEIPT',
+      'READ_PRODUCT',
+      'READ_CATEGORY',
+      'READ_PAYMENTMETHOD',
+      'READ_CURRENCY',
+      'READ_CONVERSION',
+      'READ_PARAMETER',
+      'READ_REPORT'
+    ]
+  },
+  {
+    name: 'Cajero',
+    description: 'Persona encargada de cobrar a estudiantes y clientes',
+    permissions: [
+      'CREATE_PERSON',
+      'READ_PERSON',
+      'READ_STUDENT',
+      'CREATE_CLIENT',
+      'READ_CLIENT',
+      'CREATE_OCCUPATION',
+      'READ_OCCUPATION',
+      'READ_SEMESTER',
+      'READ_DOCTYPE',
+      'CREATE_ADDRESS',
+      'READ_ADDRESS',
+      'CREATE_RECEIPT',
+      'READ_RECEIPT',
+      'READ_PRODUCT',
+      'READ_CATEGORY',
+      'READ_PAYMENTMETHOD',
+      'READ_CURRENCY',
+      'READ_CONVERSION',
+      'READ_PARAMETER',
+      'CREATE_BILLING',
+      'READ_REPORT'
+    ]
+  },
+  {
+    name: 'Supervisor',
+    description: 'Capacidad para alterar las variables del sistema.',
+    permissions: [
+      'CREATE_PRODUCT',
+      'READ_PRODUCT',
+      'DELETE_PRODUCT',
+      'EDIT_PRODUCT',
+      'CREATE_CATEGORY',
+      'READ_CATEGORY',
+      'DELETE_CATEGORY',
+      'EDIT_CATEGORY',
+      'CREATE_PAYMENTMETHOD',
+      'READ_PAYMENTMETHOD',
+      'DELETE_PAYMENTMETHOD',
+      'EDIT_PAYMENTMETHOD',
+      'CREATE_CURRENCY',
+      'READ_CURRENCY',
+      'DELETE_CURRENCY',
+      'EDIT_CURRENCY',
+      'CREATE_CONVERSION',
+      'READ_CONVERSION',
+      'DELETE_CONVERSION',
+      'EDIT_CONVERSION',
+      'READ_PARAMETER',
+      'EDIT_PARAMETER'
+    ]
+  }
+]

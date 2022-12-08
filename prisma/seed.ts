@@ -7,6 +7,7 @@ import {
   CURRENCIES,
   DOCUMENT_TYPES,
   PAYMENT_METHODS,
+  ROLES,
   SECRET_QUESTIONS,
   STUDENT_STATUS
 } from './baseData'
@@ -46,7 +47,8 @@ async function main() {
   await createSemester()
 
   const permissionIDs = await createPermissions()
-  await createDummyUser(permissionIDs)
+  await createAdmin(permissionIDs, docTypeIDs)
+  await createUsers(docTypeIDs)
 
   await createSecretQuestions()
 }
@@ -96,13 +98,13 @@ async function createParameters() {
   })
 }
 
-async function createDummyUser(permissionIDs: number[]) {
+async function createAdmin(permissionIDs: number[], docTypeIDs: number[]) {
   await prisma.user.create({
     data: {
       username: 'admin',
       password: encryptToSaveDB('password'),
       person: {
-        connect: { id: 1 }
+        create: genPerson(docTypeIDs)
       },
       status: {
         create: {
@@ -129,6 +131,42 @@ async function createDummyUser(permissionIDs: number[]) {
       }
     }
   })
+}
+
+async function createUsers(docTypeIDs: number[]) {
+  await Promise.all(
+    ROLES.map((role) =>
+      prisma.user.create({
+        data: {
+          roles: {
+            create: {
+              ...role,
+              permissions: { connect: role.permissions.map((permission) => ({ permission })) }
+            }
+          },
+          username: role.name.toLowerCase(),
+          password: encryptToSaveDB('password'),
+          secret: {
+            create: {
+              questionOne: 'hola',
+              answerOne: encryptToSaveDB('chao'),
+              questionTwo: 'hola',
+              answerTwo: encryptToSaveDB('chao'),
+              questionThree: 'hola',
+              answerThree: encryptToSaveDB('chao')
+            }
+          },
+          status: {
+            connectOrCreate: {
+              create: { status: 'Activo', description: 'El usuario está activo' },
+              where: { status: 'Activo' }
+            }
+          },
+          person: { create: genPerson(docTypeIDs) }
+        }
+      })
+    )
+  )
 }
 
 async function createReceipts({
