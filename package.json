@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "nodemon",
-    "build": "next build && tsc --project tsconfig.server.json",
-    "start": "nodemon server.ts",
+    "build:server": "tsc --project tsconfig.server.json",
+    "build:next": "next build",
+    "build": "npm run build:next && npm run build:server",
+    "start:prod": "NODE_ENV=production node dist/server/index.js",
+    "start:win:prod": "set \"NODE_ENV=production\" & node dist/server/index.js",
     "lint": "next lint",
     "prettier": "prettier --write ."
   },
