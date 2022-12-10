@@ -31,7 +31,7 @@ export const ClientForm = ({ id, onSubmit }: { id: string; onSubmit: ClientFormS
         <Stack gap={3}>
           <PersonInputs />
 
-          <FormControl isInvalid={!!errors.occupationId}>
+          <FormControl isInvalid={!!errors.occupationId} isRequired>
             <FormLabel>Ocupación</FormLabel>
             <Controller
               name="occupationId"
