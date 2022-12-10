@@ -1,4 +1,5 @@
 import { Button, Td, Tr } from '@chakra-ui/react'
+import { ConvertableAmount } from 'components/app'
 import { BsXLg } from 'react-icons/bs'
 import { ProductReceivable } from '.'
 
@@ -13,7 +14,9 @@ export const ProductItem = ({
     <Td>
       {product.name} (x{product.quantity})
     </Td>
-    <Td textAlign="center">$ {product.price * product.quantity}</Td>
+    <Td textAlign="center">
+      <ConvertableAmount amount={product.price * product.quantity} />
+    </Td>
     <Td textAlign="center">
       <Button
         variant="ghost"
