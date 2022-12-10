@@ -34,7 +34,7 @@ export const CategoryForm = ({ id, onSubmit, formHook, resetOnSubmit = false }: 
       </FormControl>
 
       <FormControl isInvalid={!!errors.description} isRequired>
-        <FormLabel>Description</FormLabel>
+        <FormLabel>Descripción</FormLabel>
         <Input
           {...register('description')}
           placeholder="Aranceles destinados a los estudiantes egresados"
