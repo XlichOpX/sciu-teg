@@ -2,12 +2,12 @@
 import { createServer } from 'http'
 import next from 'next'
 import { parse } from 'url'
-import scheduleConversionTask from './cron/scheduleConversionTask'
-import scheduleUpdateTask from './cron/scheduleUpdateTask'
+import scheduleConversionTask from '../cron/scheduleConversionTask'
+import scheduleUpdateTask from '../cron/scheduleUpdateTask'
 
 const port = parseInt(process.env.PORT || '3000', 10)
 const dev = process.env.NODE_ENV !== 'production'
-const hostname = 'localhost'
+const hostname = process.env.HOSTNAME
 const app = next({
   dev,
   hostname,
