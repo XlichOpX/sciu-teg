@@ -1,5 +1,5 @@
 import { withIronSessionApiRoute } from 'iron-session/next'
-import { encrypt, secretCrypt } from 'lib/crypter'
+import { encryptToSaveDB, secretCrypt } from 'lib/crypter'
 import { ironOptions } from 'lib/ironSession'
 import prisma from 'lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -57,7 +57,7 @@ async function userHandler(req: NextApiRequest, res: NextApiResponse) {
         if (passwordConfirm || password)
           if (!(password === passwordConfirm)) return res.status(404).end(`Password not match`)
 
-        const [, cryptoPass] = encrypt(password)
+        const cryptoPass = encryptToSaveDB(password)
         body.password = cryptoPass
         if (passwordConfirm) body.passwordConfirm = undefined
         // Hasheamos las respuestas
