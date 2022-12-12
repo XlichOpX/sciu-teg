@@ -1,4 +1,4 @@
-import { BOLIVAR, DOLLAR } from 'utils/constants'
+import { BOLIVAR, DOLLAR, MATRICULADO } from 'utils/constants'
 
 export const CATEGORIES = [
   {
@@ -165,7 +165,7 @@ export const ROLES = [
 ]
 
 export const STUDENT_STATUS = [
-  { status: 'Matriculado', description: 'Estudiante cursando carrera.' },
+  { status: MATRICULADO, description: 'Estudiante cursando carrera.' },
   { status: 'Retiro temporal', description: "Estudiante que 'congeló' la carrera." },
   { status: 'Retiro definitivo', description: 'Estudiante retirado formalmente.' },
   { status: 'Egresado', description: 'Estudiante graduado satisfactoriamente.' },
