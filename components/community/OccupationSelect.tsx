@@ -25,6 +25,7 @@ export interface OccupationSelectProps
   onChange: (value: Option | null) => void
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const OccupationSelect = forwardRef<any, OccupationSelectProps>(
   ({ onChange, ...props }, ref) => {
     const [value, setValue] = useState<Option | null>(null)

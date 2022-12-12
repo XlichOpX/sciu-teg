@@ -12,6 +12,7 @@ type ReportTypeDef = {
   schema: ZodTypeAny
   defaultValues: Record<string, unknown>
   filters?: () => JSX.Element
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component?: ({ data }: { data: any }) => JSX.Element
 }
 
