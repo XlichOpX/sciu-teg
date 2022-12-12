@@ -13,8 +13,7 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Logo } from 'components/app'
-import { userFetchKey } from 'contexts/AuthContext'
-import { useMatchMutate } from 'hooks'
+import { useAuth } from 'hooks'
 import Head from 'next/head'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -42,7 +41,7 @@ const Login: NextPageWithLayout = () => {
   } = router
 
   const toast = useToast()
-  const matchMutate = useMatchMutate()
+  const { mutate } = useAuth()
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const res = await fetch('/api/auth/login', {
@@ -56,7 +55,7 @@ const Login: NextPageWithLayout = () => {
       return
     }
 
-    matchMutate(userFetchKey)
+    mutate()
     router.push(typeof redirect === 'string' ? redirect : '/')
   }
 

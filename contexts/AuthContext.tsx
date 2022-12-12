@@ -8,12 +8,13 @@ type AuthContext = {
   logout: () => Promise<void>
   user: Awaited<ReturnType<typeof getUser>> | null
   error: HttpError
+  mutate: () => void
 }
 
 export const AuthContext = createContext<AuthContext | null>(null)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { data, error } = useSWR(userFetchKey, getUser)
+  const { data, error, mutate } = useSWR(userFetchKey, getUser)
   const router = useRouter()
 
   /** Does a fetch to '/api/auth/logout' and then redirects to '/auth/login' */
@@ -23,7 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [router])
 
   return (
-    <AuthContext.Provider value={{ user: data ?? null, logout, error }}>
+    <AuthContext.Provider value={{ user: data ?? null, logout, error, mutate }}>
       {children}
     </AuthContext.Provider>
   )
