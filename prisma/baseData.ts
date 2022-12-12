@@ -3,144 +3,90 @@ export const CATEGORIES = [
     name: 'Taller de FOC',
     description: 'Talleres de Formación Complementaria',
     products: [
-      { name: 'Taller: Venciendo a la Tímidez' },
-      { name: 'Taller: Cuando el Producto Soy Yo' },
-      { name: 'Taller: Presentaciones Electrónicas Efectivas' },
-      { name: 'Taller: Sígueme y te Sigo' },
-      { name: 'Taller: Versos Prosas y Poesías' },
-      { name: 'Taller: Conociendo el niño en su Desarrollo Evolutivo' },
-      { name: 'Taller de Teatro' },
-      { name: 'Taller de Lenguaje de Señas' },
-      { name: 'Taller de Álgebra' },
-      { name: 'Taller de Excel Avanzado' },
-      { name: 'Taller de AutoCAD' },
-      { name: 'Taller de Contabilidad' }
+      { name: 'Taller: Venciendo a la Timidez', stock: 120, price: 15 },
+      { name: 'Taller: Cuando el Producto Soy Yo', stock: 120, price: 15 },
+      { name: 'Taller: Presentaciones Electrónicas Efectivas', stock: 120, price: 15 },
+      { name: 'Taller: Sígueme y te Sigo', stock: 120, price: 15 },
+      { name: 'Taller: Versos Prosas y Poesías', stock: 120, price: 15 },
+      { name: 'Taller: Conociendo el niño en su Desarrollo Evolutivo', stock: 120, price: 15 },
+      { name: 'Taller de Teatro', stock: 120, price: 15 },
+      { name: 'Taller de Lenguaje de Señas', stock: 120, price: 15 },
+      { name: 'Taller de Álgebra', stock: 120, price: 15 },
+      { name: 'Taller de Excel Avanzado', stock: 120, price: 15 },
+      { name: 'Taller de AutoCAD', stock: 120, price: 15 },
+      { name: 'Taller de Contabilidad', stock: 120, price: 15 }
     ]
   },
   {
     name: 'Cursos CEP',
     description: 'Cursos de Extensión Profesional',
     products: [
-      { name: 'Curso: Mantenimiento y Reparación de PC' },
-      { name: 'Curso: Buenas Prácticas en Excel' },
-      { name: 'Curso: Diseño para no diseñadores' },
-      { name: 'Curso: Instalaciones Eléctricas Residenciales' }
+      { name: 'Curso: Mantenimiento y Reparación de PC', stock: 15, price: 25 },
+      { name: 'Curso: Buenas Prácticas en Excel', stock: 15, price: 25 },
+      { name: 'Curso: Diseño para no diseñadores', stock: 15, price: 25 },
+      { name: 'Curso: Instalaciones Eléctricas Residenciales', stock: 15, price: 25 }
     ]
   },
   {
     name: 'Constancias',
     description: 'Constancias de diversa índole',
     products: [
-      { name: 'Constancia de Culminación de Estudios' },
-      { name: 'Constancia de Servicio Comunitario' },
-      { name: 'Constancia de Horarios Firmados y Sellados' },
-      { name: 'Constancia de Estudios' },
-      { name: 'Constancia de Pasantías' },
-      { name: 'Constancia de Autenticación de Notas/Título' },
-      { name: 'Constancia de Buena Conducta' },
-      { name: 'Constancia de Notas Certificadas' },
-      { name: 'Constancia de Puesto en la Promoción' },
-      { name: 'Constancia de Horas Académicas' },
-      { name: 'Constancia de Acta de Grado' },
-      { name: 'Constancia de Modalidad de Estudio' },
-      { name: 'Constancia de Mínimo Aprobatorio' },
-      { name: 'Constancia de Tramitación de Título' },
-      { name: 'Constancia de Asistencia a Socialización TEG' },
-      { name: 'Constancia de Asistencia a Talleres ' },
-      { name: 'Constancia de Asistencia a Asesorías de TEG' },
-      { name: 'Constancia de Asistencia a Reuniones' },
-      { name: 'Constancia de Participación/Apoyo Logística de TEG' },
-      { name: 'Constancia de Asistencia a Convivencias' },
-      { name: 'Constancia de Inscripción' }
+      { name: 'Constancia de Culminación de Estudios', stock: -1, price: 0.9 },
+      { name: 'Constancia de Servicio Comunitario', stock: -1, price: 0.9 },
+      { name: 'Constancia de Horarios Firmados y Sellados', stock: -1, price: 0.9 },
+      { name: 'Constancia de Estudios', stock: -1, price: 0.9 },
+      { name: 'Constancia de Pasantías', stock: -1, price: 0.9 },
+      { name: 'Constancia de Autenticación de Notas/Título', stock: -1, price: 0.9 },
+      { name: 'Constancia de Buena Conducta', stock: -1, price: 0.9 },
+      { name: 'Constancia de Notas Certificadas', stock: -1, price: 0.9 },
+      { name: 'Constancia de Puesto en la Promoción', stock: -1, price: 0.9 },
+      { name: 'Constancia de Horas Académicas', stock: -1, price: 0.9 },
+      { name: 'Constancia de Acta de Grado', stock: -1, price: 0.9 },
+      { name: 'Constancia de Modalidad de Estudio', stock: -1, price: 0.9 },
+      { name: 'Constancia de Mínimo Aprobatorio', stock: -1, price: 0.9 },
+      { name: 'Constancia de Tramitación de Título', stock: -1, price: 0.9 },
+      { name: 'Constancia de Asistencia a Socialización TEG', stock: -1, price: 0.9 },
+      { name: 'Constancia de Asistencia a Talleres ', stock: -1, price: 0.9 },
+      { name: 'Constancia de Asistencia a Asesorías de TEG', stock: -1, price: 0.9 },
+      { name: 'Constancia de Asistencia a Reuniones', stock: -1, price: 0.9 },
+      { name: 'Constancia de Participación/Apoyo Logística de TEG', stock: -1, price: 0.9 },
+      { name: 'Constancia de Asistencia a Convivencias', stock: -1, price: 0.9 },
+      { name: 'Constancia de Inscripción', stock: -1, price: 0.9 }
     ]
   },
   {
     name: 'Formatos',
     description: 'Formatos predefinidos para procesos',
     products: [
-      { name: 'Hoja de Graduandos' },
-      { name: 'Planilla de Reincorporación/Retiro de Semestre' },
-      { name: 'Planilla de Inscripción/Retiro de Materia' }
+      { name: 'Hoja de Graduandos', stock: -1, price: 3 },
+      { name: 'Planilla de Reincorporación/Retiro de Semestre', stock: -1, price: 3 },
+      { name: 'Planilla de Inscripción/Retiro de Materia', stock: -1, price: 3 }
     ]
   },
   {
     name: 'Matrícula',
     description: 'Todo lo relacionado a la matriculación',
     products: [
-      { name: 'Mensualidad' },
-      { name: 'Recargo por retardo' },
-      { name: 'Cambio de carrera' },
-      { name: 'Equivalencia de carrera' },
-      { name: 'Reincorporación' },
-      { name: 'Propedéutico' },
-      { name: 'Derecho de Inscripción' }
+      { name: 'Mensualidad', stock: -1, price: 30 },
+      { name: 'Recargo por retardo', stock: -1, price: 30 * 0.16 },
+      { name: 'Cambio de carrera', stock: -1, price: 10 },
+      { name: 'Equivalencia de carrera', stock: -1, price: 15 },
+      { name: 'Reincorporación', stock: -1, price: 5 },
+      { name: 'Propedéutico', stock: 300, price: 45 },
+      { name: 'Derecho de Inscripción', stock: 3000, price: 30 }
     ]
   },
   {
     name: 'Grado',
     description: 'Todo lo relacionado a graduandos',
     products: [
-      { name: 'Permiso de Acto de Grado' },
-      { name: 'Solicitud de Acto de Grado por Secretaría' },
-      { name: 'Paquete de constancias para graduandos' },
-      { name: 'Paquete de Grado' },
-      { name: 'Petición de grado' }
+      { name: 'Permiso de Acto de Grado', stock: 120, price: 25 },
+      { name: 'Solicitud de Acto de Grado por Secretaría', stock: 120, price: 10 },
+      { name: 'Paquete de constancias para graduandos', stock: 120, price: 15 },
+      { name: 'Paquete de Grado', stock: 120, price: 100 },
+      { name: 'Petición de grado', stock: 120, price: 12 }
     ]
   }
-]
-
-export const STUDENT_STATUS = [
-  'Matriculado',
-  'Retiro temporal',
-  'Retiro definitvo',
-  'Egresado',
-  'Inasistente',
-  'Pendiente de reingreso'
-]
-
-export const CAREERS = [
-  'Informática',
-  'Contabilidad',
-  'Administración',
-  'Electrotecnia',
-  'Electrónica',
-  'Educación'
-]
-
-export const DOCUMENT_TYPES = ['CV', 'CE', 'PP', 'RIF']
-
-export const CURRENCIES = [
-  { name: 'Bolívar', symbol: 'Bs', conversion: 13.19 },
-  { name: 'Euro', symbol: '€', conversion: 0.98 },
-  { name: 'Dólar', symbol: '$', conversion: 1 }
-]
-
-export const PAYMENT_METHODS = [
-  {
-    name: 'Tarjeta',
-    description: 'Tarjetas de débito/crédito nacionales',
-    currencies: ['Bolívar']
-  },
-  {
-    name: 'Transferencia',
-    description: 'Transferencias desde bancos nacionales',
-    currencies: ['Bolívar'],
-    metaPayment: [{ name: 'referencia', fieldType: 'string' }]
-  },
-  {
-    name: 'Efectivo',
-    description: 'Efectivo en moneda nacional o divisas',
-    currencies: ['Bolívar', 'Dólar', 'Euro']
-  },
-  { name: 'Pago móvil', description: 'Pago móvil desde bancos nacionales', currencies: ['Bolívar'] }
-]
-
-export const SECRET_QUESTIONS = [
-  'Primer nombre de tu madre',
-  'Segundo apellido de tu padre',
-  'Nombre de tu mascota favorita',
-  'Color del caballo blanco de Simón Bolivar',
-  'Nombre de tu primera escuela'
 ]
 
 export const ROLES = [
@@ -214,4 +160,171 @@ export const ROLES = [
       'EDIT_PARAMETER'
     ]
   }
+]
+
+export const STUDENT_STATUS = [
+  { status: 'Matriculado', description: 'Estudiante cursando carrera.' },
+  { status: 'Retiro temporal', description: "Estudiante que 'congeló' la carrera." },
+  { status: 'Retiro definitivo', description: 'Estudiante retirado formalmente.' },
+  { status: 'Egresado', description: 'Estudiante graduado satisfactoriamente.' },
+  { status: 'Inasistente', description: 'Estudiante que ha dejado de asistir al instituto.' },
+  {
+    status: 'Pendiente de reingreso',
+    description: 'Estudiante que está en proceso de retomar los estudios.'
+  }
+]
+
+export const CAREERS = [
+  'Informática',
+  'Contabilidad',
+  'Administración',
+  'Electrotecnia',
+  'Electrónica',
+  'Educación'
+]
+
+export const OCCUPATIONS = [
+  'Técnico informático',
+  'Ama de casa',
+  'Oficinista',
+  'Profesor',
+  'Estudiante',
+  'Fumigador',
+  'Panadero',
+  'Empresario',
+  'Contador',
+  'Programador',
+  'Diseñador',
+  'Asesor',
+  'Influencer',
+  'Gamer Profesional'
+]
+
+export const CURRENCIES = [
+  { name: 'Bolívar', symbol: 'Bs', conversion: 13.19 },
+  { name: 'Euro', symbol: '€', conversion: 0.98 },
+  { name: 'Dólar', symbol: '$', conversion: 1 }
+]
+
+export const PAYMENT_METHODS = [
+  {
+    name: 'Tarjeta',
+    description: 'Tarjetas de débito y/o crédito',
+    currencies: ['Bolívar']
+  },
+  {
+    name: 'Transferencia',
+    description: 'Transferencias desde bancos nacionales',
+    currencies: ['Bolívar'],
+    metaPayment: [{ name: 'referencia', fieldType: 'string' }]
+  },
+  {
+    name: 'Efectivo',
+    description: 'Efectivo en moneda nacional o divisas',
+    currencies: ['Bolívar', 'Dólar', 'Euro']
+  },
+  { name: 'Pago móvil', description: 'Pago móvil desde bancos nacionales', currencies: ['Bolívar'] }
+]
+
+export const DOCUMENT_TYPES = ['CV', 'CE', 'PP', 'RIF']
+
+export const SECRET_QUESTIONS = [
+  'Primer nombre de tu madre',
+  'Segundo apellido de tu padre',
+  'Nombre de tu mascota favorita',
+  'Color del caballo blanco de Simón Bolivar',
+  'Nombre de tu primera escuela'
+]
+
+export const SEMESTERS = [
+  {
+    startDate: new Date(2021, 9, 6),
+    endDate: new Date(2022, 3, 1, 23, 59, 59, 999),
+    semester: '2021-II'
+  },
+  {
+    startDate: new Date(2022, 3, 2),
+    endDate: new Date(2022, 9, 2, 23, 59, 59, 999),
+    semester: '2022-I'
+  },
+  {
+    startDate: new Date(2022, 9, 3),
+    endDate: new Date(2023, 1, 31, 23, 59, 59, 999),
+    semester: '2022-II'
+  },
+  {
+    startDate: new Date(2023, 1, 30),
+    endDate: new Date(2023, 6, 16, 23, 59, 59, 999),
+    semester: '2023-I'
+  }
+]
+
+export const FIRST_NAMES = [
+  'Reynaldo',
+  'Yhan',
+  'Elisette',
+  'Juan',
+  'José',
+  'Iraida',
+  'Juanito',
+  'Noris',
+  'Luis',
+  'Pedro',
+  'Johan',
+  'Eduardo',
+  'Vin',
+  'Kelsier',
+  'Sazed',
+  'Ladrian',
+  'Elend',
+  'Brisa',
+  'Elena',
+  'Elene',
+  'Maria',
+  'Josefina',
+  'Pancracio',
+  'Bob',
+  'Carlos',
+  'Yuleisi',
+  'Elizabeth'
+]
+export const LAST_NAMES = [
+  'González',
+  'Mejías',
+  'Bueno',
+  'Rodriguez',
+  'Montaño',
+  'Venture',
+  'Eldair',
+  'Altozano',
+  'Hernandez',
+  'Terris',
+  'Terrano',
+  'Perez',
+  'Casas',
+  'Blanco',
+  'Rojas',
+  'Obama',
+  'Swann',
+  'Sparrow',
+  'Bootstrap',
+  'Turner'
+]
+export const DOMAINS = ['mail', 'gmail', 'outlook', 'yahoo', 'u-mail', 'exist', 'hotmail', 'proton']
+
+export const DOT_MAIL = ['com', 'com.ve', 'live', 'net', 'tv', 'dev', 'link', 'tube', 'online']
+
+export const ADDRESS = [
+  'La California',
+  'Catia',
+  'Los Flores de Catia',
+  'Mariperez',
+  'Propatria',
+  'Los Ruices',
+  'Narnia',
+  'Los Teques',
+  'La Urdaneta',
+  'La campiña',
+  'Plaza Venezuela diagonal al SENIAT',
+  'Av. Bolivar detrás de la bomba'
 ]
