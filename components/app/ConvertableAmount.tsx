@@ -8,6 +8,7 @@ import {
 } from '@chakra-ui/react'
 import { useLatestConversions } from 'hooks'
 import { RefObject } from 'react'
+import { DOLLAR } from 'utils/constants'
 import { round } from 'utils/round'
 
 export const ConvertableAmount = ({
@@ -32,7 +33,7 @@ export const ConvertableAmount = ({
           <PopoverBody>
             {latestConversions
               ? latestConversions.map((lc) =>
-                  lc.currency.name !== 'Dólar' ? (
+                  lc.currency.name !== DOLLAR ? (
                     <p key={lc.id}>
                       {lc.currency.symbol} {round(amount * lc.value).toLocaleString()}
                     </p>

@@ -1,5 +1,6 @@
 import { IncomingMessage } from 'http'
 import { get } from 'https'
+import { BOLIVAR } from 'utils/constants'
 import dayjs from './../lib/dayjs'
 import prisma from './../lib/prisma'
 import { sendMail } from './../utils/sendMail'
@@ -62,7 +63,7 @@ const parserConversions = (rawConversion: rawConversion[]) => {
       // hacer un llamado a la db y buscar cual es el currency adecuado según el campo currency.
       const dbCurr = await prisma.currency.findFirst({
         select: { id: true },
-        where: { name: { startsWith: 'Bolívar', mode: 'insensitive' } }
+        where: { name: { startsWith: BOLIVAR, mode: 'insensitive' } }
       })
       if (!dbCurr) return
 

@@ -19,3 +19,9 @@ export const INSCRIPTION = 'Derecho de Inscripción'
  * Constante para buscar el producto de recargo por retardo
  */
 export const LATE_PAYMENT = 'Recargo por Retardo'
+
+/** Constante para el nombre de la moneda Bolívar */
+export const BOLIVAR = 'Bolívar'
+
+/** Constante para el nombre de la moneda Dólar */
+export const DOLLAR = 'Dólar'

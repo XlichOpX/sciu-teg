@@ -2,6 +2,7 @@ import { Text } from '@chakra-ui/react'
 import { Currency } from '@prisma/client'
 import { SimpleBox } from 'components/app'
 import { useAuth } from 'hooks'
+import { DOLLAR } from 'utils/constants'
 import { EditCurrencyModal } from './EditCurrencyModal'
 
 export const CurrencyItem = ({ currency }: { currency: Currency }) => {
@@ -12,7 +13,7 @@ export const CurrencyItem = ({ currency }: { currency: Currency }) => {
       <Text fontWeight="bold">
         {currency.name} - {currency.symbol}
       </Text>
-      {currency.name !== 'Dólar' && user?.permissions.includes('EDIT_CURRENCY') && (
+      {currency.name !== DOLLAR && user?.permissions.includes('EDIT_CURRENCY') && (
         <EditCurrencyModal currency={currency} />
       )}
     </SimpleBox>

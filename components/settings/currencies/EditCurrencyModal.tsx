@@ -16,6 +16,7 @@ import { SubmitHandler } from 'react-hook-form'
 import { currencyUpdateSchema } from 'schema/currencySchema'
 import { deleteCurrency, updateCurrency } from 'services/currencies'
 import { Currency } from 'types/currency'
+import { BOLIVAR } from 'utils/constants'
 import { z } from 'zod'
 import { CurrencyForm } from './CurrencyForm'
 
@@ -69,7 +70,7 @@ export const EditCurrencyModal = ({ currency }: { currency: Currency }) => {
           </ModalBody>
 
           <ModalFooter>
-            {currency.name !== 'Bolívar' && user?.permissions.includes('DELETE_CURRENCY') && (
+            {currency.name !== BOLIVAR && user?.permissions.includes('DELETE_CURRENCY') && (
               <DeleteButton
                 confirmBody="¿Está seguro de eliminar este moneda?"
                 onDelete={onDelete}

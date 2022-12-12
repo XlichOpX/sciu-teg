@@ -15,6 +15,7 @@ import { useCategories } from 'hooks'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { ProductInput } from 'types/product'
+import { INSCRIPTION, LATE_PAYMENT, MONTHLY_PAYMENT } from 'utils/constants'
 
 export type ProductFormSubmitHandler = SubmitHandler<ProductInput>
 
@@ -26,6 +27,7 @@ interface Props {
 }
 
 const defaultStockValue = 15
+const lockedProducts = [MONTHLY_PAYMENT, INSCRIPTION, LATE_PAYMENT]
 
 export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Props) => {
   const { categories, isLoading, errorMsg } = useCategories()
@@ -47,7 +49,10 @@ export const ProductForm = ({ onSubmit, formHook, defaultValues, ...props }: Pro
     <VStack gap={3} as="form" onSubmit={handleSubmit(onSubmit)} {...props} noValidate>
       <FormControl isInvalid={!!errors.name} isRequired>
         <FormLabel>Nombre</FormLabel>
-        <Input {...register('name')} />
+        <Input
+          {...register('name')}
+          isReadOnly={defaultValues?.name ? lockedProducts.includes(defaultValues.name) : false}
+        />
         <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
       </FormControl>
 

@@ -4,6 +4,7 @@ import { ComponentPropsWithoutRef } from 'react'
 import type { SubmitHandler } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import { currencyCreateSchema } from 'schema/currencySchema'
+import { BOLIVAR } from 'utils/constants'
 import { z } from 'zod'
 
 export const CurrencyForm = ({ onSubmit, defaultValues, ...props }: CurrencyFormProps) => {
@@ -18,7 +19,7 @@ export const CurrencyForm = ({ onSubmit, defaultValues, ...props }: CurrencyForm
       <SimpleGrid columns={2} gap={4}>
         <FormControl isInvalid={!!errors.name} isRequired>
           <FormLabel>Nombre</FormLabel>
-          <Input {...register('name')} isReadOnly={defaultValues?.name === 'Bolívar'} />
+          <Input {...register('name')} isReadOnly={defaultValues?.name === BOLIVAR} />
           <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
         </FormControl>
 

@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { useLatestConversions } from 'hooks'
 import { FaExchangeAlt } from 'react-icons/fa'
+import { BOLIVAR } from 'utils/constants'
 import { FullyCenteredSpinner } from './FullyCenteredSpinner'
 
 export const LatestConversionsHelper = ({
@@ -22,7 +23,7 @@ export const LatestConversionsHelper = ({
   popoverContentProps: PopoverContentProps
 }) => {
   const { latestConversions, isLoading, error } = useLatestConversions()
-  const bsConversion = latestConversions?.find((lc) => lc.currency.name === 'Bolívar')
+  const bsConversion = latestConversions?.find((lc) => lc.currency.name === BOLIVAR)
 
   return (
     <Popover variant="dark" trigger="hover">

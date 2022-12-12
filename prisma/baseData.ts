@@ -1,3 +1,5 @@
+import { BOLIVAR, DOLLAR } from 'utils/constants'
+
 export const CATEGORIES = [
   {
     name: 'Taller de FOC',
@@ -201,29 +203,29 @@ export const OCCUPATIONS = [
 ]
 
 export const CURRENCIES = [
-  { name: 'Bolívar', symbol: 'Bs', conversion: 13.19 },
+  { name: BOLIVAR, symbol: 'Bs', conversion: 13.19 },
   { name: 'Euro', symbol: '€', conversion: 0.98 },
-  { name: 'Dólar', symbol: '$', conversion: 1 }
+  { name: DOLLAR, symbol: '$', conversion: 1 }
 ]
 
 export const PAYMENT_METHODS = [
   {
     name: 'Tarjeta',
     description: 'Tarjetas de débito y/o crédito',
-    currencies: ['Bolívar']
+    currencies: [BOLIVAR]
   },
   {
     name: 'Transferencia',
     description: 'Transferencias desde bancos nacionales',
-    currencies: ['Bolívar'],
+    currencies: [BOLIVAR],
     metaPayment: [{ name: 'referencia', fieldType: 'string' }]
   },
   {
     name: 'Efectivo',
     description: 'Efectivo en moneda nacional o divisas',
-    currencies: ['Bolívar', 'Dólar', 'Euro']
+    currencies: [BOLIVAR, DOLLAR, 'Euro']
   },
-  { name: 'Pago móvil', description: 'Pago móvil desde bancos nacionales', currencies: ['Bolívar'] }
+  { name: 'Pago móvil', description: 'Pago móvil desde bancos nacionales', currencies: [BOLIVAR] }
 ]
 
 export const DOCUMENT_TYPES = ['CV', 'CE', 'PP', 'RIF']
