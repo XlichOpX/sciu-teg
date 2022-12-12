@@ -7,5 +7,30 @@
   },
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
-  }
+  },
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  },
+  "cSpell.words": [
+    "Eldair",
+    "Elend",
+    "Elene",
+    "Elisette",
+    "Iraida",
+    "Johan",
+    "Juanito",
+    "Kelsier",
+    "Ladrian",
+    "Mariperez",
+    "Noris",
+    "Propatria",
+    "Ruices",
+    "Sazed",
+    "SENIAT",
+    "Teques",
+    "Terrano",
+    "Terris",
+    "Urdaneta",
+    "Yuleisi"
+  ]
 }
