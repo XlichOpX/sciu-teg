@@ -13,7 +13,7 @@ type AuthContext = {
 export const AuthContext = createContext<AuthContext | null>(null)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { data, error } = useSWR('/api/auth/user', getUser)
+  const { data, error } = useSWR(userFetchKey, getUser)
   const router = useRouter()
 
   /** Does a fetch to '/api/auth/logout' and then redirects to '/auth/login' */
@@ -28,3 +28,5 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     </AuthContext.Provider>
   )
 }
+
+export const userFetchKey = '/api/auth/user'
