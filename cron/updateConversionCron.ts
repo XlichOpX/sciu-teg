@@ -1,6 +1,6 @@
 import { IncomingMessage } from 'http'
 import { get } from 'https'
-import { BOLIVAR } from 'utils/constants'
+import { BOLIVAR } from '../utils/constants'
 import dayjs from './../lib/dayjs'
 import prisma from './../lib/prisma'
 import { sendMail } from './../utils/sendMail'
