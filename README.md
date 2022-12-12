@@ -41,7 +41,9 @@ Este sistema busca solventar las necesidades de cobro de los estudiantes del Ins
 
 Precondición, debemos tener instalados NodeJS 16 LTS o superior y su respectiva versión de NPM
 
-Primero, clonamos el repositorio, utilizando el método HTTP, GitHub CLI o SSH:
+#### Primero
+
+Clonamos el repositorio, utilizando el método HTTP, GitHub CLI o SSH:
 
 ```bash
 git clone https://github.com/XlichOpX/sciu-teg.git
@@ -53,20 +55,22 @@ git clone https://github.com/XlichOpX/sciu-teg.git
 gh repo clone XlichOpX/sciu-teg
 ```
 
-Segundo, Instalamos las dependencias necesarias.
+#### Segundo
+
+Instalamos las dependencias necesarias.
 
 ```bash
 cd /sciu-teg
 npm install
 ```
 
-Tercero, Creamos o copiamos a partir de `.env.example` el archivo `.env` y lo configuramos
+#### Tercero, Creamos o copiamos a partir de `.env.example` el archivo `.env` y lo configuramos
 
 ```bash
 # .env file
 
 # Definimos la base de datos, usuario, contraseña, host, puerto y schema a utilizar, generalmente schema=public
-DATABASE_URL="postgresql://<db_username>:<db_password>@<db_host_server>:<db_port>/<db_name>?schema=<db_schema>"
+DATABASE_URL="postgresql://<db_username>:<db_password>@<db_host_server>:<db_port>/<db_name>?schema=<db_schema>&pool_timeout=0&connection_limit=20"
 
 # Podemos no definir esta variable para ejecutar en modo desarrollo
 NODE_ENV = "development" | "production"
@@ -92,7 +96,8 @@ HOSTNAME=<DOMAIN_NAME>
 CONVERSION_BOLIVAR_API_URL="https://bcv-api.deno.dev/v1/exchange"
 ```
 
-Después de esto, necesitamos crear o tener las credenciales de base de datos que se usaron en la url.
+#### Después de esto, necesitamos crear o tener las credenciales de base de datos que se usaron en la url.
+
 Y añadir el schema de la base de dato usando el siguiente comando:
 
 ```bash
@@ -114,6 +119,72 @@ Una vez realizado estos pasos, deberíamos tener todo listo para ejecutar desarr
 ```bash
 npm run dev
 ```
+
+### Abre [http://localhost:3000](http://localhost:3000) en tu navegador y accede al sistema.
+
+## Usando Docker compose
+
+Creamos en busca de disponer de un método rápido y fácil de presentar el sistema ante el jurado, la funcionalidad de crear una imagen del proyecto
+y desplegar esta en un contenedor de docker.
+
+### Pre-requisitos
+
+Para poder ejecutar el proyecto en un contenedor debemos tener las siguientes herramientas en nuestro entorno de trabajo:
+
+- [Docker](https://www.docker.com/) (_Windows, Linux o MacOS_)
+- WSL 2 (en caso de tener _Windows_ como **OS** **anfitrión**)
+- [Docker-compose](https://docs.docker.com/compose/install/) (Viene incluido con `Docker-Desktop`)
+
+### Iniciando El proyecto con Docker
+
+Realizaremos los [primeros pasos](#primero) de la misma manera, obtendremos el `repositorio`. Sin embargo no hace falta instalar node ni las dependencias.
+
+En cambio, abriremos la terminal dentro del directorio.
+
+En el directorio raíz veremos los archivos `docker-compose.yml` y `Dockerfile`
+Accederemos al archivo `docker-compose.yml` y configuraremos tanto para `postgresito` como para `sciu-teg` la sección `environment:` con la información de su preferencia.
+
+```yml
+# docker-compose.yml
+postgresito:
+    environment:
+      - POSTGRES_DB=<db_name>
+      - POSTGRES_PASSWORD=<db_password>
+      - POSTGRES_HOST_AUTH_METHOD=trust
+sciu-teg:
+  ...
+  environment:
+    - DATABASE_URL=postgresql://postgres:<db_password>@postgresito:3000/<db_name>?schema=public&pool_timeout=0&connection_limit=20
+    - SECRET=<SECRET_PHRASE>
+    - SESSION_PASSWORD=<SECRET_PHRASE>
+    - SMTP_HOST=<smtp host>
+    - SMTP_PORT=<smtp port>
+    - SMTP_USER=<mail address or user>
+    - SMTP_PASS=<mail password>
+    - NOTIFICATION_MAIL=<mail address>
+    - HOSTNAME=localhost
+    - PORT=3000
+    - CONVERSION_BOLIVAR_API_URL=https://bcv-api.deno.dev/v1/exchange
+```
+
+Una vez configurado estas variables de entorno para el archivo `docker-compose.yml` podemos proceder a levantar el contenedor.
+Haciendo uso del siguiente comando:
+
+```bash
+#estando en la raíz del proyecto
+docker compose up
+```
+
+Una ve realizado este comando, tardará un poco, ya que ha de descargar las imágenes de PostgreSQL y Node 16 bajo Linux Alpine, descargar las dependencias y construir la aplicación.
+
+Para finalizar y tener datos que revisar, se ejecutará los siguientes comandos dentro de la terminal del contenedor (una vez se termine de componer dicho contenedor quedará a la escucha de peticiones)
+
+```bash
+npx prisma db push
+npx prisma db seed
+```
+
+con estos se esquematizará la base de datos y seguido de esto se generarán datos de prueba.
 
 ### Abre [http://localhost:3000](http://localhost:3000) en tu navegador y accede al sistema.
 
