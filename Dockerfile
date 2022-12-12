@@ -8,10 +8,13 @@ COPY package.json /tmp/dev/package.json
 COPY package-lock.json /tmp/dev/package-lock.json
 RUN cd /tmp/dev && npm install
 RUN mkdir -p /usr/dev && cp -a /tmp/dev/node_modules /usr/dev/
+RUN rm -rf /tmp/dev
+RUN mkdir /tmp/prod
 COPY package.json /tmp/prod/package.json
 COPY package-lock.json /tmp/prod/package-lock.json
 RUN cd /tmp/prod && npm install --omit=dev
 RUN mkdir -p /usr/app && cp -a /tmp/prod/node_modules /usr/app/
+RUN rm -rf /tmp/prod
 
 # Copiamos los archivos del repo y buildeamos.
 FROM dependencies AS BUILD_IMAGE
@@ -20,7 +23,7 @@ COPY package*.json ./
 COPY . .
 RUN npx prisma generate
 RUN npm run build
-RUN rm -rf node_modules
+RUN rm -rf /usr/dev/node_modules
 
 # Preparamos el servidor de producción ahora
 FROM dependencies
@@ -35,6 +38,7 @@ COPY --from=BUILD_IMAGE /usr/dev/.next ./.next
 COPY --from=BUILD_IMAGE /usr/dev/prisma/schema.prisma ./prisma/schema.prisma
 COPY --from=BUILD_IMAGE /usr/dev/prisma/seed.ts ./prisma/seed.ts
 RUN npx prisma generate
+RUN rm -rf /usr/dev
 # Exponemos la imagen en un puerto
 EXPOSE 3000
 # Indicamos que se ejecutará al montarlo en un contenedor
