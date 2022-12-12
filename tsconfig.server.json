@@ -8,5 +8,5 @@
     "noEmit": false,
     "moduleResolution": "node16"
   },
-  "include": ["server"]
+  "include": ["server", "prisma/seed.ts"]
 }
