@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  postgresito:
+    image: postgres:latest
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_DB=teg
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - post-data:/var/lib/postgresql/data
+    restart: unless-stopped
+  sciu-teg:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgresito:3000/teg?schema=public&pool_timeout=0&connection_limit=20
+      - SECRET=SECRET_PHRASE
+      - SESSION_PASSWORD=SECRET_PHRASE
+      - SMTP_HOST=example.com
+      - SMTP_PORT=576
+      - SMTP_USER=mail@example.com
+      - SMTP_PASS=password
+      - NOTIFICATION_MAIL=mail@example.com
+      - HOSTNAME=localhost
+      - PORT=3000
+      - CONVERSION_BOLIVAR_API_URL=https://bcv-api.deno.dev/v1/exchange
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgresito
+
+volumes:
+  post-data:
