@@ -177,11 +177,12 @@ docker compose up
 
 Una ve realizado este comando, tardará un poco, ya que ha de descargar las imágenes de PostgreSQL y Node 16 bajo Linux Alpine, descargar las dependencias y construir la aplicación.
 
-Para finalizar y tener datos que revisar, se ejecutará los siguientes comandos dentro de la terminal del contenedor (una vez se termine de componer dicho contenedor quedará a la escucha de peticiones)
+Para finalizar y tener datos que revisar, se ejecutará los siguientes comandos (una vez se termine de componer dicho contenedor quedará a la escucha de peticiones)
+También puedes ejecutarlos desde la CLI de docker, simplemente usando `npx prisma db <arg>`
 
 ```bash
-npx prisma db push
-npx prisma db seed
+docker exec sciu-teg-sciu-teg-1 npx prisma db push
+docker exec sciu-teg-sciu-teg-1 npx prisma db seed
 ```
 
 con estos se esquematizará la base de datos y seguido de esto se generarán datos de prueba.
