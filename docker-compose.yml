@@ -9,6 +9,7 @@ services:
       - POSTGRES_DB=teg
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST_AUTH_METHOD=trust
+      - TZ=America/Caracas
     volumes:
       - post-data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -18,12 +19,13 @@ services:
       dockerfile: Dockerfile
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgresito:5432/teg?schema=public&pool_timeout=0&connection_limit=20
-      - SECRET=<SECRET_PHRASE>
-      - SESSION_PASSWORD=<SECRET_PHRASE>
+      - SECRET=<SECRET_PHRASE><SECRET_PHRASE><SECRET_PHRASE>
+      - SESSION_PASSWORD=<SECRET_PHRASE><SECRET_PHRASE><SECRET_PHRASE>
       - NOTIFICATION_MAIL=notification@mail.com
       - HOSTNAME=localhost
       - PORT=3000
       - CONVERSION_BOLIVAR_API_URL=https://bcv-api.deno.dev/v1/exchange
+      - TZ=America/Caracas
     ports:
       - '3000:3000'
     depends_on:
