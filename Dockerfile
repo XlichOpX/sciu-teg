@@ -33,7 +33,6 @@ COPY --from=BUILD_IMAGE	/usr/dev/package.json	./
 COPY --from=BUILD_IMAGE /usr/dev/package-lock.json ./
 COPY --from=BUILD_IMAGE /usr/dev/public ./public
 COPY --from=BUILD_IMAGE /usr/dev/dist ./dist
-COPY --from=BUILD_IMAGE /usr/dev/.env ./.env
 COPY --from=BUILD_IMAGE /usr/dev/.next ./.next
 COPY --from=BUILD_IMAGE /usr/dev/prisma/schema.prisma ./prisma/schema.prisma
 COPY --from=BUILD_IMAGE /usr/dev/prisma/seed.ts ./prisma/seed.ts
