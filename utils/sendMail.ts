@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
 import Mail from 'nodemailer/lib/mailer'
-
+import SMTPTransport from 'nodemailer/lib/smtp-transport'
 export async function sendMail({
   from,
   to,
@@ -10,29 +10,17 @@ export async function sendMail({
   attachments
 }: Partial<Mail.Options>) {
   /**
-   * Objeto de transporte de pruebas... se ha de eliminar al pasar a producción
-   */
-  const transportObject = {
-    host: 'smtp.ethereal.email',
-    port: 587,
-    auth: {
-      user: 'hailie.murazik@ethereal.email',
-      pass: 'CEaBeDaG17gtR1Gn8Y'
-    }
-  }
-
-  /**
    * Esta sección hace uso de las variables de entorno.
    */
-  // const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env
-  // const transportObject: SMTPTransport.Options = {
-  //   host: SMTP_HOST,
-  //   port: Number(SMTP_PORT),
-  //   auth: {
-  //     user: SMTP_USER,
-  //     pass: SMTP_PASS
-  //   }
-  // }
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env
+  const transportObject: SMTPTransport.Options = {
+    host: SMTP_HOST || 'smtp.ethereal.email',
+    port: Number(SMTP_PORT || 587),
+    auth: {
+      user: SMTP_USER || 'hailie.murazik@ethereal.email',
+      pass: SMTP_PASS || 'CEaBeDaG17gtR1Gn8Y'
+    }
+  }
   const transporter = nodemailer.createTransport({ ...transportObject })
 
   // send mail with defined transport object

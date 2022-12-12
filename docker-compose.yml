@@ -17,14 +17,10 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgresito:3000/teg?schema=public&pool_timeout=0&connection_limit=20
-      - SECRET=SECRET_PHRASE
-      - SESSION_PASSWORD=SECRET_PHRASE
-      - SMTP_HOST=example.com
-      - SMTP_PORT=576
-      - SMTP_USER=mail@example.com
-      - SMTP_PASS=password
-      - NOTIFICATION_MAIL=mail@example.com
+      - DATABASE_URL=postgresql://postgres:postgres@postgresito:5432/teg?schema=public&pool_timeout=0&connection_limit=20
+      - SECRET=<SECRET_PHRASE>
+      - SESSION_PASSWORD=<SECRET_PHRASE>
+      - NOTIFICATION_MAIL=notification@mail.com
       - HOSTNAME=localhost
       - PORT=3000
       - CONVERSION_BOLIVAR_API_URL=https://bcv-api.deno.dev/v1/exchange
@@ -32,6 +28,7 @@ services:
       - '3000:3000'
     depends_on:
       - postgresito
+    restart: always
 
 volumes:
   post-data:
