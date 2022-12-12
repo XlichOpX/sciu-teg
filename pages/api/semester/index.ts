@@ -7,7 +7,7 @@ import { canUserDo } from 'utils/checkPermissions'
 // GET|POST /api/semester
 export default withIronSessionApiRoute(handle, ironOptions)
 async function handle(req: NextApiRequest, res: NextApiResponse) {
-  const { body, method, session } = req
+  const { body, method, session, query } = req
 
   switch (method) {
     case 'GET':
@@ -15,6 +15,14 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).send(`Can't read this.`)
       //obtenemos TODOS los semestres
       try {
+        if (query?.current) {
+          const today = new Date()
+          const semester = await prisma.semester.findFirst({
+            where: { AND: [{ startDate: { lte: today } }, { endDate: { gte: today } }] }
+          })
+          return res.status(200).send(semester)
+        }
+
         const semesters = await prisma.semester.findMany({ orderBy: { createdAt: 'desc' } })
         res.status(200).send(semesters)
       } catch (error) {
