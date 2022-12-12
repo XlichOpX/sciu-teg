@@ -27,7 +27,7 @@ export const ClientForm = ({ id, onSubmit }: { id: string; onSubmit: ClientFormS
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} id={id} noValidate>
+      <form onSubmit={methods.handleSubmit(onSubmit)} id={id} noValidate autoComplete="off">
         <Stack gap={3}>
           <PersonInputs />
 

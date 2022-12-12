@@ -58,7 +58,7 @@ export const SearchUserForm = ({
   }
 
   return (
-    <Box as="form" w="full" onSubmit={handleSubmit(onSubmit)}>
+    <Box as="form" w="full" onSubmit={handleSubmit(onSubmit)} autoComplete="off">
       <FormControl mb={4} id="username" isInvalid={!!errors.username} isReadOnly={disabled}>
         <FormLabel>Usuario</FormLabel>
         <Input {...register('username')} />

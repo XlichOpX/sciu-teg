@@ -26,7 +26,7 @@ export const SearchInput = ({
   } = useForm<SearchInput>({ resolver: zodResolver(schema) })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
       <InputGroup w="auto">
         <Input
           placeholder={placeholder}

@@ -56,7 +56,14 @@ export const UserForm = ({ formHook, onSubmit, id }: UserFormProps) => {
   if (!secretQuestions) return <FullyCenteredSpinner />
 
   return (
-    <Stack gap={2} as="form" onSubmit={handleSubmit(onSubmit)} id={id} noValidate>
+    <Stack
+      gap={2}
+      as="form"
+      onSubmit={handleSubmit(onSubmit)}
+      id={id}
+      noValidate
+      autoComplete="off"
+    >
       <FormControl isInvalid={!!errors.username} isRequired>
         <FormLabel>Nombre de usuario</FormLabel>
         <Input {...register('username')} />

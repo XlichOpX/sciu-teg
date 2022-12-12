@@ -15,7 +15,7 @@ export const PersonForm = ({
   id: string
 }) => {
   return (
-    <form onSubmit={onSubmit} id={id} noValidate>
+    <form onSubmit={onSubmit} id={id} noValidate autoComplete="off">
       <Stack gap={2}>
         <PersonInputs />
       </Stack>
