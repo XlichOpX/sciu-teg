@@ -5,9 +5,7 @@ import { billing } from './../prisma/queries'
 import { BillingComparatorArgs } from './../types/billing'
 import { StudentWithPersonCareerAndStatus } from './../types/student'
 import { stringSearch } from './../utils/routePaginate'
-
-// ID of StudentStatus 'Matriculado'
-export const MATRICULADO = 1
+import { INSCRIPTION, LATE_PAYMENT, MATRICULADO, MONTHLY_PAYMENT } from './constants'
 
 export async function checkBillings(
   student: StudentWithPersonCareerAndStatus,
@@ -16,24 +14,27 @@ export async function checkBillings(
   // Recuperamos el usuario asociado al número de documento pasado
   const newBillings: BillingComparatorArgs[] = []
   // Recuperamos el semestre actual
-  const semester = await prisma.semester.findFirst({ orderBy: { endDate: 'desc' } })
+  const today = new Date()
+  const semester = await prisma.semester.findFirst({
+    where: { AND: [{ startDate: { lte: today } }, { endDate: { gte: today } }] }
+  })
   if (!semester) throw new Error(`Current Semester not found`)
 
   // Recuperamos el producto 'mensualidad' de la base de datos
   const monthlyPayment = await prisma.product.findFirst({
-    where: { name: stringSearch('Mensualidad') }
+    where: { name: stringSearch(MONTHLY_PAYMENT) }
   })
   if (!monthlyPayment) throw new Error(`Monthly Payment product not found`)
 
   // Recuperamos el producto 'Inscripción' de la base de datos
   const inscription = await prisma.product.findFirst({
-    where: { name: stringSearch('Inscripción') }
+    where: { name: stringSearch(INSCRIPTION) }
   })
   if (!inscription) throw new Error(`Inscription product not found`)
 
   // Recuperamos el producto 'Recargo por retardo' de la base de datos
   const latePayment = await prisma.product.findFirst({
-    where: { name: stringSearch('Recargo por Retardo') }
+    where: { name: stringSearch(LATE_PAYMENT) }
   })
   if (!latePayment) throw new Error(`Retarded Payment product not found`)
 
@@ -50,7 +51,7 @@ export async function checkBillings(
 
   // Sí no existen billings  del semestre actual y el estudiante está matriculado
   // Generamos los productos correspondiente al semestre (Todas las mensualidades para el semestre actual)
-  if (billingCount === 0 && student.status.id === MATRICULADO) {
+  if (billingCount === 0 && student.status.status === MATRICULADO) {
     const data: Prisma.Enumerable<Prisma.BillingCreateManyInput> = []
     const dateToPay = dayjs(semester.startDate).locale('es').set('date', 1) // semester.startDate == 10/2/2022 ==> 1/2/2022
 

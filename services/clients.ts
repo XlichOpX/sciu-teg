@@ -2,8 +2,6 @@ import { Prisma } from '@prisma/client'
 import { fetch } from 'lib/fetch'
 import { ClientGetResponse, ClientWithPersonAndOccupation, CreateClientInput } from 'types/client'
 
-const MATRICULADO = 1
-
 const parseCreateInput = (data: CreateClientInput) => {
   const { occupationId, docTypeId, address, ...person } = data
   return Prisma.validator<Prisma.ClientCreateInput>()({

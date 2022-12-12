@@ -1,7 +1,8 @@
 import dayjs from './../lib/dayjs'
 import prisma from './../lib/prisma'
 import { studentWithPersonCareerAndStatus } from './../prisma/queries'
-import { checkBillings, MATRICULADO } from './../utils/checkBillings'
+import { checkBillings } from './../utils/checkBillings'
+import { MATRICULADO } from './../utils/constants'
 import { sendMail } from './../utils/sendMail'
 import { StudentWithBill } from './StudentWithBill'
 
@@ -16,7 +17,7 @@ export default async function updateStudentBillingCron() {
 
     const students = await prisma.student.findMany({
       ...studentWithPersonCareerAndStatus,
-      where: { statusId: MATRICULADO }
+      where: { status: { status: MATRICULADO } }
     })
 
     // Recuperamos los estudiantes activos (matriculados)
