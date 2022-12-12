@@ -1,4 +1,4 @@
-import { BOLIVAR, DOLLAR, MATRICULADO } from 'utils/constants'
+import { BOLIVAR, DOLLAR, MATRICULADO } from '../utils/constants'
 
 export const CATEGORIES = [
   {
