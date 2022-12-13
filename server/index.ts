@@ -18,6 +18,9 @@ const app = next({
     swcMinify: true
   }
 })
+const scheduleUpdateCron = process.env.SCHEDULE_UPDATE_BILLING ?? '0 14 16 */ *'
+const scheduleConversionCron = process.env.SCHEDULE_UPDATE_CONVERSION ?? '0 08 */ * *'
+
 const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
@@ -37,8 +40,8 @@ app.prepare().then(() => {
   }).listen(port, () => {
     console.log(`IUJO CAJA <${dev ? 'Desarrollo' : 'Producción'}> -> http://${hostname}:${port}`)
     try {
-      scheduleUpdateTask('0 14 16 */ *')
-      scheduleConversionTask('0 08 */ * *')
+      scheduleUpdateTask(scheduleUpdateCron)
+      scheduleConversionTask(scheduleConversionCron)
     } catch (error) {
       console.log({ error })
     }
