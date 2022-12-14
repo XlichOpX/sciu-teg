@@ -190,3 +190,6 @@ con estos se esquematizará la base de datos y seguido de esto se generarán dat
 ### Abre [http://localhost:3000](http://localhost:3000) en tu navegador y accede al sistema.
 
 Este es un proyecto [Next.js](https://nextjs.org/) iniciado con [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+[Presentación en PowerPoint del Sistema](https://1drv.ms/p/s!AicWR-5fnmEYgaxENPkS5mmZ8aUlHQ?e=dWvTZl)
+[Libro de Tesis Revisado](./resources/%5BTEG%5D%20-SCMAMIEIUJOCEP-%20Reynaldo%20%26%20Yhan.pdf)
