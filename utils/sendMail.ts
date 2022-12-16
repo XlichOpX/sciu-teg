@@ -14,11 +14,11 @@ export async function sendMail({
    */
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env
   const transportObject: SMTPTransport.Options = {
-    host: SMTP_HOST || 'smtp.ethereal.email',
-    port: Number(SMTP_PORT || 587),
+    host: SMTP_HOST,
+    port: Number(SMTP_PORT),
     auth: {
-      user: SMTP_USER || 'hailie.murazik@ethereal.email',
-      pass: SMTP_PASS || 'CEaBeDaG17gtR1Gn8Y'
+      user: SMTP_USER,
+      pass: SMTP_PASS
     }
   }
   const transporter = nodemailer.createTransport({ ...transportObject })

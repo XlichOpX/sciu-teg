@@ -2,7 +2,7 @@
 # las dependencias y construimos la app para producción
 
 # Descargamos las dependencias de desarrollo
-FROM node:16-alpine as dependencies
+FROM node:16 as dependencies
 RUN mkdir /tmp/dev
 COPY package.json /tmp/dev/package.json
 COPY package-lock.json /tmp/dev/package-lock.json
@@ -26,9 +26,10 @@ RUN npm run build
 RUN rm -rf /usr/dev/node_modules
 
 # Preparamos el servidor de producción ahora
-FROM dependencies
+FROM node:16
 ENV NODE_ENV production
 WORKDIR /usr/app
+COPY --from=dependencies /usr/app/node_modules ./node_modules
 COPY --from=BUILD_IMAGE	/usr/dev/package.json	./
 COPY --from=BUILD_IMAGE /usr/dev/package-lock.json ./
 COPY --from=BUILD_IMAGE /usr/dev/public ./public
