@@ -26,6 +26,7 @@ const BatchImport: NextPageWithLayout = () => {
   const [sheet, setSheet] = useState<Sheet>()
   const [validSheet, setValidSheet] = useState<SheetData>()
   const [createdReceipts, setCreatedReceipts] = useState<ReceiptWithPerson[]>()
+  const [isValidating, setIsValidating] = useState(false)
   const encodedFile = useRef<string>()
   const toast = useToast()
 
@@ -53,7 +54,9 @@ const BatchImport: NextPageWithLayout = () => {
     setFileName(file.name)
     setSheet(sheet)
 
+    setIsValidating(true)
     const validation = await sheetSchema.safeParseAsync(sheet)
+    setIsValidating(false)
     if (!validation.success) {
       const formattedErrors = validation.error.format()
       const flatErrors = validation.error.flatten((issue) => {
@@ -128,6 +131,8 @@ const BatchImport: NextPageWithLayout = () => {
           <SaveButton onClick={handleSubmit}>Subir lote de cobros</SaveButton>
         </>
       )}
+
+      {isValidating && <FullyCenteredSpinner />}
 
       {sheet && <Preview sheet={sheet} errors={errors?.formatted} />}
 
