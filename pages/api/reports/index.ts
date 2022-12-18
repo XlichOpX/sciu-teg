@@ -48,16 +48,16 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
         productSale.forEach((sale) => {
           const { price, product, createdAt, quantity } = sale
           const { name, id, category } = product
-          const findI = byProducts.findIndex((sale) => sale.id === id)
+          const findI = byProducts.findIndex((saleS) => saleS.id === id)
           if (findI !== -1) {
-            byProducts[findI].amount += price
+            byProducts[findI].amount += price * (quantity ?? 1)
             byProducts[findI].quantity += quantity ?? 1
           } else {
             byProducts.push({
               id,
               name,
               category,
-              amount: price,
+              amount: price * (quantity ?? 1),
               createdAt,
               quantity: quantity ?? 1
             })
