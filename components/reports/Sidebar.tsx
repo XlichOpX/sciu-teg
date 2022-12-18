@@ -36,7 +36,7 @@ export const Sidebar = ({ onSubmit, isLoading, ...props }: ReportsSidebarProps) 
   const { register, watch } = useForm<ReportDelimitation>({
     resolver: zodResolver(reportDelimitationSchema),
     defaultValues: {
-      reportType: 'arqByCategory',
+      reportType: 'arqByPayMethod',
       startDate: dayjs().date(1).format('YYYY-MM-DD'),
       endDate: dayjs().format('YYYY-MM-DD')
     }
