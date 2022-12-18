@@ -7,16 +7,7 @@ export type PaymentMethodReport = {
 }
 export type GroupedPaymentMethodReport = Record<string, PaymentMethodReport[]>
 
-export type CategoryReport = {
-  amount: number
-  category: string
-  id: number
-  currency: { id: number; name: string; symbol: string }
-}
-
-export type GroupedCategoryReport = Record<string, CategoryReport[]>
-
-export type Report = GroupedPaymentMethodReport | GroupedCategoryReport | ProductReport[]
+export type Report = GroupedPaymentMethodReport | ProductReport[]
 
 export type ProductReport = {
   id: number
