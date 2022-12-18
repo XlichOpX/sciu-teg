@@ -203,9 +203,32 @@ export const OCCUPATIONS = [
 ]
 
 export const CURRENCIES = [
-  { name: BOLIVAR, symbol: 'Bs', conversion: 13.19 },
-  { name: 'Euro', symbol: '€', conversion: 0.98 },
-  { name: DOLLAR, symbol: '$', conversion: 1 }
+  {
+    name: BOLIVAR,
+    symbol: 'Bs',
+    conversion: [
+      { value: 11.2548, date: new Date(2022, 11, 1, 21, 0, 0, 0) },
+      { value: 12.2467, date: new Date(2022, 11, 2, 21, 0, 0, 0) },
+      { value: 11.539, date: new Date(2022, 11, 5, 21, 0, 0, 0) },
+      { value: 11.8608, date: new Date(2022, 11, 6, 21, 0, 0, 0) },
+      { value: 12.6615, date: new Date(2022, 11, 7, 21, 0, 0, 0) },
+      { value: 14.1251, date: new Date(2022, 11, 9, 21, 0, 0, 0) },
+      { value: 14.1251, date: new Date(2022, 11, 12, 21, 0, 0, 0) },
+      { value: 14.7646, date: new Date(2022, 11, 13, 21, 0, 0, 0) },
+      { value: 15.7668, date: new Date(2022, 11, 17, 21, 0, 0, 0) },
+      { value: 15.7668, date: new Date(2022, 11, 18, 21, 0, 0, 0) },
+      { value: 15.7668, date: new Date(2022, 11, 19, 21, 0, 0, 0) }
+    ]
+  },
+  {
+    name: 'Euro',
+    symbol: '€',
+    conversion: [
+      { value: 0.98, date: new Date(2022, 11, 1, 8, 0, 0, 0) },
+      { value: 0.94, date: new Date(2022, 11, 17, 8, 0, 0, 0) }
+    ]
+  },
+  { name: DOLLAR, symbol: '$', conversion: [{ value: 1, date: new Date(2022, 11, 1, 8, 0, 0, 0) }] }
 ]
 
 export const PAYMENT_METHODS = [

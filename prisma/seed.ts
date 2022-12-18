@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client'
-import { encryptToSaveDB } from '../lib/crypter'
+import { encryptToSaveDB, hashString } from '../lib/crypter'
 import {
   ADDRESS,
   CAREERS,
@@ -22,13 +22,14 @@ import { permissions } from './permissions'
 const prisma = new PrismaClient()
 
 // Parámetros para manejar la cantidad de datos a generar
-const totalStudents = 20
-const totalClients = 10
-const receiptsPerPerson = 3
+const totalStudents = 1500
+const totalClients = 350
+const receiptsPerPerson = 35
 const productsPerReceipt = 3
 const chargesPerReceipt = 2
 
 async function main() {
+  console.time('🌻 Sembrador finalizado. ✔')
   console.log('▶ Iniciando Seeder....')
   await clearTables()
   console.log('🗄 Generando Datos....')
@@ -61,8 +62,9 @@ main()
     await prisma.$disconnect()
     process.exit(1)
   })
-  .finally(() => console.log('🌻 Sembrador finalizado. ✔'))
-
+  .finally(() => {
+    console.timeEnd('🌻 Sembrador finalizado. ✔')
+  })
 /**
  * Crea recibos en base a los parámetros pasados.
  */
@@ -249,9 +251,9 @@ function genPerson(
   const firstLastName = getRandomValueFromArray(LAST_NAMES)
   const middleName = getRandomValueFromArray(FIRST_NAMES)
   const secondLastName = getRandomValueFromArray(LAST_NAMES)
-  const email = `${firstName}_${firstLastName}@${getRandomValueFromArray(
-    DOMAINS
-  )}.${getRandomValueFromArray(DOT_MAIL)}`
+  const email = `${firstName}_${firstLastName}_${hashString(
+    `${firstName}_${firstLastName}_${Date.now()}`
+  )}@${getRandomValueFromArray(DOMAINS)}.${getRandomValueFromArray(DOT_MAIL)}`
   const shortAddress = getRandomValueFromArray(ADDRESS)
   return {
     docNumber: getRandomDocNumber(docType.type).toString(),
@@ -510,7 +512,10 @@ async function createCurrencies(
   currencies: {
     name: string
     symbol: string
-    conversion: number
+    conversion: {
+      value: number
+      date: Date
+    }[]
   }[]
 ) {
   const c = await Promise.all(
@@ -522,8 +527,9 @@ async function createCurrencies(
             name: c.name,
             symbol: c.symbol,
             conversions: {
-              create: {
-                value: c.conversion
+              createMany: {
+                skipDuplicates: true,
+                data: c.conversion
               }
             }
           }
