@@ -210,7 +210,7 @@ const parseData = async ({ data, headings }: SheetData) => {
           const cur = findCurrency(currencies, field as string)
           if (cur) field = cur
           else {
-            throw new Error(`The moneda ${row[index]} is not a valid moneda`)
+            throw new Error(`La moneda ${row[index]} no es válida`)
           }
         }
         return [headings[index], field]
@@ -225,7 +225,7 @@ const parseData = async ({ data, headings }: SheetData) => {
 function findCurrency(currencies: Pick<Currency, 'id' | 'name' | 'symbol'>[], field: string) {
   return currencies.find((currency) => {
     const isSymbol = currency.symbol.toLocaleLowerCase() === field.toLocaleLowerCase()
-    const isName = currency.name.includes(field.toLocaleLowerCase())
+    const isName = currency.name.toLocaleLowerCase().includes(field.toLocaleLowerCase())
     return isSymbol || isName
   })?.id
 }
