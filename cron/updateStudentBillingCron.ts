@@ -1,3 +1,4 @@
+import { BillingComparatorArgs } from 'types/billing'
 import dayjs from './../lib/dayjs'
 import prisma from './../lib/prisma'
 import { studentWithPersonCareerAndStatus } from './../prisma/queries'
@@ -21,38 +22,40 @@ export default async function updateStudentBillingCron() {
     })
 
     // Recuperamos los estudiantes activos (matriculados)
+
     // Iteramos el checkBillings por cada uno y enviamos un mail de información. En caso de OK o en caso de Error
-    const studentWithBillings: string[] = []
-    students.forEach(async (student) => {
-      const { career, person, currentSemester, id } = student
-      const {
-        docNumber,
-        firstName,
-        firstLastName,
-        docType: { type }
-      } = person
-
-      const billings = await checkBillings(student, { onlyNews: true })
-
-      const studentWithBillingsConstruct = {
-        student: {
-          id,
+    const billingsChecked = await Promise.all(
+      students.map(async (student) => {
+        const { career, person, currentSemester, id } = student
+        const {
+          docNumber,
           firstName,
           firstLastName,
-          docNumber,
-          type,
-          career: career.career,
-          currentSemester
-        },
-        billings:
-          billings.length > 0
-            ? billings.map((billing) => billing.productName.slice(0, 32) + '...').toLocaleString()
-            : '',
-        count: billings.length
-      }
-      if (studentWithBillingsConstruct.count > 0)
-        studentWithBillings.push(StudentWithBill(studentWithBillingsConstruct))
-    })
+          docType: { type }
+        } = person
+
+        const billings: BillingComparatorArgs[] = await checkBillings(student, { onlyNews: true })
+
+        if (billings.length > 0) {
+          const studentWithBillingsConstruct = {
+            student: {
+              id,
+              firstName,
+              firstLastName,
+              docNumber,
+              type,
+              career: career.career,
+              currentSemester
+            },
+            billings: billings.map((billing) => billing.productName),
+            count: billings.length
+          }
+          return StudentWithBill(studentWithBillingsConstruct)
+        }
+      })
+    )
+
+    const checkedFiltered = billingsChecked.filter((e): e is string => typeof e !== 'undefined')
 
     const mailOptions = {
       from: '"Instituto Universitario Jesús Obrero - Sede Catia" <caja@iujo.edu.ve>',
@@ -60,14 +63,12 @@ export default async function updateStudentBillingCron() {
       subject: `IUJO CAJA - Generación de Morosos ${dayjs()
         .locale('es')
         .format('dddd, MMMM D, YYYY')}`,
-      text:
-        studentWithBillings.length >= 1
-          ? `A continuación se listan los pendientes de pago generados según morosos del mes.`
-          : `No se han generado Nuevos Morosos...`,
-      html:
-        studentWithBillings.length >= 1
-          ? studentWithBillings.join('<br>')
-          : `<span>No se han generado Nuevos Morosos...</span>`
+      text: checkedFiltered.length
+        ? `A continuación se listan los ${checkedFiltered.length} pendientes de pago generados del mes.`
+        : `No se han generado Nuevos Morosos...`,
+      html: checkedFiltered.length
+        ? checkedFiltered.join('<br>')
+        : `<span>No se han generado Nuevos Morosos...</span>`
     }
 
     sendMail(mailOptions).then((result) => {

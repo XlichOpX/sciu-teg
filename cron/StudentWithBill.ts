@@ -12,6 +12,6 @@ type StudentWithBillOptions = {
     career: string
     currentSemester: number
   }
-  billings: string
+  billings: string[]
   count: number
 }

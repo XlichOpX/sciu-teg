@@ -136,7 +136,7 @@ export async function checkBillings(
 
   if (options?.onlyNews) {
     newBillings.push(...latePaymentData)
-    return newBillings ?? []
+    return newBillings
   }
 
   // Recuperamos y devolvemos todos los 'billings' pendientes por pagar
