@@ -6,7 +6,7 @@ import prisma from 'lib/prisma'
 import _ from 'lodash'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextApiRequestQuery } from 'next/dist/server/api-utils'
-import { CategoryReport, PaymentMethodReport, ProductReport } from 'types/report'
+import { PaymentMethodReport, ProductReport } from 'types/report'
 import { canUserDo } from 'utils/checkPermissions'
 export default withIronSessionApiRoute(handle, ironOptions)
 
@@ -89,34 +89,6 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
 
         res.json(_.groupBy(byPayment, 'paymentMethod'))
         break
-
-      case 'arqByCategory':
-        const byCategory: CategoryReport[] = []
-
-        baseReport = await generateBasicReport({ categoryArr, endDate, startDate })
-
-        baseReport.forEach((charge) => {
-          const { amount, currency, category } = charge
-          category.forEach((cat) => {
-            if (!categoryArr.includes(cat.id)) return
-            const index = byCategory.findIndex(
-              (charge) => charge.id === cat.id && charge.currency.id === currency.id
-            )
-            if (index !== -1) byCategory[index].amount += amount
-            else
-              byCategory.push({
-                amount,
-                category: cat.name,
-                id: cat.id,
-                currency
-              })
-          })
-        })
-
-        res.json(_.groupBy(byCategory, 'category'))
-
-        break
-
       default:
         res.json({ error: `not report found` })
         break
@@ -131,7 +103,7 @@ type basicReport = {
   id: number
   currency: Omit<Currency, 'createdAt' | 'updatedAt'>
   paymentMethod: Pick<PaymentMethod, 'id' | 'name'>
-  category: (Pick<Category, 'id' | 'name'> & { price: number })[]
+  category: (Pick<Category, 'id' | 'name'> & { price: number; quantity: number | null })[]
   createdAt: Date
 }
 
@@ -157,7 +129,8 @@ async function generateBasicReport({
           chargedProducts: {
             select: {
               product: { select: { category: { select: { id: true, name: true } } } },
-              price: true
+              price: true,
+              quantity: true
             }
           }
         }
@@ -186,9 +159,10 @@ async function generateBasicReport({
     const category = chargedProducts.map((charProd) => {
       const {
         price,
+        quantity,
         product: { category }
       } = charProd
-      return { price, ...category }
+      return { price, quantity, ...category }
     })
 
     return {
