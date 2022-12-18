@@ -1,3 +1,4 @@
+import { Currency } from '@prisma/client'
 import { getCurrencies } from 'services/currencies'
 import { z } from 'zod'
 
@@ -46,29 +47,34 @@ export const dataSchema = z
     z.number().positive().int(),
     // Cobro
     z.string(),
-    z.string().refine(
-      async (value) => {
-        const lcValue = value.toLocaleLowerCase()
-
-        let currencies
-        if (typeof window === 'undefined') {
-          const getServerSideCurrencies = (await import('utils/getServerSideCurrencies')).default
-          currencies = await getServerSideCurrencies()
-        } else {
-          currencies = await getCurrencies()
-        }
-
-        return currencies.find(
-          (c) => c.name.toLowerCase() === lcValue || c.symbol.toLowerCase() === lcValue
-        )
-      },
-      (value) => ({ message: `No existe la moneda ${value}` })
-    ),
+    z.string(),
     z.number().positive(),
     castToString,
     castToDate
   ])
   .array()
+  .superRefine(async (values, ctx) => {
+    let currencies: Currency[]
+    if (typeof window === 'undefined') {
+      const getServerSideCurrencies = (await import('utils/getServerSideCurrencies')).default
+      currencies = await getServerSideCurrencies()
+    } else {
+      currencies = await getCurrencies()
+    }
+
+    values.forEach((val, index) => {
+      const foundCurrency = currencies.find(
+        (c) => c.name.toLowerCase() === val[7] || c.symbol.toLowerCase() === val[7]
+      )
+      if (!foundCurrency) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `No existe la moneda ${val[7]}`,
+          path: [index, 7]
+        })
+      }
+    })
+  })
 
 export const sheetSchema = z.object({
   headings: headingSchema,

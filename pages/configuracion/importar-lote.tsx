@@ -9,7 +9,6 @@ import {
   Preview,
   ValidFileFeedback
 } from 'components/settings/batch-import'
-import { useCurrencies } from 'hooks'
 import { HttpError } from 'lib/http-error'
 import { NextPageWithLayout } from 'pages/_app'
 import React, { useRef, useState } from 'react'
@@ -27,11 +26,9 @@ const BatchImport: NextPageWithLayout = () => {
   const [validSheet, setValidSheet] = useState<SheetData>()
   const [createdReceipts, setCreatedReceipts] = useState<ReceiptWithPerson[]>()
   const [isValidating, setIsValidating] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const encodedFile = useRef<string>()
   const toast = useToast()
-
-  const { currencies } = useCurrencies()
-  if (!currencies) return <FullyCenteredSpinner />
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = async (evt) => {
     const file = evt.target.files?.[0]
@@ -96,6 +93,7 @@ const BatchImport: NextPageWithLayout = () => {
 
   const handleSubmit = async () => {
     if (!validSheet) return
+    setIsSubmitting(true)
     try {
       const receipts = await uploadChargesBatch(validSheet)
       setCreatedReceipts(receipts)
@@ -109,6 +107,8 @@ const BatchImport: NextPageWithLayout = () => {
           isClosable: true
         })
       }
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -128,7 +128,9 @@ const BatchImport: NextPageWithLayout = () => {
       {validSheet && (
         <>
           <ValidFileFeedback />
-          <SaveButton onClick={handleSubmit}>Subir lote de cobros</SaveButton>
+          <SaveButton onClick={handleSubmit} isLoading={isSubmitting}>
+            Subir lote de cobros
+          </SaveButton>
         </>
       )}
 
