@@ -1,5 +1,16 @@
 export const StudentWithBill = ({ student, billings, count }: StudentWithBillOptions) => {
-  return `<pre>${JSON.stringify({ student, billings, count }, null, 2)}</pre>`
+  return `
+  <article>
+    <h2>
+    ${student.type}-${student.docNumber}: ${student.firstName} ${student.firstLastName},
+    ${student.career}, ${student.currentSemester}° semestre
+    </h2>
+    <p>Deudas generadas (${count}):</p>
+    <ul>
+      ${billings.map((billing) => `<li>${billing}</li>`).join('')}
+    </ul>
+  </article>
+  `
 }
 
 type StudentWithBillOptions = {
