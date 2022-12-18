@@ -25,7 +25,7 @@ RUN npm run build
 RUN rm -rf /usr/dev/node_modules
 
 # Preparamos el servidor de producción ahora
-FROM mcr.microsoft.com/playwright
+FROM mcr.microsoft.com/playwright:v1.28.0-focal
 ENV NODE_ENV production
 WORKDIR /usr/app
 COPY --from=dependencies /usr/app/node_modules ./node_modules
