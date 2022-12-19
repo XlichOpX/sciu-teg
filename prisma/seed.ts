@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { encryptToSaveDB, hashString } from '../lib/crypter'
+import dayjs from '../lib/dayjs'
 import {
   ADDRESS,
   CAREERS,
@@ -27,6 +28,7 @@ const totalClients = 350
 const receiptsPerPerson = 35
 const productsPerReceipt = 3
 const chargesPerReceipt = 2
+const receiptSlackDays = 3
 
 async function main() {
   console.time('🌻 Sembrador finalizado. ✔')
@@ -89,6 +91,10 @@ async function createReceipts(
         return receiptPromises
 
         function createReceipt() {
+          const randomDate = dayjs()
+            .subtract(getRandomInt({ max: receiptSlackDays }), 'day')
+            .toDate()
+
           const chargedProducts = Array.from({
             length: getRandomInt({ max: productsPerReceipt })
           }).map(() => {
@@ -96,9 +102,11 @@ async function createReceipts(
             return {
               productId: product.id,
               price: product.price,
-              quantity: getRandomInt({ max: 6 })
+              quantity: getRandomInt({ max: 6 }),
+              createdAt: randomDate
             }
           })
+
           const totalAmount = chargedProducts.reduce((ac, p) => ac + p.price * p.quantity, 0)
           const totalCharges = getRandomInt({ max: chargesPerReceipt })
 
@@ -116,10 +124,12 @@ async function createReceipts(
                   data: Array.from({ length: totalCharges }).map(() => ({
                     amount: totalAmount / totalCharges,
                     paymentMethodId: getRandomValueFromArray(paymentMethodsIDs),
-                    currencyId: getRandomValueFromArray(currenciesIDs)
+                    currencyId: getRandomValueFromArray(currenciesIDs),
+                    createdAt: randomDate
                   }))
                 }
-              }
+              },
+              createdAt: randomDate
             }
           })
         }
