@@ -94,7 +94,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
               where: { name: stringSearch(row.producto) }
             })
             if (!product) throw new Error('product not found')
-            products.push({ id: product.id, quantity: row.cantidad })
+            products.push({ id: product.id, quantity: row.cantidad, price: row.precio })
             amount = row.precio
           }
 

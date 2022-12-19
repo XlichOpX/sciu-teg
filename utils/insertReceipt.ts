@@ -45,18 +45,18 @@ export const insertReceipt = async (body: CreateReceiptInput) => {
     if (products) {
       // Generamos un arreglo de chargedProduct, buscando la información en la base de datos primero. SIN el Id de Receipt.
       const data = await Promise.all(
-        products.map(async ({ id, quantity }) => {
+        products.map(async ({ id, quantity, price }) => {
           if (!(await tc.product.findFirst({ where: { id } })))
             throw new Error(`Product id:${id} not found`)
 
-          const { price } = await tc.product.update({
+          const { price: dbPrice } = await tc.product.update({
             data: { stock: { decrement: quantity } },
             select: { price: true },
             where: { id }
           })
 
           return {
-            price,
+            price: price ?? dbPrice,
             productId: id,
             quantity
           }
