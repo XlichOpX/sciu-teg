@@ -63,13 +63,15 @@ export const dataSchema = z
     }
 
     values.forEach((val, index) => {
+      const lowerCaseCurrency = val[7].toLowerCase()
       const foundCurrency = currencies.find(
-        (c) => c.name.toLowerCase() === val[7] || c.symbol.toLowerCase() === val[7]
+        ({ name, symbol }) =>
+          name.toLowerCase() === lowerCaseCurrency || symbol.toLowerCase() === lowerCaseCurrency
       )
       if (!foundCurrency) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: `No existe la moneda ${val[7]}`,
+          message: `No existe la moneda "${val[7]}"`,
           path: [index, 7]
         })
       }
