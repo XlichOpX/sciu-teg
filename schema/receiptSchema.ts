@@ -27,7 +27,8 @@ body: {
  **/
 export const receiptProductSchema = z.object({
   id: z.number().positive().int(),
-  quantity: z.number().positive().int()
+  quantity: z.number().positive().int(),
+  price: z.number().positive().optional()
 })
 
 export const receiptCreateSchemaInput = z.object({
