@@ -8,7 +8,7 @@ const CommunityIndex: NextPageWithLayout = () => {
   if (!user) return null
   return (
     <>
-      <Alert mb={4}>Busque una persona por su número cédula...</Alert>
+      <Alert mb={4}>Busque una persona por su número de documento...</Alert>
       {user.permissions.includes('CREATE_CLIENT') && <CreateClientModal />}
     </>
   )

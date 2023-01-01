@@ -32,7 +32,7 @@ export const ReceiptList = ({
           <Tr>
             <Th>Fecha</Th>
             <Th textAlign="center">Recibo N°</Th>
-            {showIdCol && <Th textAlign="center">Cédula</Th>}
+            {showIdCol && <Th textAlign="center">N° de documento</Th>}
             <Th textAlign="center">Monto</Th>
           </Tr>
         </Thead>

@@ -33,7 +33,7 @@ export const CommunityLayout = ({ children }: { children: ReactNode }) => {
       </Head>
       <HeadingWithSearch
         title="Comunidad"
-        placeholder="Cédula"
+        placeholder="Número de documento"
         onSubmit={async ({ text }) => {
           const { result: clients } = await getClients({ keyword: text })
           if (clients.length === 0) {

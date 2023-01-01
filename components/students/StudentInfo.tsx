@@ -19,7 +19,8 @@ export const StudentInfo = ({
     <>
       <Flex gap={4} wrap="wrap" justifyContent="space-between" alignItems="center">
         <p>
-          Estudiante: {fullName} / Cédula: {docNumber} / Carrera: {career} / Estado: {status}
+          Estudiante: {fullName} / N° de documento: {docNumber} / Carrera: {career} / Estado:{' '}
+          {status}
         </p>
         {user?.permissions.includes('READ_RECEIPT') && (
           <ViewReceiptsModal fullName={fullName} personDocNum={docNumber} />

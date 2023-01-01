@@ -33,7 +33,7 @@ export const StudentsLayout = ({ children }: { children: ReactNode }) => {
       </Head>
       <HeadingWithSearch
         title="Estudiantes"
-        placeholder="Cédula"
+        placeholder="Número de documento"
         onSubmit={async ({ text }) => {
           const { result: students } = await getStudents({ keyword: text })
           if (students.length === 0) {

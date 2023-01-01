@@ -5,7 +5,7 @@ import { NextPageWithLayout } from '../_app'
 const StudentsIndex: NextPageWithLayout = () => {
   return (
     <>
-      <Alert>Busque un estudiante por su cédula...</Alert>
+      <Alert>Busque un estudiante por su número de documento...</Alert>
     </>
   )
 }
