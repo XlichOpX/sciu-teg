@@ -43,6 +43,10 @@ export const ReceiptDetail = ({
   receipt: ReceiptWithAll
   parameters: Parameters
 }) => {
+  const {
+    person: { firstName, middleName, firstLastName, secondLastName }
+  } = receipt
+  const personFullName = `${firstName} ${middleName} ${firstLastName} ${secondLastName}`
   return (
     <Container
       maxW="container.lg"
@@ -107,9 +111,7 @@ export const ReceiptDetail = ({
           }
         }}
       >
-        <p>
-          Persona: {receipt.person.firstName} {receipt.person.firstLastName}
-        </p>
+        <p>Persona: {personFullName}</p>
         <p>
           {receipt.person.docType.type}-{receipt.person.docNumber}
         </p>

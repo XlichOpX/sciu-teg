@@ -47,7 +47,7 @@ export const CommunityLayout = ({ children }: { children: ReactNode }) => {
         }}
       />
       {children}
-      <Modal isOpen={Boolean(clients)} onClose={onClose}>
+      <Modal isOpen={Boolean(clients)} onClose={onClose} size="2xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Clientes encontrados</ModalHeader>
@@ -55,30 +55,45 @@ export const CommunityLayout = ({ children }: { children: ReactNode }) => {
 
           <ModalBody>
             <Box as="ul" listStyleType="none">
-              {clients?.map((client, index) => (
-                <Box
-                  as="li"
-                  key={client.id}
-                  borderBottom={index !== clients.length - 1 ? '1px' : undefined}
-                  _dark={{ borderBottomColor: 'whiteAlpha.200' }}
-                  _light={{ borderBottomColor: 'blackAlpha.200' }}
-                >
-                  <NLink href={`/comunidad/${client.id}`}>
-                    <Box
-                      as="span"
-                      h="full"
-                      display="block"
-                      py={1}
-                      _dark={{ _hover: { bgColor: 'whiteAlpha.200' } }}
-                      _light={{ _hover: { bgColor: 'blue.50' } }}
-                      onClick={onClose}
-                    >
-                      {client.person.firstName} {client.person.firstLastName} -{' '}
-                      {client.person.docType.type}: {client.person.docNumber}
-                    </Box>
-                  </NLink>
-                </Box>
-              ))}
+              {clients?.map(
+                (
+                  {
+                    id,
+                    person: {
+                      firstName,
+                      firstLastName,
+                      middleName,
+                      secondLastName,
+                      docType,
+                      docNumber
+                    }
+                  },
+                  index
+                ) => (
+                  <Box
+                    as="li"
+                    key={id}
+                    borderBottom={index !== clients.length - 1 ? '1px' : undefined}
+                    _dark={{ borderBottomColor: 'whiteAlpha.200' }}
+                    _light={{ borderBottomColor: 'blackAlpha.200' }}
+                  >
+                    <NLink href={`/comunidad/${id}`}>
+                      <Box
+                        as="span"
+                        h="full"
+                        display="block"
+                        py={1}
+                        _dark={{ _hover: { bgColor: 'whiteAlpha.200' } }}
+                        _light={{ _hover: { bgColor: 'blue.50' } }}
+                        onClick={onClose}
+                      >
+                        {firstName} {middleName} {firstLastName} {secondLastName} - {docType.type}:{' '}
+                        {docNumber}
+                      </Box>
+                    </NLink>
+                  </Box>
+                )
+              )}
             </Box>
           </ModalBody>
 

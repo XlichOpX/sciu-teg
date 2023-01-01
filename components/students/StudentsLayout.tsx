@@ -47,7 +47,7 @@ export const StudentsLayout = ({ children }: { children: ReactNode }) => {
         }}
       />
       {children}
-      <Modal isOpen={Boolean(students)} onClose={onClose} size="lg">
+      <Modal isOpen={Boolean(students)} onClose={onClose} size="2xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Estudiantes encontrados</ModalHeader>
@@ -55,31 +55,46 @@ export const StudentsLayout = ({ children }: { children: ReactNode }) => {
 
           <ModalBody>
             <Box as="ul" listStyleType="none">
-              {students?.map((student, index) => (
-                <Box
-                  as="li"
-                  key={student.id}
-                  borderBottom={index !== students.length - 1 ? '1px' : undefined}
-                  _dark={{ borderBottomColor: 'whiteAlpha.200' }}
-                  _light={{ borderBottomColor: 'blackAlpha.200' }}
-                >
-                  <NLink href={`/estudiantes/${student.id}`}>
-                    <Box
-                      as="span"
-                      h="full"
-                      display="block"
-                      py={1}
-                      _dark={{ _hover: { bgColor: 'whiteAlpha.200' } }}
-                      _light={{ _hover: { bgColor: 'blue.50' } }}
-                      onClick={onClose}
-                    >
-                      {student.person.firstName} {student.person.firstLastName} -{' '}
-                      {student.person.docType.type}: {student.person.docNumber} |{' '}
-                      {student.status.status}
-                    </Box>
-                  </NLink>
-                </Box>
-              ))}
+              {students?.map(
+                (
+                  {
+                    id,
+                    person: {
+                      firstName,
+                      firstLastName,
+                      middleName,
+                      secondLastName,
+                      docType,
+                      docNumber
+                    },
+                    status
+                  },
+                  index
+                ) => (
+                  <Box
+                    as="li"
+                    key={id}
+                    borderBottom={index !== students.length - 1 ? '1px' : undefined}
+                    _dark={{ borderBottomColor: 'whiteAlpha.200' }}
+                    _light={{ borderBottomColor: 'blackAlpha.200' }}
+                  >
+                    <NLink href={`/estudiantes/${id}`}>
+                      <Box
+                        as="span"
+                        h="full"
+                        display="block"
+                        py={1}
+                        _dark={{ _hover: { bgColor: 'whiteAlpha.200' } }}
+                        _light={{ _hover: { bgColor: 'blue.50' } }}
+                        onClick={onClose}
+                      >
+                        {firstName} {middleName} {firstLastName} {secondLastName} - {docType.type}:{' '}
+                        {docNumber} | {status.status}
+                      </Box>
+                    </NLink>
+                  </Box>
+                )
+              )}
             </Box>
           </ModalBody>
 
