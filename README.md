@@ -25,7 +25,9 @@ Este sistema busca solventar las necesidades de cobro de los estudiantes del Ins
 - **TypeScript** _4.7.4_
 - **Zod** _3.18.0_
   además de usar **faker-js** _7.5.0_ para crear las pruebas iniciales del _seeder_ de prisma
-
+  
+##### Plataforma: 
+**Node JS 16 LTS** bajo contenedores **Docker**
 ### Algunas de las características del sistema:
 
 - [x] Importar cobros por lote a través de Hojas de Cálculo
