@@ -84,58 +84,57 @@ async function createReceipts(
   const persons = await prisma.person.findMany()
   const products = await prisma.product.findMany()
 
-  const receipts = await Promise.all(
-    persons
-      .map((p) => {
-        const receiptPromises = Array.from({ length: receiptsPerPerson }).map(() => createReceipt())
-        return receiptPromises
+  const receipts = []
+  for (const p of persons) {
+    for (let i = 0; i < receiptsPerPerson; i++) {
+      receipts.push(await createReceipt())
+    }
 
-        function createReceipt() {
-          const randomDate = dayjs()
-            .subtract(getRandomInt({ max: receiptSlackDays }), 'day')
-            .toDate()
+    function createReceipt() {
+      const randomDate = dayjs()
+        .subtract(getRandomInt({ max: receiptSlackDays }), 'day')
+        .toDate()
 
-          const chargedProducts = Array.from({
-            length: getRandomInt({ max: productsPerReceipt })
-          }).map(() => {
-            const product = getRandomValueFromArray(products)
-            return {
-              productId: product.id,
-              price: product.price,
-              quantity: getRandomInt({ max: 6 }),
-              createdAt: randomDate
-            }
-          })
-
-          const totalAmount = chargedProducts.reduce((ac, p) => ac + p.price * p.quantity, 0)
-          const totalCharges = getRandomInt({ max: chargesPerReceipt })
-
-          return prisma.receipt.create({
-            data: {
-              amount: totalAmount,
-              personId: p.id,
-              chargedProducts: {
-                createMany: {
-                  data: chargedProducts
-                }
-              },
-              charges: {
-                createMany: {
-                  data: Array.from({ length: totalCharges }).map(() => ({
-                    amount: totalAmount / totalCharges,
-                    paymentMethodId: getRandomValueFromArray(paymentMethodsIDs),
-                    currencyId: getRandomValueFromArray(currenciesIDs),
-                    createdAt: randomDate
-                  }))
-                }
-              },
-              createdAt: randomDate
-            }
-          })
+      const chargedProducts = Array.from({
+        length: getRandomInt({ max: productsPerReceipt })
+      }).map(() => {
+        const product = getRandomValueFromArray(products)
+        return {
+          productId: product.id,
+          price: product.price,
+          quantity: getRandomInt({ max: 6 }),
+          createdAt: randomDate
         }
       })
-      .flat()
-  )
+
+      const totalAmount = chargedProducts.reduce((ac, p) => ac + p.price * p.quantity, 0)
+      const totalCharges = getRandomInt({ max: chargesPerReceipt })
+
+      return prisma.receipt.create({
+        data: {
+          amount: totalAmount,
+          personId: p.id,
+          chargedProducts: {
+            createMany: {
+              data: chargedProducts
+            }
+          },
+          charges: {
+            createMany: {
+              data: Array.from({ length: totalCharges }).map(() => ({
+                amount: totalAmount / totalCharges,
+                paymentMethodId: getRandomValueFromArray(paymentMethodsIDs),
+                currencyId: getRandomValueFromArray(currenciesIDs),
+                createdAt: randomDate
+              }))
+            }
+          },
+          createdAt: randomDate
+        }
+      })
+    }
+  }
+
   if (receipts) console.log('🧾 Recibos Creados ✔')
   return receipts
 }
@@ -156,9 +155,10 @@ async function createCategoriesWithProducts(
     }[]
   }[]
 ) {
-  const cp = await Promise.all(
-    categories.map(({ name, description, products }) =>
-      prisma.category.create({
+  const cp = []
+  for (const { name, description, products } of categories) {
+    cp.push(
+      await prisma.category.create({
         data: {
           name,
           description,
@@ -174,7 +174,8 @@ async function createCategoriesWithProducts(
         }
       })
     )
-  )
+  }
+
   if (cp) console.log('🛒 Categorías y Productos Creados ✔')
   return cp
 }
@@ -195,18 +196,19 @@ async function createClients(
   },
   totalClients: number
 ) {
-  const c = await Promise.all(
-    Array.from({ length: totalClients }).map(() => {
-      const person = genPerson(docTypes)
-      const id = getRandomValueFromArray(occupationIDs)
-      return prisma.client.create({
+  const c = []
+  for (let i = 0; i < totalClients; i++) {
+    const person = genPerson(docTypes)
+    const id = getRandomValueFromArray(occupationIDs)
+    c.push(
+      await prisma.client.create({
         data: {
           person: { connectOrCreate: { where: { email: person.email }, create: person } },
           occupation: { connect: { id } }
         }
       })
-    })
-  )
+    )
+  }
   if (c) console.log('👤 Clientes Creados ✔')
   return c
 }
@@ -230,18 +232,21 @@ async function createStudents(
   },
   totalStudents: number
 ) {
-  const s = await Promise.all(
-    Array.from({ length: totalStudents })
-      .map(() => ({
-        person: {
-          create: genPerson(docTypes)
-        },
-        currentSemester: getRandomInt({ min: 1, max: 6 }),
-        career: { connect: { id: getRandomValueFromArray(careerIDs) } },
-        status: { connect: { id: getRandomValueFromArray(statusIDs) } }
-      }))
-      .map((data) => prisma.student.create({ data }))
-  )
+  const s = []
+  for (let i = 0; i < totalStudents; i++) {
+    s.push(
+      await prisma.student.create({
+        data: {
+          person: {
+            create: genPerson(docTypes)
+          },
+          currentSemester: getRandomInt({ min: 1, max: 6 }),
+          career: { connect: { id: getRandomValueFromArray(careerIDs) } },
+          status: { connect: { id: getRandomValueFromArray(statusIDs) } }
+        }
+      })
+    )
+  }
   if (s) console.log('👨‍🎓 Estudiantes Creados ✔')
   return s
 }
@@ -262,7 +267,7 @@ function genPerson(
   const middleName = getRandomValueFromArray(FIRST_NAMES)
   const secondLastName = getRandomValueFromArray(LAST_NAMES)
   const email = `${firstName}_${firstLastName}_${hashString(
-    `${firstName}_${firstLastName}_${Date.now()}`
+    `${firstName}_${firstLastName}_${Math.random()}`
   )}@${getRandomValueFromArray(DOMAINS)}.${getRandomValueFromArray(DOT_MAIL)}`
   const shortAddress = getRandomValueFromArray(ADDRESS)
   return {
@@ -348,9 +353,10 @@ async function createUsers({
     type: string
   }[]
 }) {
-  const r = await Promise.all(
-    roles.map((role) =>
-      prisma.user.create({
+  const r = []
+  for (const role of roles) {
+    r.push(
+      await prisma.user.create({
         data: {
           roles: {
             create: {
@@ -380,7 +386,7 @@ async function createUsers({
         }
       })
     )
-  )
+  }
   if (r) console.log('👷‍♂️ Usuarios con Rol Creados ✔')
   return r
 }
@@ -390,11 +396,10 @@ async function createUsers({
  * @returns
  */
 async function createSemester(semesters: { startDate: Date; endDate: Date; semester: string }[]) {
-  const s = await Promise.all(
-    semesters
-      .map((semester) => prisma.semester.create({ data: semester }))
-      .map(async (s) => (await s).id)
-  )
+  const s = []
+  for (const semester of semesters) {
+    s.push((await prisma.semester.create({ data: semester })).id)
+  }
   if (s) console.log('📅 Semestres Creados ✔')
   return s
 }
@@ -423,11 +428,10 @@ async function createParameters() {
  * @returns
  */
 async function createOccupations(occupations: string[]) {
-  const o = await Promise.all(
-    occupations
-      .map((occupation) => prisma.occupation.create({ data: { occupation } }))
-      .map(async (oc) => (await oc).id)
-  )
+  const o = []
+  for (const occupation of occupations) {
+    o.push((await prisma.occupation.create({ data: { occupation } })).id)
+  }
   if (o) console.log('🧰 Ocupaciones de Clientes Creadas ✔')
   return o
 }
@@ -438,13 +442,10 @@ async function createOccupations(occupations: string[]) {
  * @returns
  */
 async function createStudentStatus(studentStatus: { status: string; description: string }[]) {
-  const ss = await Promise.all(
-    studentStatus
-      .map(({ status, description }) =>
-        prisma.studentStatus.create({ data: { description, status } })
-      )
-      .map(async (ss) => (await ss).id)
-  )
+  const ss = []
+  for (const { status, description } of studentStatus) {
+    ss.push((await prisma.studentStatus.create({ data: { description, status } })).id)
+  }
   if (ss) console.log('📓 Estado Estudiantil Creado ✔')
   return ss
 }
@@ -455,11 +456,10 @@ async function createStudentStatus(studentStatus: { status: string; description:
  * @returns
  */
 async function createCareers(careers: string[]) {
-  const c = await Promise.all(
-    careers
-      .map((career) => prisma.career.create({ data: { career } }))
-      .map(async (c) => (await c).id)
-  )
+  const c = []
+  for (const career of careers) {
+    c.push((await prisma.career.create({ data: { career } })).id)
+  }
   if (c) console.log('🏁 Carreras universitarias Creadas ✔')
   return c
 }
@@ -470,11 +470,10 @@ async function createCareers(careers: string[]) {
  * @returns
  */
 async function createDocTypes(docTypes: string[]) {
-  const dt = await Promise.all(
-    docTypes.map((type) =>
-      prisma.docType.create({ select: { id: true, type: true }, data: { type } })
-    )
-  )
+  const dt = []
+  for (const type of docTypes) {
+    dt.push(await prisma.docType.create({ select: { id: true, type: true }, data: { type } }))
+  }
   if (dt) console.log('🎫 Tipos de Documentos Creados ✔')
   return dt
 }
@@ -495,10 +494,11 @@ async function createPaymentMethods(
     }[]
   }[]
 ) {
-  const pm = await Promise.all(
-    paymentMethods
-      .map(({ name, description, currencies, metaPayment }) =>
-        prisma.paymentMethod.create({
+  const pm = []
+  for (const { name, description, currencies, metaPayment } of paymentMethods) {
+    pm.push(
+      (
+        await prisma.paymentMethod.create({
           select: { id: true },
           data: {
             name,
@@ -507,9 +507,9 @@ async function createPaymentMethods(
             metaPayment
           }
         })
-      )
-      .map(async (pm) => (await pm).id)
-  )
+      ).id
+    )
+  }
   if (pm) console.log('💱 Métodos de pago Creados ✔')
   return pm
 }
@@ -528,25 +528,27 @@ async function createCurrencies(
     }[]
   }[]
 ) {
-  const c = await Promise.all(
-    currencies
-      .map((c) =>
-        prisma.currency.create({
+  const c = []
+  for (const ca of currencies) {
+    c.push(
+      (
+        await prisma.currency.create({
           select: { id: true },
           data: {
-            name: c.name,
-            symbol: c.symbol,
+            name: ca.name,
+            symbol: ca.symbol,
             conversions: {
               createMany: {
                 skipDuplicates: true,
-                data: c.conversion
+                data: ca.conversion
               }
             }
           }
         })
-      )
-      .map(async (c) => (await c).id)
-  )
+      ).id
+    )
+  }
+
   if (c) console.log('💰 Monedas Creadas ✔')
   return c
 }
@@ -562,11 +564,10 @@ async function createPermissions(
     description: string
   }[]
 ) {
-  const p = await Promise.all(
-    permissions
-      .map((permission) => prisma.permission.create({ data: permission }))
-      .map(async (p) => (await p).id)
-  )
+  const p = []
+  for (const permission of permissions) {
+    p.push((await prisma.permission.create({ data: permission })).id)
+  }
   if (p) console.log('📄 Permisos Creados ✔')
   return p
 }
@@ -577,21 +578,20 @@ async function createPermissions(
  * @returns
  */
 async function createSecretQuestions(secretQuestions: string[]) {
-  const sq = await Promise.all(
-    secretQuestions
-      .map((question) => prisma.secretQuestion.create({ data: { question } }))
-      .map(async (a) => (await a).id)
-  )
+  const sq = []
+  for (const question of secretQuestions) {
+    sq.push((await prisma.secretQuestion.create({ data: { question } })).id)
+  }
+
   if (sq) console.log('🔐 Preguntas secretas Creadas ✔')
   return sq
 }
 
 async function createAddress(addresses: string[]) {
-  const a = await Promise.all(
-    addresses
-      .map((shortAddress) => prisma.address.create({ data: { shortAddress } }))
-      .map(async (s) => (await s).shortAddress)
-  )
+  const a = []
+  for (const shortAddress of addresses) {
+    a.push((await prisma.address.create({ data: { shortAddress } })).id)
+  }
   if (a) console.log('🗺  Direcciones Creadas ✔')
   return a
 }
