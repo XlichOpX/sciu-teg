@@ -23,8 +23,8 @@ import { permissions } from './permissions'
 const prisma = new PrismaClient()
 
 // Parámetros para manejar la cantidad de datos a generar
-const totalStudents = 1500
-const totalClients = 350
+const totalStudents = 100
+const totalClients = 100
 const receiptsPerPerson = 35
 const productsPerReceipt = 3
 const chargesPerReceipt = 2
