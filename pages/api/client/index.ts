@@ -20,7 +20,7 @@ async function handle(req: NextApiRequest, res: NextApiResponse) {
       try {
         const { keyword } = query
         const searchQuery = stringSearch(keyword)
-        const where: Prisma.StudentWhereInput = keyword
+        const where: Prisma.ClientWhereInput = keyword
           ? {
               OR: [
                 { person: { docNumber: searchQuery } },
