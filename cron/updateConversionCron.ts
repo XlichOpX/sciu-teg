@@ -86,9 +86,9 @@ const parserConversions = (rawConversion: rawConversion[]) => {
           'Se ha actualizado el valor de '
         )
         return sendMail({
-          from: 'IUJO - Conversión API <conversion@iujo.edu.ve>',
+          from: 'SCIU - Conversión API <conversion@SCIU.edu.ve>',
           to: process.env.NOTIFICATION_MAIL,
-          subject: `IUJO CAJA - Actualización de Divisas`,
+          subject: `SCIU CAJA - Actualización de Divisas`,
           text
         })
       } else {

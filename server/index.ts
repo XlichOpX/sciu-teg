@@ -57,7 +57,7 @@ app.prepare().then(() => {
       res.end('internal server error')
     }
   }).listen(port, () => {
-    console.log(`IUJO CAJA <${dev ? 'Desarrollo' : 'Producción'}> -> http://${hostname}:${port}`)
+    console.log(`SCIU CAJA <${dev ? 'Desarrollo' : 'Producción'}> -> http://${hostname}:${port}`)
     try {
       scheduleUpdateTask(scheduleUpdateCron)
       scheduleConversionTask(scheduleConversionCron)

@@ -405,13 +405,13 @@ async function createSemester(semesters: { startDate: Date; endDate: Date; semes
 }
 
 /**
- * Crea los parámetros por defecto para el IUJO.
+ * Crea los parámetros por defecto para el SCIU.
  * @returns parameters
  */
 async function createParameters() {
   const p = await prisma.parameters.create({
     data: {
-      institute: 'Instituto Universitario Jesús Obrero',
+      institute: 'Instituto Universitario',
       address: `Calle Real de los Flores con calle Andrés Bello`,
       phone: '(0212) 861-65-57',
       population: 'Catia - Caracas',

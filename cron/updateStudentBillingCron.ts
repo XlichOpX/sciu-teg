@@ -58,9 +58,9 @@ export default async function updateStudentBillingCron() {
     const checkedFiltered = billingsChecked.filter((e): e is string => typeof e !== 'undefined')
 
     const mailOptions = {
-      from: '"Instituto Universitario Jesús Obrero - Sede Catia" <caja@iujo.edu.ve>',
+      from: '"Instituto Universitario - Sede Catia" <caja@SCIU.edu.ve>',
       to: process.env.NOTIFICATION_MAIL,
-      subject: `IUJO CAJA - Generación de Morosos ${dayjs()
+      subject: `SCIU CAJA - Generación de Morosos ${dayjs()
         .locale('es')
         .format('dddd, MMMM D, YYYY')}`,
       text: checkedFiltered.length
@@ -83,9 +83,9 @@ export default async function updateStudentBillingCron() {
     })
   } catch (error) {
     const mailOptions = {
-      from: '"Instituto Universitario Jesús Obrero - Sede Catia" <caja@iujo.edu.ve>',
+      from: '"Instituto Universitario - Sede Catia" <caja@SCIU.edu.ve>',
       to: process.env.NOTIFICATION_MAIL,
-      subject: `IUJO CAJA - ERROR al momento de la Generación de Morosos ${dayjs()
+      subject: `SCIU CAJA - ERROR al momento de la Generación de Morosos ${dayjs()
         .locale('es')
         .format('dddd, MMMM D, YYYY')}`,
       text: `A continuación se muestra el error producido al generar los morosos`,

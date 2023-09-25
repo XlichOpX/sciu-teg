@@ -18,7 +18,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   switch (method) {
     case 'POST':
       try {
-        const from = '"Instituto Universitario Jesús Obrero - Sede Catia" <caja@iujo.edu.ve>'
+        const from = '"Instituto Universitario" <caja@SCIU.edu.ve>'
         const { receipts } = body
         const validBody = z.number().array().safeParse(receipts)
         if (!validBody.success) throw new Error('not request valid')
@@ -44,7 +44,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
           const mailOption = {
             from,
             to: person.email,
-            subject: `IUJO CAJA - ${person.docType.type}:${person.docNumber} - ${dayjs()
+            subject: `SCIU CAJA - ${person.docType.type}:${person.docNumber} - ${dayjs()
               .locale('es')
               .format('dddd, MMMM D, YYYY')}`,
             attachments,

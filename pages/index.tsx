@@ -18,7 +18,7 @@ const Home: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>Sistema de Cobranzas - IUJO</title>
+        <title>Sistema de Cobranzas - SCIU</title>
         <meta
           name="description"
           content="Sistema de Cobranzas para una Institución Universitaria"
@@ -28,7 +28,7 @@ const Home: NextPageWithLayout = () => {
 
       <Container maxW="container.xl" as="main" py={4}>
         <Heading as="h1" mb={4} textAlign="center">
-          Sistema de Cobranzas - IUJO
+          Sistema de Cobranzas - SCIU
         </Heading>
 
         {user.permissions.includes('READ_SEMESTER') && <SemesterIndicator />}
